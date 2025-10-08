@@ -2,21 +2,28 @@
 //  Nano04DnDiceApp.swift
 //  Nano04DnDice
 //
-//  Created by Lucas Dal Pra Brascher on 08/10/25.
-//
 
 import SwiftUI
 import CoreData
 
 @main
 struct Nano04DnDiceApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DiceRollerView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
+    }
+}
+
+// MARK: - AppDelegate para forçar Landscape
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return .landscape
     }
 }
 
@@ -64,7 +71,7 @@ public class InjectionObserver: ObservableObject {
     var cancellable: AnyCancellable? = nil
     let publisher = PassthroughSubject<Void, Never>()
     init() {
-        _ = loadInjectionOnce // .enableInjection() optional Xcode 16+
+        _ = loadInjectionOnce
         cancellable = NotificationCenter.default.publisher(for:
             Notification.Name("INJECTION_BUNDLE_NOTIFICATION"))
             .sink { [weak self] change in

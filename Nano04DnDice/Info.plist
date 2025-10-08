@@ -2,6 +2,20 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Ubuntu-Regular.ttf</string>
+		<string>Ubuntu-Bold.ttf</string>
+		<string>SecularOne-Regular.ttf</string>
+		<string>Pangolin-Regular.ttf</string>
+		<string>NotoSansLinearB-Regular.ttf</string>
+		<string>MetalMania-Regular.ttf</string>
+		<string>BitcountPropSingleInk-VariableFont.ttf</string>
+		<string>BebasNeue-Regular.ttf</string>
+		<string>PlayfairDisplay-Regular.ttf</string>
+		<string>PlayfairDisplay-Bold.ttf</string>
+		<string>PlayfairDisplay-Black.ttf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

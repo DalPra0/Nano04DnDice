@@ -62,7 +62,12 @@ struct DiceResultView: View {
                 action: onContinue
             )
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Computed Properties
     

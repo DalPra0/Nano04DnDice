@@ -2,13 +2,17 @@
 //  RollMode.swift
 //  Nano04DnDice
 //
-//  Model - Modos de rolagem (Normal/Abençoado/Amaldiçoado)
+//  Model - Roll Modes (Normal/Blessed/Cursed)
 //
 
 import Foundation
 
 enum RollMode: String, CaseIterable {
     case normal = "Normal"
-    case blessed = "Abençoado"
-    case cursed = "Amaldiçoado"
+    case blessed = "Blessed"
+    case cursed = "Cursed"
+    
+    var displayName: String {
+        return self.rawValue
+    }
 }

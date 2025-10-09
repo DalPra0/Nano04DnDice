@@ -25,7 +25,12 @@ struct DiceSelectorView: View {
             // Custom Dice Button
             customDiceButton
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Subviews
     

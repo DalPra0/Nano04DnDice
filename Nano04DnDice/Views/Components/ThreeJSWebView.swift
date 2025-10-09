@@ -11,6 +11,7 @@ import WebKit
 struct ThreeJSWebView: UIViewRepresentable {
     let currentNumber: Int
     let isRolling: Bool
+    let diceSides: Int  // Número de lados do dado
     let onRollComplete: (Int) -> Void
     
     func makeUIView(context: Context) -> WKWebView {
@@ -27,6 +28,13 @@ struct ThreeJSWebView: UIViewRepresentable {
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
+        // Se mudou o tipo de dado, recarrega a cena
+        if context.coordinator.currentDiceSides != diceSides {
+            context.coordinator.currentDiceSides = diceSides
+            loadThreeJSScene(webView: webView)
+            return
+        }
+        
         if isRolling {
             webView.evaluateJavaScript("startDiceRoll();")
         } else {
@@ -35,14 +43,16 @@ struct ThreeJSWebView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(onRollComplete: onRollComplete)
+        Coordinator(onRollComplete: onRollComplete, diceSides: diceSides)
     }
     
     class Coordinator: NSObject, WKScriptMessageHandler {
         let onRollComplete: (Int) -> Void
+        var currentDiceSides: Int
         
-        init(onRollComplete: @escaping (Int) -> Void) {
+        init(onRollComplete: @escaping (Int) -> Void, diceSides: Int) {
             self.onRollComplete = onRollComplete
+            self.currentDiceSides = diceSides
         }
         
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -96,10 +106,71 @@ struct ThreeJSWebView: UIViewRepresentable {
             
             <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
             <script>
-                let scene, camera, renderer, icosahedron;
+                let scene, camera, renderer, dice;
                 let isRolling = false;
                 let currentNumber = 1;
                 let numberDisplay;
+                const diceSides = \(diceSides);
+                
+                function getDiceGeometry(sides) {
+                    switch(sides) {
+                        case 4:  // Tetrahedron (D4)
+                            return new THREE.TetrahedronGeometry(1.0, 0);
+                        case 6:  // Box (D6)
+                            return new THREE.BoxGeometry(1.4, 1.4, 1.4);
+                        case 8:  // Octahedron (D8)
+                            return new THREE.OctahedronGeometry(1.0, 0);
+                        case 10: // D10 - duas pirâmides pentagonais unidas (bipyramid)
+                            const geometry10 = new THREE.BufferGeometry();
+                            const vertices10 = [];
+                            const r = 0.6;  // raio do pentágono
+                            const h = 1.0;  // altura de cada pirâmide
+                            
+                            // Vértice superior (índice 0)
+                            vertices10.push(0, h, 0);
+                            
+                            // Pentágono no meio - 5 vértices (índices 1-5)
+                            for (let i = 0; i < 5; i++) {
+                                const angle = (i * Math.PI * 2) / 5;
+                                vertices10.push(
+                                    r * Math.cos(angle),
+                                    0,
+                                    r * Math.sin(angle)
+                                );
+                            }
+                            
+                            // Vértice inferior (índice 6)
+                            vertices10.push(0, -h, 0);
+                            
+                            const indices10 = [];
+                            
+                            // 5 faces da pirâmide SUPERIOR
+                            for (let i = 0; i < 5; i++) {
+                                const curr = i + 1;
+                                const next = ((i + 1) % 5) + 1;
+                                indices10.push(0, curr, next);
+                            }
+                            
+                            // 5 faces da pirâmide INFERIOR
+                            for (let i = 0; i < 5; i++) {
+                                const curr = i + 1;
+                                const next = ((i + 1) % 5) + 1;
+                                indices10.push(6, next, curr); // ordem invertida pra normal correta
+                            }
+                            
+                            geometry10.setIndex(indices10);
+                            geometry10.setAttribute('position', new THREE.Float32BufferAttribute(vertices10, 3));
+                            geometry10.computeVertexNormals();
+                            return geometry10;
+                            
+                        case 12: // Dodecahedron (D12) - geometria nativa
+                            return new THREE.DodecahedronGeometry(0.85, 0);
+                        case 20: // Icosahedron (D20)
+                            return new THREE.IcosahedronGeometry(0.9, 0);
+                        default: // Custom - usa icosahedron
+                            return new THREE.IcosahedronGeometry(0.9, 0);
+                    }
+                }
                 
                 function init() {
                     numberDisplay = document.getElementById('numberDisplay');
@@ -113,7 +184,7 @@ struct ThreeJSWebView: UIViewRepresentable {
                     renderer.setClearColor(0x000000, 0);
                     document.getElementById('container').appendChild(renderer.domElement);
                     
-                    const geometry = new THREE.IcosahedronGeometry(0.9, 0);
+                    const geometry = getDiceGeometry(diceSides);
                     const material = new THREE.MeshPhongMaterial({
                         color: 0xffffff,
                         shininess: 100,
@@ -122,18 +193,18 @@ struct ThreeJSWebView: UIViewRepresentable {
                         opacity: 0.3
                     });
                     
-                    icosahedron = new THREE.Mesh(geometry, material);
+                    dice = new THREE.Mesh(geometry, material);
                     // Rotação inicial mais agradável
-                    icosahedron.rotation.x = Math.PI * 0.15;
-                    icosahedron.rotation.y = Math.PI * 0.2;
-                    scene.add(icosahedron);
+                    dice.rotation.x = Math.PI * 0.15;
+                    dice.rotation.y = Math.PI * 0.2;
+                    scene.add(dice);
                     
                     const wireframe = new THREE.WireframeGeometry(geometry);
                     const line = new THREE.LineSegments(wireframe);
                     line.material.color.setHex(0xffd700);
                     line.material.opacity = 0.8;
                     line.material.transparent = true;
-                    icosahedron.add(line);
+                    dice.add(line);
                     
                     const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
                     scene.add(ambientLight);
@@ -164,8 +235,8 @@ struct ThreeJSWebView: UIViewRepresentable {
                     requestAnimationFrame(animate);
                     
                     if (!isRolling) {
-                        icosahedron.rotation.x += 0.005;
-                        icosahedron.rotation.y += 0.008;
+                        dice.rotation.x += 0.005;
+                        dice.rotation.y += 0.008;
                     }
                     
                     renderer.render(scene, camera);
@@ -184,19 +255,19 @@ struct ThreeJSWebView: UIViewRepresentable {
                     
                     function rollAnimation() {
                         if (rollTime < rollDuration) {
-                            icosahedron.rotation.x += (Math.random() - 0.5) * 0.6;
-                            icosahedron.rotation.y += (Math.random() - 0.5) * 0.6;
-                            icosahedron.rotation.z += (Math.random() - 0.5) * 0.6;
+                            dice.rotation.x += (Math.random() - 0.5) * 0.6;
+                            dice.rotation.y += (Math.random() - 0.5) * 0.6;
+                            dice.rotation.z += (Math.random() - 0.5) * 0.6;
                             
                             if (rollTime % 100 === 0) {
-                                currentNumber = Math.floor(Math.random() * 20) + 1;
+                                currentNumber = Math.floor(Math.random() * diceSides) + 1;
                                 updateNumberDisplay();
                             }
                             
                             rollTime += 50;
                             setTimeout(rollAnimation, 50);
                         } else {
-                            const finalResult = Math.floor(Math.random() * 20) + 1;
+                            const finalResult = Math.floor(Math.random() * diceSides) + 1;
                             currentNumber = finalResult;
                             updateNumberDisplay();
                             
@@ -206,9 +277,9 @@ struct ThreeJSWebView: UIViewRepresentable {
                             
                             let smoothTime = 0;
                             const smoothDuration = 1000;
-                            const initialRotX = icosahedron.rotation.x;
-                            const initialRotY = icosahedron.rotation.y;
-                            const initialRotZ = icosahedron.rotation.z;
+                            const initialRotX = dice.rotation.x;
+                            const initialRotY = dice.rotation.y;
+                            const initialRotZ = dice.rotation.z;
                             
                             function smoothStop() {
                                 smoothTime += 50;
@@ -219,9 +290,9 @@ struct ThreeJSWebView: UIViewRepresentable {
                                 const targetY = Math.PI * 0.3;
                                 const targetZ = 0;
                                 
-                                icosahedron.rotation.x = initialRotX + (targetX - initialRotX) * easeOut;
-                                icosahedron.rotation.y = initialRotY + (targetY - initialRotY) * easeOut;
-                                icosahedron.rotation.z = initialRotZ + (targetZ - initialRotZ) * easeOut;
+                                dice.rotation.x = initialRotX + (targetX - initialRotX) * easeOut;
+                                dice.rotation.y = initialRotY + (targetY - initialRotY) * easeOut;
+                                dice.rotation.z = initialRotZ + (targetZ - initialRotZ) * easeOut;
                                 
                                 if (progress < 1) {
                                     setTimeout(smoothStop, 50);

@@ -90,7 +90,12 @@ struct ThemesListView: View {
                 Text("Are you sure you want to delete '\(themeToDelete?.name ?? "")'?")
             }
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Components
     
@@ -221,7 +226,12 @@ struct ThemeCardView: View {
             )
         }
         .buttonStyle(.plain)
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     private var colorPreview: some View {
         HStack(spacing: 4) {

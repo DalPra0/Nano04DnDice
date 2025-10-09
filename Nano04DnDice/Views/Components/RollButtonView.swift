@@ -29,7 +29,12 @@ struct RollButtonView: View {
                 action: onRoll
             )
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }
 
 // MARK: - Action Button Component
@@ -65,5 +70,10 @@ struct ActionButton: View {
         .disabled(disabled)
         .scaleEffect(disabled ? 0.95 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: disabled)
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }

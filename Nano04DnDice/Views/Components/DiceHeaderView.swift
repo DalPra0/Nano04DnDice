@@ -12,25 +12,32 @@ struct DiceHeaderView: View {
     let accentColor: Color
     
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
             OrnamentalDivider(color: accentColor)
             
-            Text("ROLLING")
-                .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(Color.white.opacity(0.7))
-                .tracking(2)
-            
-            Text(diceName.uppercased())
-                .font(.custom("PlayfairDisplay-Black", size: 32))
-                .foregroundColor(accentColor)
-                .shadow(color: accentColor.opacity(0.6), radius: 12)
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
+            // ROLLING D** - Tudo em uma linha só
+            HStack(spacing: 6) {
+                Text("ROLLING")
+                    .font(.custom("PlayfairDisplay-Regular", size: 16))
+                    .foregroundColor(Color.white.opacity(0.7))
+                    .tracking(2)
+                
+                Text(diceName.uppercased())
+                    .font(.custom("PlayfairDisplay-Black", size: 36))
+                    .foregroundColor(accentColor)
+                    .shadow(color: accentColor.opacity(0.6), radius: 12)
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
             
             OrnamentalDivider(color: accentColor)
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }
 
 // MARK: - Ornamental Divider Component
@@ -53,5 +60,10 @@ struct OrnamentalDivider: View {
                 .frame(height: 1.5)
         }
         .frame(width: 120)
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }

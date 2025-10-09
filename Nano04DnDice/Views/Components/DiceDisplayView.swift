@@ -14,12 +14,13 @@ struct DiceDisplayView: View {
     let glowIntensity: Double
     let diceBorderColor: Color
     let accentColor: Color
+    let diceSides: Int  // Número de lados do dado
     let onRollComplete: (Int) -> Void
     
     var body: some View {
         ZStack {
             // Border
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 20)
                 .stroke(
                     LinearGradient(
                         colors: [
@@ -30,13 +31,13 @@ struct DiceDisplayView: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: 2
+                    lineWidth: 3
                 )
                 .frame(width: diceSize, height: diceSize)
-                .shadow(color: diceBorderColor.opacity(0.4), radius: 12)
+                .shadow(color: diceBorderColor.opacity(0.5), radius: 16)
             
             // Background
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 18)
                 .fill(
                     RadialGradient(
                         colors: [
@@ -45,20 +46,26 @@ struct DiceDisplayView: View {
                         ],
                         center: .center,
                         startRadius: 30,
-                        endRadius: 80
+                        endRadius: 100
                     )
                 )
-                .frame(width: diceSize - 4, height: diceSize - 4)
+                .frame(width: diceSize - 6, height: diceSize - 6)
             
-            // Dice 3D - padding mínimo para melhor aproveitamento
+            // Dice 3D - MAIORZÃO - padding mínimo
             ThreeJSWebView(
                 currentNumber: currentNumber,
                 isRolling: isRolling,
+                diceSides: diceSides,
                 onRollComplete: onRollComplete
             )
-            .frame(width: diceSize - 6, height: diceSize - 6)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: accentColor.opacity(glowIntensity), radius: 14)
+            .frame(width: diceSize - 8, height: diceSize - 8)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .shadow(color: accentColor.opacity(glowIntensity), radius: 18)
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }

@@ -23,17 +23,16 @@ struct DiceRollerView: View {
                     currentTheme.backgroundColor.color
                         .ignoresSafeArea()
                     
-                    VStack(spacing: 0) {
-                        // Top Buttons
-                        TopButtonsView(
-                            accentColor: currentTheme.accentColor.color,
-                            onShowThemes: { viewModel.showThemesList = true },
-                            onShowCustomizer: { viewModel.showCustomizer = true }
-                        )
-                        
-                        // Main Content - PORTRAIT LAYOUT
-                        mainContentPortrait(geometry: geometry)
-                    }
+                    // Main Content - PORTRAIT LAYOUT (sem o TopButtons aqui)
+                    mainContentPortrait(geometry: geometry)
+                    
+                    // Menu Hambúrguer - POR CIMA DE TUDO
+                    TopButtonsView(
+                        accentColor: currentTheme.accentColor.color,
+                        onShowThemes: { viewModel.showThemesList = true },
+                        onShowCustomizer: { viewModel.showCustomizer = true }
+                    )
+                    .zIndex(1000)
                 }
             }
             .navigationBarHidden(true)
@@ -54,7 +53,12 @@ struct DiceRollerView: View {
         .onAppear {
             viewModel.startAmbientAnimation()
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Main Content - PORTRAIT MODE
     
@@ -63,6 +67,10 @@ struct DiceRollerView: View {
         let screenHeight = geometry.size.height
         
         return VStack(spacing: 0) {
+            // Espaçamento no topo para não cortar o ROLLING D20
+            Spacer()
+                .frame(height: 50)
+            
             // TOP HALF - DICE DISPLAY (50% da tela)
             topSection(screenWidth: screenWidth, screenHeight: screenHeight)
                 .frame(height: screenHeight * 0.50)
@@ -76,18 +84,20 @@ struct DiceRollerView: View {
     // MARK: - Top Section (Dice)
     
     private func topSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        let diceSize = min(screenWidth * 0.80, screenHeight * 0.38)
+        // DADO MAIORZÃO - quase tocando nas laterais
+        let diceSize = min(screenWidth * 0.92, screenHeight * 0.42)
         
-        return VStack(spacing: 8) {
+        return VStack(spacing: 20) {
             Spacer(minLength: 0)
             
-            // Header compacto
+            // Header compacto - NA FRENTE (zIndex alto)
             DiceHeaderView(
                 diceName: viewModel.selectedDiceType.name,
                 accentColor: currentTheme.accentColor.color
             )
+            .zIndex(10)
             
-            // Dice Display - ENORME
+            // Dice Display - ENORME com mais espaçamento
             DiceDisplayView(
                 diceSize: diceSize,
                 currentNumber: viewModel.result ?? viewModel.currentRoll,
@@ -95,58 +105,63 @@ struct DiceRollerView: View {
                 glowIntensity: viewModel.glowIntensity * currentTheme.glowIntensity,
                 diceBorderColor: currentTheme.diceBorderColor.color,
                 accentColor: currentTheme.accentColor.color,
+                diceSides: viewModel.selectedDiceType.sides,
                 onRollComplete: viewModel.handleRollComplete
             )
+            .padding(.vertical, 16)
+            .zIndex(1)
             
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 8)
+        .padding(.bottom, 24)
     }
     
     // MARK: - Bottom Section (Controls)
     
     private func bottomSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 12) {
-                // Dice Selector
-                DiceSelectorView(
-                    selectedDiceType: viewModel.selectedDiceType,
+        VStack(spacing: 12) {
+            // Dice Selector - COM ESPAÇAMENTO DO DADO
+            DiceSelectorView(
+                selectedDiceType: viewModel.selectedDiceType,
+                accentColor: currentTheme.accentColor.color,
+                onSelectDice: viewModel.selectDiceType,
+                onShowCustomDice: { viewModel.showCustomDice = true }
+            )
+            .padding(.top, 8)
+            
+            // Roll Mode Selector - COLLAPSIBLE
+            RollModeSelectorView(
+                selectedMode: viewModel.rollMode,
+                accentColor: currentTheme.accentColor.color,
+                onSelectMode: viewModel.selectRollMode
+            )
+            
+            // Result or Roll Button
+            if let result = viewModel.result {
+                DiceResultView(
+                    result: result,
+                    secondResult: viewModel.secondResult,
+                    rollMode: viewModel.rollMode,
+                    diceSides: viewModel.selectedDiceType.sides,
                     accentColor: currentTheme.accentColor.color,
-                    onSelectDice: viewModel.selectDiceType,
-                    onShowCustomDice: { viewModel.showCustomDice = true }
+                    onContinue: viewModel.continueAfterResult
                 )
-                
-                // Roll Mode Selector
-                RollModeSelectorView(
-                    selectedMode: viewModel.rollMode,
+            } else {
+                RollButtonView(
+                    diceType: viewModel.selectedDiceType,
+                    rollMode: viewModel.rollMode,
+                    isRolling: viewModel.rolling,
                     accentColor: currentTheme.accentColor.color,
-                    onSelectMode: viewModel.selectRollMode
+                    onRoll: viewModel.rollDice
                 )
-                
-                // Result or Roll Button
-                if let result = viewModel.result {
-                    DiceResultView(
-                        result: result,
-                        secondResult: viewModel.secondResult,
-                        rollMode: viewModel.rollMode,
-                        diceSides: viewModel.selectedDiceType.sides,
-                        accentColor: currentTheme.accentColor.color,
-                        onContinue: viewModel.continueAfterResult
-                    )
-                } else {
-                    RollButtonView(
-                        diceType: viewModel.selectedDiceType,
-                        rollMode: viewModel.rollMode,
-                        isRolling: viewModel.rolling,
-                        accentColor: currentTheme.accentColor.color,
-                        onRoll: viewModel.rollDice
-                    )
-                }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 20)
+            
+            Spacer(minLength: 0)
         }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 20)
     }
 }
 

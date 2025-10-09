@@ -81,7 +81,12 @@ struct ThemeCustomizerView: View {
                 Text("Enter a name for your custom theme")
             }
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Components
     
@@ -484,7 +489,12 @@ struct ColorPickerSheet: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }
 
 // MARK: - Extension

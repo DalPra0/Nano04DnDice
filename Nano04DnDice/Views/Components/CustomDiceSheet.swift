@@ -51,7 +51,12 @@ struct CustomDiceSheet: View {
                 isTextFieldFocused = true
             }
         }
+        .enableInjection()
     }
+
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
     
     // MARK: - Subviews
     

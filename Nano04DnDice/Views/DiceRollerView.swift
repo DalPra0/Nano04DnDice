@@ -33,7 +33,7 @@ struct DiceRollerView: View {
                         
                         // Main Content
                         mainContent(geometry: geometry)
-                            .padding(.top, 8)
+                            .padding(.top, 4)
                     }
                 }
             }
@@ -63,24 +63,24 @@ struct DiceRollerView: View {
         let screenWidth = geometry.size.width
         let screenHeight = geometry.size.height
         
-        return HStack(spacing: 16) {
+        return HStack(spacing: 8) {
             // LEFT SIDE - 38%
             leftSide
                 .frame(width: screenWidth * 0.38)
             
-            // RIGHT SIDE - 52%
+            // RIGHT SIDE - 58%
             rightSide(screenWidth: screenWidth, screenHeight: screenHeight)
-                .frame(width: screenWidth * 0.52)
+                .frame(width: screenWidth * 0.58)
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 8)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding(.horizontal, 8)
+        .padding(.bottom, 2)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
     
     // MARK: - Left Side
     
     private var leftSide: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 6) {
             // Header
             DiceHeaderView(
                 diceName: viewModel.selectedDiceType.name,
@@ -101,20 +101,24 @@ struct DiceRollerView: View {
                 accentColor: currentTheme.accentColor.color,
                 onSelectMode: viewModel.selectRollMode
             )
+            
+            Spacer(minLength: 0)
         }
     }
     
     // MARK: - Right Side
     
     private func rightSide(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        // DADO - 50% da altura disponível
-        let availableHeight = screenHeight - 80
-        let diceSize = min(screenWidth * 0.45, availableHeight * 0.6)
+        // DADO - ajustado para caber perfeitamente na tela
+        let availableHeight = screenHeight - 40
+        let maxDiceSize = min(screenWidth * 0.45, availableHeight * 0.70)
         
-        return VStack(spacing: 12) {
+        return VStack(spacing: 6) {
+            Spacer(minLength: 0)
+            
             // Dice Display
             DiceDisplayView(
-                diceSize: diceSize,
+                diceSize: maxDiceSize,
                 currentNumber: viewModel.result ?? viewModel.currentRoll,
                 isRolling: viewModel.rolling,
                 glowIntensity: viewModel.glowIntensity * currentTheme.glowIntensity,
@@ -142,6 +146,8 @@ struct DiceRollerView: View {
                     onRoll: viewModel.rollDice
                 )
             }
+            
+            Spacer(minLength: 0)
         }
     }
 }

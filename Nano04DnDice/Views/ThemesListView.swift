@@ -25,8 +25,8 @@ struct ThemesListView: View {
                         // Header
                         headerView
                         
-                        // Temas Pré-definidos
-                        sectionHeader(title: "TEMAS PRÉ-DEFINIDOS", icon: "star.fill")
+                        // Preset Themes
+                        sectionHeader(title: "PRESET THEMES", icon: "star.fill")
                         
                         ForEach(PresetThemes.allThemes) { theme in
                             ThemeCardView(theme: theme, isCurrentTheme: theme.id == themeManager.currentTheme.id) {
@@ -39,8 +39,8 @@ struct ThemesListView: View {
                             .background(Color.white.opacity(0.3))
                             .padding(.vertical, 10)
                         
-                        // Temas Customizados
-                        sectionHeader(title: "MEUS TEMAS", icon: "paintbrush.fill")
+                        // Custom Themes
+                        sectionHeader(title: "MY THEMES", icon: "paintbrush.fill")
                         
                         let customThemes = themeManager.savedThemes.filter { theme in
                             !PresetThemes.allThemes.contains(where: { $0.name == theme.name })
@@ -69,25 +69,25 @@ struct ThemesListView: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("Temas")
+            .navigationTitle("Themes")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Fechar") {
+                    Button("Close") {
                         dismiss()
                     }
                     .foregroundColor(Color(hex: "#FFD700"))
                 }
             }
-            .alert("Deletar Tema", isPresented: $showDeleteAlert) {
-                Button("Cancelar", role: .cancel) {}
-                Button("Deletar", role: .destructive) {
+            .alert("Delete Theme", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
                     if let theme = themeToDelete {
                         themeManager.deleteTheme(theme)
                     }
                 }
             } message: {
-                Text("Tem certeza que deseja deletar '\(themeToDelete?.name ?? "")'?")
+                Text("Are you sure you want to delete '\(themeToDelete?.name ?? "")'?")
             }
         }
     }
@@ -99,11 +99,11 @@ struct ThemesListView: View {
             Text("🎨")
                 .font(.system(size: 60))
             
-            Text("Escolha seu Tema")
+            Text("Choose your Theme")
                 .font(.custom("PlayfairDisplay-Bold", size: 24))
                 .foregroundColor(.white)
             
-            Text("Selecione um tema ou crie o seu próprio")
+            Text("Select a theme or create your own")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
                 .foregroundColor(.white.opacity(0.7))
         }
@@ -130,11 +130,11 @@ struct ThemesListView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.white.opacity(0.3))
             
-            Text("Nenhum tema customizado ainda")
+            Text("No custom themes yet")
                 .font(.custom("PlayfairDisplay-Regular", size: 16))
                 .foregroundColor(.white.opacity(0.6))
             
-            Text("Use 'CUSTOMIZAR' para criar seu primeiro tema!")
+            Text("Use 'CUSTOMIZE' to create your first theme!")
                 .font(.custom("PlayfairDisplay-Regular", size: 12))
                 .foregroundColor(.white.opacity(0.4))
         }

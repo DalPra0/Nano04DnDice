@@ -81,7 +81,7 @@ struct ThreeJSWebView: UIViewRepresentable {
                     left: 50%;
                     transform: translate(-50%, -50%);
                     color: #000;
-                    font-size: 48px;
+                    font-size: 20vw;
                     font-weight: bold;
                     text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
                     z-index: 10;
@@ -106,14 +106,14 @@ struct ThreeJSWebView: UIViewRepresentable {
                     
                     scene = new THREE.Scene();
                     camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-                    camera.position.z = 2.5;
+                    camera.position.z = 2.2;
                     
                     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                    renderer.setSize(140, 140);
+                    renderer.setSize(window.innerWidth, window.innerHeight);
                     renderer.setClearColor(0x000000, 0);
                     document.getElementById('container').appendChild(renderer.domElement);
                     
-                    const geometry = new THREE.IcosahedronGeometry(0.8, 0);
+                    const geometry = new THREE.IcosahedronGeometry(0.9, 0);
                     const material = new THREE.MeshPhongMaterial({
                         color: 0xffffff,
                         shininess: 100,
@@ -123,6 +123,9 @@ struct ThreeJSWebView: UIViewRepresentable {
                     });
                     
                     icosahedron = new THREE.Mesh(geometry, material);
+                    // Rotação inicial mais agradável
+                    icosahedron.rotation.x = Math.PI * 0.15;
+                    icosahedron.rotation.y = Math.PI * 0.2;
                     scene.add(icosahedron);
                     
                     const wireframe = new THREE.WireframeGeometry(geometry);
@@ -161,8 +164,8 @@ struct ThreeJSWebView: UIViewRepresentable {
                     requestAnimationFrame(animate);
                     
                     if (!isRolling) {
-                        icosahedron.rotation.x += 0.008;
-                        icosahedron.rotation.y += 0.012;
+                        icosahedron.rotation.x += 0.005;
+                        icosahedron.rotation.y += 0.008;
                     }
                     
                     renderer.render(scene, camera);

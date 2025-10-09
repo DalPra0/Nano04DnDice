@@ -38,11 +38,11 @@ struct CustomDiceSheet: View {
                     confirmButton
                 }
             }
-            .navigationTitle("Dado Customizado")
+            .navigationTitle("Custom Dice")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                     .foregroundColor(Color(hex: "#FFD700"))
@@ -61,11 +61,11 @@ struct CustomDiceSheet: View {
             Text("🎲")
                 .font(.system(size: 80))
             
-            Text("Dado Customizado")
+            Text("Custom Dice")
                 .font(.custom("PlayfairDisplay-Bold", size: 28))
                 .foregroundColor(.white)
             
-            Text("Digite o número de lados (2-100)")
+            Text("Enter number of sides (2-100)")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
                 .foregroundColor(.white.opacity(0.7))
         }
@@ -91,7 +91,7 @@ struct CustomDiceSheet: View {
             
             if let sides = Int(diceSides) {
                 if sides < 2 || sides > 100 {
-                    Text("⚠️ Digite um número entre 2 e 100")
+                    Text("⚠️ Enter a number between 2 and 100")
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
                         .foregroundColor(.red)
                 }
@@ -102,7 +102,7 @@ struct CustomDiceSheet: View {
     
     private var quickSelectView: some View {
         VStack(spacing: 12) {
-            Text("Atalhos Rápidos")
+            Text("Quick Shortcuts")
                 .font(.custom("PlayfairDisplay-Bold", size: 14))
                 .foregroundColor(.white.opacity(0.7))
             
@@ -129,7 +129,7 @@ struct CustomDiceSheet: View {
     
     private var confirmButton: some View {
         Button(action: onConfirm) {
-            Text("CONFIRMAR")
+            Text("CONFIRM")
                 .font(.custom("PlayfairDisplay-Bold", size: 18))
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity)

@@ -19,7 +19,7 @@ struct DiceDisplayView: View {
     var body: some View {
         ZStack {
             // Border
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     LinearGradient(
                         colors: [
@@ -30,13 +30,13 @@ struct DiceDisplayView: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: 2.5
+                    lineWidth: 2
                 )
                 .frame(width: diceSize, height: diceSize)
-                .shadow(color: diceBorderColor.opacity(0.4), radius: 14)
+                .shadow(color: diceBorderColor.opacity(0.4), radius: 12)
             
             // Background
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 14)
                 .fill(
                     RadialGradient(
                         colors: [
@@ -48,17 +48,17 @@ struct DiceDisplayView: View {
                         endRadius: 80
                     )
                 )
-                .frame(width: diceSize - 5, height: diceSize - 5)
+                .frame(width: diceSize - 4, height: diceSize - 4)
             
-            // Dice 3D - MUITO MAIOR! Reduzindo padding de 20 para 10
+            // Dice 3D - padding mínimo para melhor aproveitamento
             ThreeJSWebView(
                 currentNumber: currentNumber,
                 isRolling: isRolling,
                 onRollComplete: onRollComplete
             )
-            .frame(width: diceSize - 10, height: diceSize - 10)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: accentColor.opacity(glowIntensity), radius: 16)
+            .frame(width: diceSize - 6, height: diceSize - 6)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: accentColor.opacity(glowIntensity), radius: 14)
         }
     }
 }

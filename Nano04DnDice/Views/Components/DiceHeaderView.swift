@@ -12,20 +12,20 @@ struct DiceHeaderView: View {
     let accentColor: Color
     
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             OrnamentalDivider(color: accentColor)
             
-            Text("TESTE DE")
-                .font(.custom("PlayfairDisplay-Regular", size: 14))
+            Text("ROLLING")
+                .font(.custom("PlayfairDisplay-Regular", size: 11))
                 .foregroundColor(Color.white.opacity(0.7))
-                .tracking(2)
+                .tracking(1.5)
             
             Text(diceName.uppercased())
-                .font(.custom("PlayfairDisplay-Black", size: 28))
+                .font(.custom("PlayfairDisplay-Black", size: 22))
                 .foregroundColor(accentColor)
-                .shadow(color: accentColor.opacity(0.6), radius: 10)
+                .shadow(color: accentColor.opacity(0.6), radius: 8)
                 .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.5)
                 .lineLimit(1)
             
             OrnamentalDivider(color: accentColor)
@@ -42,16 +42,16 @@ struct OrnamentalDivider: View {
         HStack {
             Rectangle()
                 .fill(color.opacity(0.6))
-                .frame(height: 1.5)
+                .frame(height: 1)
             
             Circle()
                 .fill(color)
-                .frame(width: 5, height: 5)
+                .frame(width: 4, height: 4)
             
             Rectangle()
                 .fill(color.opacity(0.6))
-                .frame(height: 1.5)
+                .frame(height: 1)
         }
-        .frame(width: 100)
+        .frame(width: 80)
     }
 }

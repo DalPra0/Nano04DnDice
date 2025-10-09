@@ -8,7 +8,6 @@ import CoreData
 
 @main
 struct Nano04DnDiceApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
@@ -16,14 +15,6 @@ struct Nano04DnDiceApp: App {
             DiceRollerView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
-    }
-}
-
-// MARK: - AppDelegate para forçar Landscape
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        return .landscape
     }
 }
 

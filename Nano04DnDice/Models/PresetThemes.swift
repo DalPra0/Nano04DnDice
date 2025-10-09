@@ -10,7 +10,7 @@ import SwiftUI
 struct PresetThemes {
     
     static let classic = DiceCustomization(
-        name: "Clássico D&D",
+        name: "Classic D&D",
         diceFaceColor: Color(hex: "#8B0000") ?? .red,
         diceBorderColor: Color(hex: "#FFD700") ?? .yellow,
         diceNumberColor: .white,
@@ -70,7 +70,7 @@ struct PresetThemes {
     )
     
     static let norse = DiceCustomization(
-        name: "Nórdico",
+        name: "Norse",
         diceFaceColor: Color(hex: "#4A5568") ?? .gray,
         diceBorderColor: Color(hex: "#C0C0C0") ?? .gray,
         diceNumberColor: Color(hex: "#E0E0E0") ?? .white,
@@ -85,7 +85,7 @@ struct PresetThemes {
     )
     
     static let arcane = DiceCustomization(
-        name: "Arcano",
+        name: "Arcane",
         diceFaceColor: Color(hex: "#4B0082") ?? .purple,
         diceBorderColor: Color(hex: "#9370DB") ?? .purple,
         diceNumberColor: Color(hex: "#FFD700") ?? .yellow,

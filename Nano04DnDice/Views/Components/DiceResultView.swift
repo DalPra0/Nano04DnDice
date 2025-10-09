@@ -28,22 +28,22 @@ struct DiceResultView: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 6) {
             // Roll Mode Info
             if rollMode != .normal, let second = secondResult {
-                VStack(spacing: 4) {
-                    Text(rollMode == .blessed ? "🙏 ABENÇOADO" : "👿 AMALDIÇOADO")
-                        .font(.custom("PlayfairDisplay-Bold", size: 12))
+                VStack(spacing: 2) {
+                    Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
+                        .font(.custom("PlayfairDisplay-Bold", size: 10))
                         .foregroundColor(rollMode == .blessed ? .green : .red)
                     
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Text("[\(second)]")
-                            .font(.custom("PlayfairDisplay-Regular", size: 16))
+                            .font(.custom("PlayfairDisplay-Regular", size: 13))
                             .foregroundColor(.white.opacity(0.5))
                             .strikethrough()
                         
                         Text("[\(result)]")
-                            .font(.custom("PlayfairDisplay-Bold", size: 18))
+                            .font(.custom("PlayfairDisplay-Bold", size: 15))
                             .foregroundColor(accentColor)
                     }
                 }
@@ -51,13 +51,13 @@ struct DiceResultView: View {
             
             // Result Text
             Text(resultText)
-                .font(.custom("PlayfairDisplay-Black", size: 20))
+                .font(.custom("PlayfairDisplay-Black", size: 16))
                 .foregroundColor(resultColor)
-                .shadow(color: resultColor.opacity(0.5), radius: 8)
+                .shadow(color: resultColor.opacity(0.5), radius: 6)
             
             // Continue Button
             ActionButton(
-                title: "CONTINUAR",
+                title: "CONTINUE",
                 accentColor: accentColor,
                 action: onContinue
             )
@@ -68,13 +68,13 @@ struct DiceResultView: View {
     
     private var resultText: String {
         if isCritical {
-            return "CRÍTICO! ⭐"
+            return "CRITICAL! ⭐"
         } else if isFumble {
-            return "FALHA! 💀"
+            return "FUMBLE! 💀"
         } else if isSuccess {
-            return "SUCESSO"
+            return "SUCCESS"
         } else {
-            return "FALHA"
+            return "FAILURE"
         }
     }
     

@@ -18,21 +18,21 @@ struct TopButtonsView: View {
             
             TopButton(
                 icon: "rectangle.stack.fill",
-                title: "TEMAS",
+                title: "THEMES",
                 accentColor: accentColor,
                 action: onShowThemes
             )
             
             TopButton(
                 icon: "paintpalette.fill",
-                title: "CUSTOMIZAR",
+                title: "CUSTOMIZE",
                 accentColor: accentColor,
                 action: onShowCustomizer
             )
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 4)
+        .padding(.horizontal, 8)
+        .padding(.top, 4)
+        .padding(.bottom, 2)
     }
 }
 
@@ -46,19 +46,19 @@ struct TopButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 5) {
+            HStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 12))
+                    .font(.system(size: 10))
                 Text(title)
-                    .font(.custom("PlayfairDisplay-Bold", size: 12))
+                    .font(.custom("PlayfairDisplay-Bold", size: 10))
             }
             .foregroundColor(.black)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 7)
                     .fill(accentColor)
-                    .shadow(color: accentColor.opacity(0.5), radius: 5)
+                    .shadow(color: accentColor.opacity(0.4), radius: 3)
             )
         }
     }

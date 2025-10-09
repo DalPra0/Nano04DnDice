@@ -15,15 +15,15 @@ struct RollButtonView: View {
     let onRoll: () -> Void
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             if rollMode != .normal {
-                Text(rollMode == .blessed ? "🙏 ABENÇOADO" : "👿 AMALDIÇOADO")
-                    .font(.custom("PlayfairDisplay-Bold", size: 12))
+                Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
+                    .font(.custom("PlayfairDisplay-Bold", size: 10))
                     .foregroundColor(rollMode == .blessed ? .green : .red)
             }
             
             ActionButton(
-                title: "ROLAR \(diceType.shortName)",
+                title: "ROLL \(diceType.shortName)",
                 accentColor: accentColor,
                 disabled: isRolling,
                 action: onRoll
@@ -43,13 +43,13 @@ struct ActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("PlayfairDisplay-Bold", size: 16))
+                .font(.custom("PlayfairDisplay-Bold", size: 14))
                 .foregroundColor(.black)
-                .tracking(1.2)
-                .padding(.horizontal, 28)
-                .padding(.vertical, 12)
+                .tracking(1)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(
                             LinearGradient(
                                 colors: disabled ?
@@ -59,7 +59,7 @@ struct ActionButton: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: disabled ? .clear : accentColor.opacity(0.6), radius: 8)
+                        .shadow(color: disabled ? .clear : accentColor.opacity(0.6), radius: 6)
                 )
         }
         .disabled(disabled)

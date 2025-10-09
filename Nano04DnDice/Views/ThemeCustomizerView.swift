@@ -61,24 +61,24 @@ struct ThemeCustomizerView: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("Customizar")
+            .navigationTitle("Customize")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancelar") {
+                    Button("Cancel") {
                         dismiss()
                     }
                     .foregroundColor(Color(hex: "#FFD700"))
                 }
             }
-            .alert("Salvar Tema", isPresented: $showSaveAlert) {
-                TextField("Nome do Tema", text: $themeName)
-                Button("Cancelar", role: .cancel) {}
-                Button("Salvar") {
+            .alert("Save Theme", isPresented: $showSaveAlert) {
+                TextField("Theme Name", text: $themeName)
+                Button("Cancel", role: .cancel) {}
+                Button("Save") {
                     saveTheme()
                 }
             } message: {
-                Text("Digite um nome para seu tema customizado")
+                Text("Enter a name for your custom theme")
             }
         }
     }
@@ -90,11 +90,11 @@ struct ThemeCustomizerView: View {
             Text("🎨")
                 .font(.system(size: 60))
             
-            Text("Crie seu Tema")
+            Text("Create your Theme")
                 .font(.custom("PlayfairDisplay-Bold", size: 24))
                 .foregroundColor(.white)
             
-            Text("Personalize cores, texturas e efeitos")
+            Text("Customize colors, textures and effects")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
                 .foregroundColor(.white.opacity(0.7))
         }
@@ -105,9 +105,9 @@ struct ThemeCustomizerView: View {
     
     private var themeNameSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "NOME DO TEMA")
+            sectionHeader(title: "THEME NAME")
             
-            TextField("Nome do Tema", text: $themeName)
+            TextField("Theme Name", text: $themeName)
                 .font(.custom("PlayfairDisplay-Regular", size: 16))
                 .foregroundColor(.white)
                 .padding()
@@ -126,22 +126,22 @@ struct ThemeCustomizerView: View {
     
     private var diceColorsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "CORES DO DADO")
+            sectionHeader(title: "DICE COLORS")
             
             colorButton(
-                title: "Face do Dado",
+                title: "Dice Face",
                 color: customTheme.diceFaceColor.color,
                 action: { showColorPicker = .diceFace }
             )
             
             colorButton(
-                title: "Borda do Dado",
+                title: "Dice Border",
                 color: customTheme.diceBorderColor.color,
                 action: { showColorPicker = .diceBorder }
             )
             
             colorButton(
-                title: "Números",
+                title: "Numbers",
                 color: customTheme.diceNumberColor.color,
                 action: { showColorPicker = .diceNumber }
             )
@@ -158,16 +158,16 @@ struct ThemeCustomizerView: View {
     
     private var appColorsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "CORES DO APP")
+            sectionHeader(title: "APP COLORS")
             
             colorButton(
-                title: "Fundo",
+                title: "Background",
                 color: customTheme.backgroundColor.color,
                 action: { showColorPicker = .background }
             )
             
             colorButton(
-                title: "Destaque (Botões/Bordas)",
+                title: "Accent (Buttons/Borders)",
                 color: customTheme.accentColor.color,
                 action: { showColorPicker = .accent }
             )
@@ -178,7 +178,7 @@ struct ThemeCustomizerView: View {
     
     private var textureSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "TEXTURA DO DADO")
+            sectionHeader(title: "DICE TEXTURE")
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
@@ -238,24 +238,24 @@ struct ThemeCustomizerView: View {
     
     private var effectsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "EFEITOS")
+            sectionHeader(title: "EFFECTS")
             
             VStack(spacing: 12) {
                 sliderRow(
-                    title: "Intensidade do Brilho",
+                    title: "Glow Intensity",
                     value: $customTheme.glowIntensity,
                     range: 0...1
                 )
                 
                 Toggle(isOn: $customTheme.shadowEnabled) {
-                    Text("Sombras")
+                    Text("Shadows")
                         .font(.custom("PlayfairDisplay-Regular", size: 16))
                         .foregroundColor(.white)
                 }
                 .tint(customTheme.accentColor.color)
                 
                 Toggle(isOn: $customTheme.particlesEnabled) {
-                    Text("Partículas")
+                    Text("Particles")
                         .font(.custom("PlayfairDisplay-Regular", size: 16))
                         .foregroundColor(.white)
                 }
@@ -319,7 +319,7 @@ struct ThemeCustomizerView: View {
                 themeManager.applyTheme(customTheme)
                 dismiss()
             }) {
-                Text("APLICAR")
+                Text("APPLY")
                     .font(.custom("PlayfairDisplay-Bold", size: 16))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
@@ -333,7 +333,7 @@ struct ThemeCustomizerView: View {
             Button(action: {
                 showSaveAlert = true
             }) {
-                Text("SALVAR")
+                Text("SAVE")
                     .font(.custom("PlayfairDisplay-Bold", size: 16))
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity)
@@ -436,17 +436,17 @@ struct ThemeCustomizerView: View {
     
     private func titleForColorType(_ type: ColorPickerType) -> String {
         switch type {
-        case .diceFace: return "Face do Dado"
-        case .diceBorder: return "Borda do Dado"
-        case .diceNumber: return "Números"
-        case .background: return "Fundo"
-        case .accent: return "Destaque"
+        case .diceFace: return "Dice Face"
+        case .diceBorder: return "Dice Border"
+        case .diceNumber: return "Numbers"
+        case .background: return "Background"
+        case .accent: return "Accent"
         }
     }
     
     private func saveTheme() {
         var themeToSave = customTheme
-        themeToSave.name = themeName.isEmpty ? "Tema Customizado" : themeName
+        themeToSave.name = themeName.isEmpty ? "Custom Theme" : themeName
         themeManager.saveCustomTheme(themeToSave)
         themeManager.applyTheme(themeToSave)
         dismiss()
@@ -463,13 +463,13 @@ struct ColorPickerSheet: View {
     var body: some View {
         NavigationView {
             VStack {
-                ColorPicker("Escolha a Cor", selection: $selectedColor, supportsOpacity: true)
+                ColorPicker("Choose Color", selection: $selectedColor, supportsOpacity: true)
                     .padding()
                 
                 Spacer()
                 
                 Button(action: { dismiss() }) {
-                    Text("Concluído")
+                    Text("Done")
                         .font(.custom("PlayfairDisplay-Bold", size: 16))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)

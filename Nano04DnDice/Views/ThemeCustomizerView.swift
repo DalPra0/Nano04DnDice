@@ -92,7 +92,7 @@ struct ThemeCustomizerView: View {
     
     private var headerView: some View {
         VStack(spacing: 8) {
-            Text("🎨")
+            Image(systemName: "paintpalette.fill")
                 .font(.system(size: 60))
             
             Text("Create your Theme")
@@ -231,11 +231,11 @@ struct ThemeCustomizerView: View {
     
     private func textureIcon(for texture: DiceCustomization.DiceTexture) -> some View {
         switch texture {
-        case .standard: return Text("🎲")
-        case .metallic: return Text("⚙️")
-        case .wooden: return Text("🪵")
-        case .stone: return Text("🗿")
-        case .crystal: return Text("💎")
+        case .standard: return Text("Standard")
+        case .metallic: return Text("Metallic")
+        case .wooden: return Text("Wooden")
+        case .stone: return Text("Stone")
+        case .crystal: return Text("Crystal")
         }
     }
     

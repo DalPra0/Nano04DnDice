@@ -78,13 +78,9 @@ class DiceRollerViewModel: ObservableObject {
         result = nil
         secondResult = nil
         
-        currentRoll = Int.random(in: 1...selectedDiceType.sides)
-        
-        audioManager.playDiceRoll()
-        
-        withAnimation(.easeInOut(duration: 0.3)) {
-            glowIntensity = 1.0
-        }
+        // Calcula o resultado final ANTES de atribuir a currentRoll
+        let firstRoll = Int.random(in: 1...selectedDiceType.sides)
+        var finalRoll = firstRoll
         
         // Handle blessed/cursed rolls
         if rollMode != .normal {
@@ -92,29 +88,31 @@ class DiceRollerViewModel: ObservableObject {
             secondResult = secondRoll
             
             if rollMode == .blessed {
-                currentRoll = max(currentRoll, secondRoll)
+                finalRoll = max(firstRoll, secondRoll)
             } else {
-                currentRoll = min(currentRoll, secondRoll)
+                finalRoll = min(firstRoll, secondRoll)
             }
         }
         
-        // Finish roll after 3 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            guard let self = self else { return }
-            if self.rolling {
-                self.result = self.currentRoll
-                self.rolling = false
-                
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    self.glowIntensity = 0.3
-                }
-            }
+        // Atribui apenas UMA VEZ para evitar o "pulo" de 2 números
+        currentRoll = finalRoll
+        
+        audioManager.playDiceRoll()
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            glowIntensity = 1.0
         }
+        
+        // NÃO chama handleRollComplete aqui - deixa o WebView chamar quando a animação terminar
     }
     
     func handleRollComplete(_ finalResult: Int) {
         result = finalResult
         rolling = false
+        
+        withAnimation(.easeInOut(duration: 0.5)) {
+            glowIntensity = 0.3
+        }
         
         if finalResult == selectedDiceType.sides {
             audioManager.playCritical()

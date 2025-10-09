@@ -101,7 +101,7 @@ struct ThemesListView: View {
     
     private var headerView: some View {
         VStack(spacing: 8) {
-            Text("🎨")
+            Image(systemName: "paintpalette.fill")
                 .font(.system(size: 60))
             
             Text("Choose your Theme")

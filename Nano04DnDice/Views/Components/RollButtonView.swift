@@ -12,12 +12,14 @@ struct RollButtonView: View {
     let rollMode: RollMode
     let isRolling: Bool
     let accentColor: Color
+    let shadowEnabled: Bool
+    let glowIntensity: Double
     let onRoll: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
             if rollMode != .normal {
-                Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
+                Text(rollMode == .blessed ? "BLESSED" : "CURSED")
                     .font(.custom("PlayfairDisplay-Bold", size: 14))
                     .foregroundColor(rollMode == .blessed ? .green : .red)
             }
@@ -25,6 +27,8 @@ struct RollButtonView: View {
             ActionButton(
                 title: "ROLL \(diceType.shortName)",
                 accentColor: accentColor,
+                shadowEnabled: shadowEnabled,
+                glowIntensity: glowIntensity,
                 disabled: isRolling,
                 action: onRoll
             )
@@ -42,6 +46,8 @@ struct RollButtonView: View {
 struct ActionButton: View {
     let title: String
     let accentColor: Color
+    let shadowEnabled: Bool
+    let glowIntensity: Double
     var disabled: Bool = false
     let action: () -> Void
     
@@ -64,7 +70,10 @@ struct ActionButton: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: disabled ? .clear : accentColor.opacity(0.6), radius: 10)
+                        .shadow(
+                            color: (shadowEnabled && !disabled) ? accentColor.opacity(0.6 * glowIntensity) : .clear,
+                            radius: shadowEnabled ? 10 : 0
+                        )
                 )
         }
         .disabled(disabled)

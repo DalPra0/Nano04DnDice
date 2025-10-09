@@ -48,7 +48,7 @@ class AudioManager: ObservableObject {
             sfxPlayer?.volume = masterVolume * volume
             sfxPlayer?.play()
             
-            print("🎲 Tocando SFX: \(soundName)")
+            print("Playing SFX: \(soundName)")
         } catch {
             print("⚠️ Erro ao tocar SFX: \(error)")
         }

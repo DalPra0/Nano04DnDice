@@ -13,6 +13,8 @@ struct DiceResultView: View {
     let rollMode: RollMode
     let diceSides: Int
     let accentColor: Color
+    let shadowEnabled: Bool
+    let glowIntensity: Double
     let onContinue: () -> Void
     
     private var isCritical: Bool {
@@ -32,7 +34,7 @@ struct DiceResultView: View {
             // Roll Mode Info
             if rollMode != .normal, let second = secondResult {
                 VStack(spacing: 4) {
-                    Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
+                    Text(rollMode == .blessed ? "BLESSED" : "CURSED")
                         .font(.custom("PlayfairDisplay-Bold", size: 14))
                         .foregroundColor(rollMode == .blessed ? .green : .red)
                     
@@ -53,12 +55,13 @@ struct DiceResultView: View {
             Text(resultText)
                 .font(.custom("PlayfairDisplay-Black", size: 24))
                 .foregroundColor(resultColor)
-                .shadow(color: resultColor.opacity(0.5), radius: 10)
             
             // Continue Button
             ActionButton(
                 title: "CONTINUE",
                 accentColor: accentColor,
+                shadowEnabled: shadowEnabled,
+                glowIntensity: glowIntensity,
                 action: onContinue
             )
         }
@@ -73,9 +76,9 @@ struct DiceResultView: View {
     
     private var resultText: String {
         if isCritical {
-            return "CRITICAL! ⭐"
+            return "CRITICAL!"
         } else if isFumble {
-            return "FUMBLE! 💀"
+            return "FUMBLE!"
         } else if isSuccess {
             return "SUCCESS"
         } else {

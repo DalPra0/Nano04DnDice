@@ -47,7 +47,6 @@ struct TopButtonsView: View {
                                 .background(
                                     Circle()
                                         .fill(Color.white.opacity(0.1))
-                                        .shadow(color: accentColor.opacity(0.3), radius: 8)
                                 )
                         }
                         
@@ -120,7 +119,6 @@ struct MenuButton: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(accentColor)
-                    .shadow(color: accentColor.opacity(0.5), radius: 10)
             )
         }
         .enableInjection()

@@ -25,7 +25,6 @@ struct DiceHeaderView: View {
                 Text(diceName.uppercased())
                     .font(.custom("PlayfairDisplay-Black", size: 36))
                     .foregroundColor(accentColor)
-                    .shadow(color: accentColor.opacity(0.6), radius: 12)
             }
             .lineLimit(1)
             .minimumScaleFactor(0.6)

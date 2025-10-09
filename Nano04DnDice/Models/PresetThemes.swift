@@ -19,8 +19,8 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .standard,
         fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.5,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: false
     )
     
@@ -34,8 +34,8 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .wooden,
         fontName: "PlayfairDisplay-Black",
-        glowIntensity: 0.3,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: false
     )
     
@@ -49,8 +49,8 @@ struct PresetThemes {
         backgroundType: .gradient,
         diceTexture: .metallic,
         fontName: "PlayfairDisplay-Regular",
-        glowIntensity: 0.9,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: true
     )
     
@@ -64,8 +64,8 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .stone,
         fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.7,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: true
     )
     
@@ -79,8 +79,8 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .stone,
         fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.4,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: false
     )
     
@@ -94,8 +94,8 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .crystal,
         fontName: "PlayfairDisplay-Regular",
-        glowIntensity: 0.8,
-        shadowEnabled: true,
+        glowIntensity: 0.0,
+        shadowEnabled: false,
         particlesEnabled: true
     )
     

@@ -106,7 +106,10 @@ struct DiceRollerView: View {
                 diceBorderColor: currentTheme.diceBorderColor.color,
                 accentColor: currentTheme.accentColor.color,
                 diceSides: viewModel.selectedDiceType.sides,
-                onRollComplete: viewModel.handleRollComplete
+                onRollComplete: { _ in 
+                    // Ignora o resultado do WebView, usa o currentRoll já calculado
+                    viewModel.handleRollComplete(viewModel.currentRoll)
+                }
             )
             .padding(.vertical, 16)
             .zIndex(1)
@@ -145,6 +148,8 @@ struct DiceRollerView: View {
                     rollMode: viewModel.rollMode,
                     diceSides: viewModel.selectedDiceType.sides,
                     accentColor: currentTheme.accentColor.color,
+                    shadowEnabled: currentTheme.shadowEnabled,
+                    glowIntensity: currentTheme.glowIntensity,
                     onContinue: viewModel.continueAfterResult
                 )
             } else {
@@ -153,6 +158,8 @@ struct DiceRollerView: View {
                     rollMode: viewModel.rollMode,
                     isRolling: viewModel.rolling,
                     accentColor: currentTheme.accentColor.color,
+                    shadowEnabled: currentTheme.shadowEnabled,
+                    glowIntensity: currentTheme.glowIntensity,
                     onRoll: viewModel.rollDice
                 )
             }

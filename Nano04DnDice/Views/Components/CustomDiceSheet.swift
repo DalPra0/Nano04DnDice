@@ -62,7 +62,7 @@ struct CustomDiceSheet: View {
     
     private var headerView: some View {
         VStack(spacing: 16) {
-            Text("🎲")
+            Image(systemName: "dice.fill")
                 .font(.system(size: 80))
             
             Text("Custom Dice")

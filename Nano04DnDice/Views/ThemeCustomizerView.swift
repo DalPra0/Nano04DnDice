@@ -278,6 +278,39 @@ struct ThemeCustomizerView: View {
         }
     }
     
+    // MARK: - Gameplay
+    
+    private var gameplaySection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            sectionHeader(title: "GAMEPLAY")
+            
+            VStack(spacing: 12) {
+                HStack {
+                    Text("Proficiency Bonus")
+                        .font(.custom("PlayfairDisplay-Regular", size: 16))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Stepper("\(customTheme.proficiencyBonus >= 0 ? "+" : "")\(customTheme.proficiencyBonus)", 
+                            value: $customTheme.proficiencyBonus, 
+                            in: -10...10)
+                        .font(.custom("PlayfairDisplay-Bold", size: 16))
+                        .foregroundColor(customTheme.accentColor.color)
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    )
+            )
+        }
+    }
+    
     // MARK: - Preview
     
     private var previewSection: some View {

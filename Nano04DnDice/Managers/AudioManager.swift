@@ -60,10 +60,6 @@ class AudioManager: ObservableObject {
         playSFX("dice_roll", volume: 0.8)
     }
     
-    func playDiceResult(success: Bool) {
-        playSFX(success ? "success_chime" : "failure_drone", volume: 0.9)
-    }
-    
     func playCritical() {
         playSFX("critical", volume: 1.0)
     }

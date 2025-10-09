@@ -36,7 +36,7 @@ struct ThreeJSWebView: UIViewRepresentable {
         }
         
         if isRolling {
-            webView.evaluateJavaScript("startDiceRoll();")
+            webView.evaluateJavaScript("startDiceRoll(\(currentNumber));")
         } else {
             webView.evaluateJavaScript("showNumber(\(currentNumber));")
         }
@@ -242,7 +242,7 @@ struct ThreeJSWebView: UIViewRepresentable {
                     renderer.render(scene, camera);
                 }
                 
-                function startDiceRoll() {
+                function startDiceRoll(targetNumber) {
                     if (isRolling) return;
                     
                     isRolling = true;
@@ -267,7 +267,8 @@ struct ThreeJSWebView: UIViewRepresentable {
                             rollTime += 50;
                             setTimeout(rollAnimation, 50);
                         } else {
-                            const finalResult = Math.floor(Math.random() * diceSides) + 1;
+                            // USA O NÚMERO QUE VEIO DO SWIFT
+                            const finalResult = targetNumber;
                             currentNumber = finalResult;
                             updateNumberDisplay();
                             

@@ -10,6 +10,7 @@ import SwiftUI
 struct CustomDiceSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var diceSides: String
+    @Binding var proficiencyBonus: Int
     let onConfirm: () -> Void
     
     @FocusState private var isTextFieldFocused: Bool
@@ -20,13 +21,16 @@ struct CustomDiceSheet: View {
                 Color.black.opacity(0.95)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 30) {
+                VStack(spacing: 24) {
                     Spacer()
                     
                     headerView
                     
                     // Input Field
                     inputView
+                    
+                    // Proficiency Bonus (logo abaixo do input)
+                    bonusView
                     
                     // Quick Select
                     quickSelectView
@@ -99,6 +103,46 @@ struct CustomDiceSheet: View {
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
                         .foregroundColor(.red)
                 }
+            }
+        }
+        .padding(.horizontal, 40)
+    }
+    
+    private var bonusView: some View {
+        VStack(spacing: 8) {
+            Text("Proficiency Bonus")
+                .font(.custom("PlayfairDisplay-Regular", size: 12))
+                .foregroundColor(.white.opacity(0.6))
+            
+            HStack(spacing: 16) {
+                Button(action: {
+                    if proficiencyBonus > -10 {
+                        proficiencyBonus -= 1
+                    }
+                }) {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(Color(hex: "#FFD700"))
+                }
+                .disabled(proficiencyBonus <= -10)
+                .opacity(proficiencyBonus <= -10 ? 0.3 : 1.0)
+                
+                Text("\(proficiencyBonus >= 0 ? "+" : "")\(proficiencyBonus)")
+                    .font(.custom("PlayfairDisplay-Bold", size: 32))
+                    .foregroundColor(Color(hex: "#FFD700"))
+                    .frame(minWidth: 80)
+                
+                Button(action: {
+                    if proficiencyBonus < 10 {
+                        proficiencyBonus += 1
+                    }
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundColor(Color(hex: "#FFD700"))
+                }
+                .disabled(proficiencyBonus >= 10)
+                .opacity(proficiencyBonus >= 10 ? 0.3 : 1.0)
             }
         }
         .padding(.horizontal, 40)

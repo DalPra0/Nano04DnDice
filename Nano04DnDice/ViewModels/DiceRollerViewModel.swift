@@ -22,6 +22,7 @@ class DiceRollerViewModel: ObservableObject {
     @Published var showCustomizer = false
     @Published var showCustomDice = false
     @Published var customDiceSides: String = "20"
+    @Published var proficiencyBonus: Int = 0
     
     // MARK: - Dependencies
     private let audioManager = AudioManager.shared
@@ -107,19 +108,18 @@ class DiceRollerViewModel: ObservableObject {
     }
     
     func handleRollComplete(_ finalResult: Int) {
-        result = finalResult
+        result = finalResult + proficiencyBonus
         rolling = false
         
         withAnimation(.easeInOut(duration: 0.5)) {
             glowIntensity = 0.3
         }
         
+        // Crítico e fumble são baseados no DADO, não no total com bônus
         if finalResult == selectedDiceType.sides {
             audioManager.playCritical()
         } else if finalResult == 1 {
             audioManager.playFumble()
-        } else {
-            audioManager.playDiceResult(success: finalResult >= (selectedDiceType.sides / 2))
         }
     }
     

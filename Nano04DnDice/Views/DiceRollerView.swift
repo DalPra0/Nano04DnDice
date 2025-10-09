@@ -45,6 +45,7 @@ struct DiceRollerView: View {
             .sheet(isPresented: $viewModel.showCustomDice) {
                 CustomDiceSheet(
                     diceSides: $viewModel.customDiceSides,
+                    proficiencyBonus: $viewModel.proficiencyBonus,
                     onConfirm: viewModel.confirmCustomDice
                 )
             }
@@ -150,6 +151,7 @@ struct DiceRollerView: View {
                     accentColor: currentTheme.accentColor.color,
                     shadowEnabled: currentTheme.shadowEnabled,
                     glowIntensity: currentTheme.glowIntensity,
+                    proficiencyBonus: viewModel.proficiencyBonus,
                     onContinue: viewModel.continueAfterResult
                 )
             } else {

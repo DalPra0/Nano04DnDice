@@ -33,6 +33,9 @@ struct DiceCustomization: Codable, Identifiable {
     var shadowEnabled: Bool
     var particlesEnabled: Bool
     
+    // Gameplay
+    var proficiencyBonus: Int
+    
     enum BackgroundType: String, Codable {
         case solid
         case gradient
@@ -62,7 +65,8 @@ struct DiceCustomization: Codable, Identifiable {
         fontName: String = "PlayfairDisplay-Regular",
         glowIntensity: Double = 0.3,
         shadowEnabled: Bool = true,
-        particlesEnabled: Bool = false
+        particlesEnabled: Bool = false,
+        proficiencyBonus: Int = 0
     ) {
         self.name = name
         self.diceFaceColor = CodableColor(color: diceFaceColor)
@@ -77,6 +81,7 @@ struct DiceCustomization: Codable, Identifiable {
         self.glowIntensity = glowIntensity
         self.shadowEnabled = shadowEnabled
         self.particlesEnabled = particlesEnabled
+        self.proficiencyBonus = proficiencyBonus
     }
 }
 

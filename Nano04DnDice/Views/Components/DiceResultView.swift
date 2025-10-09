@@ -15,18 +15,19 @@ struct DiceResultView: View {
     let accentColor: Color
     let shadowEnabled: Bool
     let glowIntensity: Double
+    let proficiencyBonus: Int
     let onContinue: () -> Void
     
+    private var baseRoll: Int {
+        result - proficiencyBonus
+    }
+    
     private var isCritical: Bool {
-        result == diceSides
+        baseRoll == diceSides
     }
     
     private var isFumble: Bool {
-        result == 1
-    }
-    
-    private var isSuccess: Bool {
-        result >= (diceSides / 2)
+        baseRoll == 1
     }
     
     var body: some View {
@@ -44,17 +45,44 @@ struct DiceResultView: View {
                             .foregroundColor(.white.opacity(0.5))
                             .strikethrough()
                         
-                        Text("[\(result)]")
+                        Text("[\(baseRoll)]")
                             .font(.custom("PlayfairDisplay-Bold", size: 20))
                             .foregroundColor(accentColor)
                     }
                 }
             }
             
-            // Result Text
-            Text(resultText)
-                .font(.custom("PlayfairDisplay-Black", size: 24))
-                .foregroundColor(resultColor)
+            // Result Number with Bonus
+            if proficiencyBonus != 0 {
+                HStack(spacing: 4) {
+                    Text("\(baseRoll)")
+                        .font(.custom("PlayfairDisplay-Black", size: 32))
+                        .foregroundColor(accentColor)
+                    
+                    Text("\(proficiencyBonus >= 0 ? "+" : "")\(proficiencyBonus)")
+                        .font(.custom("PlayfairDisplay-Bold", size: 24))
+                        .foregroundColor(.white.opacity(0.7))
+                    
+                    Text("=")
+                        .font(.custom("PlayfairDisplay-Regular", size: 24))
+                        .foregroundColor(.white.opacity(0.5))
+                    
+                    Text("\(result)")
+                        .font(.custom("PlayfairDisplay-Black", size: 40))
+                        .foregroundColor(accentColor)
+                }
+            } else {
+                Text("\(result)")
+                    .font(.custom("PlayfairDisplay-Black", size: 48))
+                    .foregroundColor(accentColor)
+            }
+            
+            // Critical/Fumble Text
+            if let text = resultText {
+                Text(text)
+                    .font(.custom("PlayfairDisplay-Black", size: 20))
+                    .foregroundColor(resultColor)
+            }
             
             // Continue Button
             ActionButton(
@@ -74,23 +102,23 @@ struct DiceResultView: View {
     
     // MARK: - Computed Properties
     
-    private var resultText: String {
+    private var resultText: String? {
         if isCritical {
             return "CRITICAL!"
         } else if isFumble {
             return "FUMBLE!"
-        } else if isSuccess {
-            return "SUCCESS"
         } else {
-            return "FAILURE"
+            return nil
         }
     }
     
     private var resultColor: Color {
-        if isCritical || isSuccess {
+        if isCritical {
             return .green
-        } else {
+        } else if isFumble {
             return .red
+        } else {
+            return accentColor
         }
     }
 }

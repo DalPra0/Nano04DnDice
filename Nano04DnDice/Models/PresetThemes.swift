@@ -21,7 +21,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Bold",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: false
+        particlesEnabled: false,
+        proficiencyBonus: 0
     )
     
     static let medieval = DiceCustomization(
@@ -36,7 +37,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Black",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: false
+        particlesEnabled: false,
+        proficiencyBonus: 0
     )
     
     static let cyberpunk = DiceCustomization(
@@ -51,7 +53,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Regular",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: true
+        particlesEnabled: true,
+        proficiencyBonus: 0
     )
     
     static let horror = DiceCustomization(
@@ -66,7 +69,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Bold",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: true
+        particlesEnabled: true,
+        proficiencyBonus: 0
     )
     
     static let norse = DiceCustomization(
@@ -81,7 +85,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Bold",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: false
+        particlesEnabled: false,
+        proficiencyBonus: 0
     )
     
     static let arcane = DiceCustomization(
@@ -96,7 +101,8 @@ struct PresetThemes {
         fontName: "PlayfairDisplay-Regular",
         glowIntensity: 0.0,
         shadowEnabled: false,
-        particlesEnabled: true
+        particlesEnabled: true,
+        proficiencyBonus: 0
     )
     
     static let allThemes: [DiceCustomization] = [

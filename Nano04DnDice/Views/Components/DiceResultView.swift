@@ -28,22 +28,22 @@ struct DiceResultView: View {
     }
     
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 12) {
             // Roll Mode Info
             if rollMode != .normal, let second = secondResult {
-                VStack(spacing: 2) {
+                VStack(spacing: 4) {
                     Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
-                        .font(.custom("PlayfairDisplay-Bold", size: 10))
+                        .font(.custom("PlayfairDisplay-Bold", size: 14))
                         .foregroundColor(rollMode == .blessed ? .green : .red)
                     
-                    HStack(spacing: 4) {
+                    HStack(spacing: 8) {
                         Text("[\(second)]")
-                            .font(.custom("PlayfairDisplay-Regular", size: 13))
+                            .font(.custom("PlayfairDisplay-Regular", size: 18))
                             .foregroundColor(.white.opacity(0.5))
                             .strikethrough()
                         
                         Text("[\(result)]")
-                            .font(.custom("PlayfairDisplay-Bold", size: 15))
+                            .font(.custom("PlayfairDisplay-Bold", size: 20))
                             .foregroundColor(accentColor)
                     }
                 }
@@ -51,9 +51,9 @@ struct DiceResultView: View {
             
             // Result Text
             Text(resultText)
-                .font(.custom("PlayfairDisplay-Black", size: 16))
+                .font(.custom("PlayfairDisplay-Black", size: 24))
                 .foregroundColor(resultColor)
-                .shadow(color: resultColor.opacity(0.5), radius: 6)
+                .shadow(color: resultColor.opacity(0.5), radius: 10)
             
             // Continue Button
             ActionButton(

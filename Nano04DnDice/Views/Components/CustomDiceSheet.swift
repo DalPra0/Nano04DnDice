@@ -23,7 +23,6 @@ struct CustomDiceSheet: View {
                 VStack(spacing: 30) {
                     Spacer()
                     
-                    // Header
                     headerView
                     
                     // Input Field

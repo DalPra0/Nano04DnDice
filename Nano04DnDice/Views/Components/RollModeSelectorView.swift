@@ -13,24 +13,24 @@ struct RollModeSelectorView: View {
     let onSelectMode: (RollMode) -> Void
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             Text("ROLL MODE")
-                .font(.custom("PlayfairDisplay-Regular", size: 9))
+                .font(.custom("PlayfairDisplay-Regular", size: 11))
                 .foregroundColor(Color.white.opacity(0.7))
                 .tracking(1)
             
-            VStack(spacing: 3) {
+            VStack(spacing: 6) {
                 modeButton(.normal, icon: "circle", label: "Normal")
                 modeButton(.blessed, icon: "arrow.up.circle.fill", label: "Blessed")
                 modeButton(.cursed, icon: "arrow.down.circle.fill", label: "Cursed")
             }
         }
-        .padding(6)
+        .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black.opacity(0.5))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 10)
                         .stroke(accentColor.opacity(0.3), lineWidth: 1.5)
                 )
         )
@@ -40,22 +40,22 @@ struct RollModeSelectorView: View {
     
     private func modeButton(_ mode: RollMode, icon: String, label: String) -> some View {
         Button(action: { onSelectMode(mode) }) {
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 12))
+                    .font(.system(size: 16))
                     .foregroundColor(selectedMode == mode ? .black : accentColor)
                 
                 Text(label)
-                    .font(.custom("PlayfairDisplay-Bold", size: 12))
+                    .font(.custom("PlayfairDisplay-Bold", size: 16))
                     .foregroundColor(selectedMode == mode ? .black : accentColor)
                 
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 30)
-            .padding(.horizontal, 6)
+            .frame(height: 44)
+            .padding(.horizontal, 10)
             .background(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(selectedMode == mode ? accentColor : Color.clear)
             )
         }

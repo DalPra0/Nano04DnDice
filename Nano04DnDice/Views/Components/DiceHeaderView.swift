@@ -12,18 +12,18 @@ struct DiceHeaderView: View {
     let accentColor: Color
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             OrnamentalDivider(color: accentColor)
             
             Text("ROLLING")
-                .font(.custom("PlayfairDisplay-Regular", size: 11))
+                .font(.custom("PlayfairDisplay-Regular", size: 14))
                 .foregroundColor(Color.white.opacity(0.7))
-                .tracking(1.5)
+                .tracking(2)
             
             Text(diceName.uppercased())
-                .font(.custom("PlayfairDisplay-Black", size: 22))
+                .font(.custom("PlayfairDisplay-Black", size: 32))
                 .foregroundColor(accentColor)
-                .shadow(color: accentColor.opacity(0.6), radius: 8)
+                .shadow(color: accentColor.opacity(0.6), radius: 12)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
@@ -42,16 +42,16 @@ struct OrnamentalDivider: View {
         HStack {
             Rectangle()
                 .fill(color.opacity(0.6))
-                .frame(height: 1)
+                .frame(height: 1.5)
             
             Circle()
                 .fill(color)
-                .frame(width: 4, height: 4)
+                .frame(width: 6, height: 6)
             
             Rectangle()
                 .fill(color.opacity(0.6))
-                .frame(height: 1)
+                .frame(height: 1.5)
         }
-        .frame(width: 80)
+        .frame(width: 120)
     }
 }

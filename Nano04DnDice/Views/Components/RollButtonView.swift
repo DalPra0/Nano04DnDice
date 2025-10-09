@@ -15,10 +15,10 @@ struct RollButtonView: View {
     let onRoll: () -> Void
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 8) {
             if rollMode != .normal {
                 Text(rollMode == .blessed ? "🙏 BLESSED" : "👿 CURSED")
-                    .font(.custom("PlayfairDisplay-Bold", size: 10))
+                    .font(.custom("PlayfairDisplay-Bold", size: 14))
                     .foregroundColor(rollMode == .blessed ? .green : .red)
             }
             
@@ -43,13 +43,13 @@ struct ActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("PlayfairDisplay-Bold", size: 14))
+                .font(.custom("PlayfairDisplay-Bold", size: 20))
                 .foregroundColor(.black)
-                .tracking(1)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
+                .tracking(1.5)
+                .padding(.horizontal, 32)
+                .padding(.vertical, 16)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 16)
                         .fill(
                             LinearGradient(
                                 colors: disabled ?
@@ -59,7 +59,7 @@ struct ActionButton: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: disabled ? .clear : accentColor.opacity(0.6), radius: 6)
+                        .shadow(color: disabled ? .clear : accentColor.opacity(0.6), radius: 10)
                 )
         }
         .disabled(disabled)

@@ -54,6 +54,13 @@ struct DiceRollerView: View {
         .onAppear {
             viewModel.startAmbientAnimation()
         }
+        .onShake {
+            if !viewModel.rolling && viewModel.result == nil {
+                let generator = UIImpactFeedbackGenerator(style: .heavy)
+                generator.impactOccurred()
+                viewModel.rollDice()
+            }
+        }
         .enableInjection()
     }
 

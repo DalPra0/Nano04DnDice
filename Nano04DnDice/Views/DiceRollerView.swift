@@ -10,12 +10,35 @@ import SwiftUI
 struct DiceRollerView: View {
     @StateObject private var viewModel = DiceRollerViewModel()
     @StateObject private var themeManager = ThemeManager.shared
+    @State private var orientation = UIDevice.current.orientation
     
     private var currentTheme: DiceCustomization {
         themeManager.currentTheme
     }
     
+    private var isLandscape: Bool {
+        orientation.isLandscape
+    }
+    
     var body: some View {
+        Group {
+            if isLandscape {
+                // LANDSCAPE MODE
+                DiceRollerLandscapeView(
+                    viewModel: viewModel,
+                    themeManager: themeManager
+                )
+            } else {
+                // PORTRAIT MODE
+                portraitView
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            orientation = UIDevice.current.orientation
+        }
+    }
+    
+    private var portraitView: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
@@ -77,10 +100,12 @@ struct DiceRollerView: View {
         }
         .enableInjection()
     }
-
+    
     #if DEBUG
     @ObserveInjection var forceRedraw
     #endif
+    
+    // MARK: - Portrait Layout
     
     // MARK: - Main Content - PORTRAIT MODE
     

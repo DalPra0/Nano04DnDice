@@ -1,14 +1,15 @@
 import SwiftUI
 import UIKit
 
-class ShakeDetector: UIWindow {
-    var onShake: (() -> Void)?
-    
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+extension UIDevice {
+    static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
+}
+
+extension UIWindow {
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
-            onShake?()
+            NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
         }
-        super.motionEnded(motion, with: event)
     }
 }
 
@@ -26,18 +27,6 @@ struct ShakeViewModifier: ViewModifier {
                     action()
                 }
             }
-    }
-}
-
-extension UIDevice {
-    static let deviceDidShakeNotification = Notification.Name(rawValue: "deviceDidShakeNotification")
-}
-
-extension UIWindow {
-    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
-            NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
-        }
     }
 }
 

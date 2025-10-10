@@ -13,6 +13,7 @@ struct DiceResultView: View {
     let rollMode: RollMode
     let diceSides: Int
     let accentColor: Color
+    let backgroundColor: Color
     let shadowEnabled: Bool
     let glowIntensity: Double
     let proficiencyBonus: Int
@@ -42,7 +43,7 @@ struct DiceResultView: View {
                     HStack(spacing: 8) {
                         Text("[\(second)]")
                             .font(.custom("PlayfairDisplay-Regular", size: 18))
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(backgroundColor.contrastTextTertiary)
                             .strikethrough()
                         
                         Text("[\(baseRoll)]")
@@ -61,11 +62,11 @@ struct DiceResultView: View {
                     
                     Text("\(proficiencyBonus >= 0 ? "+" : "")\(proficiencyBonus)")
                         .font(.custom("PlayfairDisplay-Bold", size: 24))
-                        .foregroundColor(.white.opacity(0.7))
+                        .foregroundColor(backgroundColor.contrastTextSecondary)
                     
                     Text("=")
                         .font(.custom("PlayfairDisplay-Regular", size: 24))
-                        .foregroundColor(.white.opacity(0.5))
+                        .foregroundColor(backgroundColor.contrastTextTertiary)
                     
                     Text("\(result)")
                         .font(.custom("PlayfairDisplay-Black", size: 40))

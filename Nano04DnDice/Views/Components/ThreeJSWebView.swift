@@ -91,7 +91,7 @@ struct ThreeJSWebView: UIViewRepresentable {
                     left: 50%;
                     transform: translate(-50%, -50%);
                     color: #000;
-                    font-size: 20vw;
+                    font-size: 90px;
                     font-weight: bold;
                     text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
                     z-index: 10;
@@ -163,8 +163,8 @@ struct ThreeJSWebView: UIViewRepresentable {
                             geometry10.computeVertexNormals();
                             return geometry10;
                             
-                        case 12: // Dodecahedron (D12) - geometria nativa
-                            return new THREE.DodecahedronGeometry(0.85, 0);
+                        case 12: // Dodecahedron (D12) - 12 pentágonos
+                            return new THREE.DodecahedronGeometry(0.9, 0);
                         case 20: // Icosahedron (D20)
                             return new THREE.IcosahedronGeometry(0.9, 0);
                         default: // Custom - usa icosahedron
@@ -199,8 +199,9 @@ struct ThreeJSWebView: UIViewRepresentable {
                     dice.rotation.y = Math.PI * 0.2;
                     scene.add(dice);
                     
-                    const wireframe = new THREE.WireframeGeometry(geometry);
-                    const line = new THREE.LineSegments(wireframe);
+                    // EdgesGeometry com threshold de 10 graus - mostra apenas arestas principais
+                    const edges = new THREE.EdgesGeometry(geometry, 10);
+                    const line = new THREE.LineSegments(edges);
                     line.material.color.setHex(0xffd700);
                     line.material.opacity = 0.8;
                     line.material.transparent = true;

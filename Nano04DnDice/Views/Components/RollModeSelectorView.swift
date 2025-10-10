@@ -10,6 +10,7 @@ import SwiftUI
 struct RollModeSelectorView: View {
     let selectedMode: RollMode
     let accentColor: Color
+    let backgroundColor: Color
     let onSelectMode: (RollMode) -> Void
     
     @State private var isExpanded: Bool = false
@@ -25,7 +26,7 @@ struct RollModeSelectorView: View {
                 HStack {
                     Text("ROLL MODE")
                         .font(.custom("PlayfairDisplay-Bold", size: 14))
-                        .foregroundColor(.white)
+                        .foregroundColor(backgroundColor.contrastText)
                     
                     Spacer()
                     

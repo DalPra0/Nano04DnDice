@@ -105,12 +105,29 @@ struct PresetThemes {
         proficiencyBonus: 0
     )
     
+    static let light = DiceCustomization(
+        name: "Light Mode",
+        diceFaceColor: Color(hex: "#FFFFFF") ?? .white,
+        diceBorderColor: Color(hex: "#2C3E50") ?? .gray,
+        diceNumberColor: Color(hex: "#1A1A1A") ?? .black,
+        backgroundColor: Color(hex: "#F5F5F5") ?? .white,
+        accentColor: Color(hex: "#3498DB") ?? .blue,
+        backgroundType: .solid,
+        diceTexture: .standard,
+        fontName: "PlayfairDisplay-Bold",
+        glowIntensity: 0.0,
+        shadowEnabled: true,
+        particlesEnabled: false,
+        proficiencyBonus: 0
+    )
+    
     static let allThemes: [DiceCustomization] = [
         classic,
         medieval,
         cyberpunk,
         horror,
         norse,
-        arcane
+        arcane,
+        light
     ]
 }

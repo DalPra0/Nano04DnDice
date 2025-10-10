@@ -94,7 +94,8 @@ struct DiceRollerView: View {
             // Header compacto - NA FRENTE (zIndex alto)
             DiceHeaderView(
                 diceName: viewModel.selectedDiceType.name,
-                accentColor: currentTheme.accentColor.color
+                accentColor: currentTheme.accentColor.color,
+                backgroundColor: currentTheme.backgroundColor.color
             )
             .zIndex(10)
             
@@ -138,6 +139,7 @@ struct DiceRollerView: View {
             RollModeSelectorView(
                 selectedMode: viewModel.rollMode,
                 accentColor: currentTheme.accentColor.color,
+                backgroundColor: currentTheme.backgroundColor.color,
                 onSelectMode: viewModel.selectRollMode
             )
             
@@ -149,6 +151,7 @@ struct DiceRollerView: View {
                     rollMode: viewModel.rollMode,
                     diceSides: viewModel.selectedDiceType.sides,
                     accentColor: currentTheme.accentColor.color,
+                    backgroundColor: currentTheme.backgroundColor.color,
                     shadowEnabled: currentTheme.shadowEnabled,
                     glowIntensity: currentTheme.glowIntensity,
                     proficiencyBonus: viewModel.proficiencyBonus,

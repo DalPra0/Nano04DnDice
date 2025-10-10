@@ -10,6 +10,7 @@ import SwiftUI
 struct DiceHeaderView: View {
     let diceName: String
     let accentColor: Color
+    let backgroundColor: Color
     
     var body: some View {
         VStack(spacing: 8) {
@@ -19,7 +20,7 @@ struct DiceHeaderView: View {
             HStack(spacing: 6) {
                 Text("ROLLING")
                     .font(.custom("PlayfairDisplay-Regular", size: 16))
-                    .foregroundColor(Color.white.opacity(0.7))
+                    .foregroundColor(backgroundColor.contrastTextSecondary)
                     .tracking(2)
                 
                 Text(diceName.uppercased())

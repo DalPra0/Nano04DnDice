@@ -37,17 +37,18 @@ struct DiceResultView: View {
             if rollMode != .normal, let second = secondResult {
                 VStack(spacing: 4) {
                     Text(rollMode == .blessed ? "BLESSED" : "CURSED")
-                        .font(.custom("PlayfairDisplay-Bold", size: 14))
+                        .font(.custom("PlayfairDisplay-Bold", size: 18))
                         .foregroundColor(rollMode == .blessed ? .green : .red)
+                        .tracking(2)
                     
                     HStack(spacing: 8) {
                         Text("[\(second)]")
-                            .font(.custom("PlayfairDisplay-Regular", size: 18))
+                            .font(.custom("PlayfairDisplay-Regular", size: 22))
                             .foregroundColor(backgroundColor.contrastTextTertiary)
                             .strikethrough()
                         
                         Text("[\(baseRoll)]")
-                            .font(.custom("PlayfairDisplay-Bold", size: 20))
+                            .font(.custom("PlayfairDisplay-Bold", size: 24))
                             .foregroundColor(accentColor)
                     }
                 }
@@ -57,32 +58,33 @@ struct DiceResultView: View {
             if proficiencyBonus != 0 {
                 HStack(spacing: 4) {
                     Text("\(baseRoll)")
-                        .font(.custom("PlayfairDisplay-Black", size: 32))
+                        .font(.custom("PlayfairDisplay-Black", size: 38))
                         .foregroundColor(accentColor)
                     
                     Text("\(proficiencyBonus >= 0 ? "+" : "")\(proficiencyBonus)")
-                        .font(.custom("PlayfairDisplay-Bold", size: 24))
+                        .font(.custom("PlayfairDisplay-Bold", size: 28))
                         .foregroundColor(backgroundColor.contrastTextSecondary)
                     
                     Text("=")
-                        .font(.custom("PlayfairDisplay-Regular", size: 24))
+                        .font(.custom("PlayfairDisplay-Regular", size: 28))
                         .foregroundColor(backgroundColor.contrastTextTertiary)
                     
                     Text("\(result)")
-                        .font(.custom("PlayfairDisplay-Black", size: 40))
+                        .font(.custom("PlayfairDisplay-Black", size: 48))
                         .foregroundColor(accentColor)
                 }
             } else {
                 Text("\(result)")
-                    .font(.custom("PlayfairDisplay-Black", size: 48))
+                    .font(.custom("PlayfairDisplay-Black", size: 56))
                     .foregroundColor(accentColor)
             }
             
             // Critical/Fumble Text
             if let text = resultText {
                 Text(text)
-                    .font(.custom("PlayfairDisplay-Black", size: 20))
+                    .font(.custom("PlayfairDisplay-Black", size: 24))
                     .foregroundColor(resultColor)
+                    .tracking(2)
             }
             
             // Continue Button

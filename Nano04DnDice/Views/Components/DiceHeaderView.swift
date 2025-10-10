@@ -19,12 +19,12 @@ struct DiceHeaderView: View {
             // ROLLING D** - Tudo em uma linha só
             HStack(spacing: 6) {
                 Text("ROLLING")
-                    .font(.custom("PlayfairDisplay-Regular", size: 16))
+                    .font(.custom("PlayfairDisplay-Bold", size: 20))
                     .foregroundColor(backgroundColor.contrastTextSecondary)
-                    .tracking(2)
+                    .tracking(3)
                 
                 Text(diceName.uppercased())
-                    .font(.custom("PlayfairDisplay-Black", size: 36))
+                    .font(.custom("PlayfairDisplay-Black", size: 40))
                     .foregroundColor(accentColor)
             }
             .lineLimit(1)

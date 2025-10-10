@@ -12,6 +12,7 @@ struct DiceSelectorView: View {
     let accentColor: Color
     let onSelectDice: (DiceType) -> Void
     let onShowCustomDice: () -> Void
+    let onShowMultipleDice: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
@@ -22,8 +23,11 @@ struct DiceSelectorView: View {
                 }
             }
             
-            // Custom Dice Button
-            customDiceButton
+            // Custom Dice & Multiple Dice Buttons
+            HStack(spacing: 8) {
+                customDiceButton
+                multipleDiceButton
+            }
         }
         .enableInjection()
     }
@@ -66,6 +70,28 @@ struct DiceSelectorView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(selectedDiceType.isCustom ? accentColor : Color.black.opacity(0.5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(accentColor.opacity(0.5), lineWidth: 1.5)
+                    )
+            )
+        }
+    }
+    
+    private var multipleDiceButton: some View {
+        Button(action: onShowMultipleDice) {
+            HStack(spacing: 6) {
+                Image(systemName: "square.on.square")
+                    .font(.system(size: 14))
+                Text("×D")
+                    .font(.custom("PlayfairDisplay-Bold", size: 18))
+            }
+            .foregroundColor(accentColor)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.black.opacity(0.5))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(accentColor.opacity(0.5), lineWidth: 1.5)

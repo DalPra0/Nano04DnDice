@@ -24,6 +24,11 @@ class DiceRollerViewModel: ObservableObject {
     @Published var customDiceSides: String = "20"
     @Published var proficiencyBonus: Int = 0
     
+    @Published var showMultipleDice = false
+    @Published var multipleDiceQuantity: Int = 2
+    @Published var multipleDiceType: DiceType = .d6
+    @Published var multipleDiceResult: MultipleDiceRoll?
+    
     // MARK: - Dependencies
     private let audioManager = AudioManager.shared
     
@@ -126,6 +131,37 @@ class DiceRollerViewModel: ObservableObject {
     func continueAfterResult() {
         result = nil
         secondResult = nil
+        multipleDiceResult = nil
         currentRoll = Int.random(in: 1...selectedDiceType.sides)
+    }
+    
+    func rollMultipleDice() {
+        rolling = true
+        multipleDiceResult = nil
+        
+        var results: [Int] = []
+        for _ in 0..<multipleDiceQuantity {
+            results.append(Int.random(in: 1...multipleDiceType.sides))
+        }
+        
+        let roll = MultipleDiceRoll(
+            diceType: multipleDiceType,
+            quantity: multipleDiceQuantity,
+            results: results
+        )
+        
+        multipleDiceResult = roll
+        rolling = false
+        
+        audioManager.playDiceRoll()
+        
+        let hasCritical = results.contains(multipleDiceType.sides)
+        let hasFumble = results.contains(1)
+        
+        if hasCritical {
+            audioManager.playCritical()
+        } else if hasFumble {
+            audioManager.playFumble()
+        }
     }
 }

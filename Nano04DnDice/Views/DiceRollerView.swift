@@ -49,6 +49,20 @@ struct DiceRollerView: View {
                     onConfirm: viewModel.confirmCustomDice
                 )
             }
+            .sheet(isPresented: $viewModel.showMultipleDice, onDismiss: {
+                // Limpa o resultado quando fechar o sheet
+                viewModel.multipleDiceResult = nil
+            }) {
+                MultipleDiceSheet(
+                    quantity: $viewModel.multipleDiceQuantity,
+                    diceType: $viewModel.multipleDiceType,
+                    result: $viewModel.multipleDiceResult,
+                    onConfirm: viewModel.rollMultipleDice,
+                    backgroundColor: currentTheme.backgroundColor.color,
+                    accentColor: currentTheme.accentColor.color,
+                    borderColor: currentTheme.diceBorderColor.color
+                )
+            }
         }
         .navigationViewStyle(.stack)
         .onAppear {
@@ -138,7 +152,8 @@ struct DiceRollerView: View {
                 selectedDiceType: viewModel.selectedDiceType,
                 accentColor: currentTheme.accentColor.color,
                 onSelectDice: viewModel.selectDiceType,
-                onShowCustomDice: { viewModel.showCustomDice = true }
+                onShowCustomDice: { viewModel.showCustomDice = true },
+                onShowMultipleDice: { viewModel.showMultipleDice = true }
             )
             .padding(.top, 8)
             
@@ -151,7 +166,14 @@ struct DiceRollerView: View {
             )
             
             // Result or Roll Button
-            if let result = viewModel.result {
+            if let multipleDiceResult = viewModel.multipleDiceResult {
+                MultipleDiceResultView(
+                    result: multipleDiceResult,
+                    accentColor: currentTheme.accentColor.color,
+                    backgroundColor: currentTheme.backgroundColor.color,
+                    onContinue: viewModel.continueAfterResult
+                )
+            } else if let result = viewModel.result {
                 DiceResultView(
                     result: result,
                     secondResult: viewModel.secondResult,

@@ -49,6 +49,9 @@ struct ThemeCustomizerView: View {
                         // Textura
                         textureSection
                         
+                        // Fonte
+                        fontSection
+                        
                         // Efeitos
                         effectsSection
                         
@@ -237,6 +240,74 @@ struct ThemeCustomizerView: View {
         case .stone: return Text("Stone")
         case .crystal: return Text("Crystal")
         }
+    }
+    
+    // MARK: - Font
+    
+    private var fontSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            sectionHeader(title: "FONT")
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(availableFonts, id: \.self) { font in
+                        fontButton(font)
+                    }
+                }
+            }
+        }
+    }
+    
+    private var availableFonts: [String] {
+        [
+            "SF Pro",
+            "BebasNeue-Regular",
+            "MetalMania-Regular",
+            "Pangolin-Regular",
+            "PlayfairDisplay-Regular",
+            "PlayfairDisplay-Bold",
+            "PlayfairDisplay-Black",
+            "SecularOne-Regular",
+            "Ubuntu-Regular",
+            "Ubuntu-Bold"
+        ]
+    }
+    
+    private func fontButton(_ font: String) -> some View {
+        let isSelected = customTheme.fontName == font
+        
+        return Button(action: {
+            customTheme.fontName = font
+        }) {
+            VStack(spacing: 8) {
+                Text("Aa")
+                    .font(font == "SF Pro" ? .system(size: 32, weight: .bold) : .custom(font, size: 32))
+                    .foregroundColor(isSelected ? customTheme.accentColor.color : .white)
+                
+                Text(fontDisplayName(font))
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.7))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(width: 90, height: 90)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                isSelected ? customTheme.accentColor.color : Color.white.opacity(0.3),
+                                lineWidth: isSelected ? 2 : 1
+                            )
+                    )
+            )
+        }
+    }
+    
+    private func fontDisplayName(_ font: String) -> String {
+        if font == "SF Pro" { return "SF Pro" }
+        return font.replacingOccurrences(of: "-", with: " ")
     }
     
     // MARK: - Effects

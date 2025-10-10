@@ -7,14 +7,51 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1531CBDE2E995784002E0D8B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDD2E995784002E0D8B /* WidgetKit.framework */; };
+		1531CBE02E995784002E0D8B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDF2E995784002E0D8B /* SwiftUI.framework */; };
+		1531CBEF2E995785002E0D8B /* DnDiceWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		15DDEF2C2E96E31B00360F5E /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = 15DDEF2B2E96E31B00360F5E /* Inject */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1531CBED2E995785002E0D8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDEF0C2E96E2D600360F5E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1531CBDA2E995784002E0D8B;
+			remoteInfo = DnDiceWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1531CBF42E995785002E0D8B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1531CBEF2E995785002E0D8B /* DnDiceWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DnDiceWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1531CBDD2E995784002E0D8B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		1531CBDF2E995784002E0D8B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		15DDEF142E96E2D600360F5E /* Nano04DnDice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nano04DnDice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1531CBF32E995785002E0D8B /* Exceptions for "DnDiceWidget" folder in "DnDiceWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */;
+		};
 		15DDEF242E96E2DA00360F5E /* Exceptions for "Nano04DnDice" folder in "Nano04DnDice" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -25,6 +62,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		1531CBE12E995784002E0D8B /* DnDiceWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1531CBF32E995785002E0D8B /* Exceptions for "DnDiceWidget" folder in "DnDiceWidgetExtension" target */,
+			);
+			path = DnDiceWidget;
+			sourceTree = "<group>";
+		};
 		15DDEF162E96E2D600360F5E /* Nano04DnDice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -36,6 +81,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1531CBD82E995784002E0D8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1531CBE02E995784002E0D8B /* SwiftUI.framework in Frameworks */,
+				1531CBDE2E995784002E0D8B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		15DDEF112E96E2D600360F5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -47,10 +101,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1531CBDC2E995784002E0D8B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1531CBDD2E995784002E0D8B /* WidgetKit.framework */,
+				1531CBDF2E995784002E0D8B /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		15DDEF0B2E96E2D600360F5E = {
 			isa = PBXGroup;
 			children = (
 				15DDEF162E96E2D600360F5E /* Nano04DnDice */,
+				1531CBE12E995784002E0D8B /* DnDiceWidget */,
+				1531CBDC2E995784002E0D8B /* Frameworks */,
 				15DDEF152E96E2D600360F5E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				15DDEF142E96E2D600360F5E /* Nano04DnDice.app */,
+				1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -66,6 +132,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1531CBF02E995785002E0D8B /* Build configuration list for PBXNativeTarget "DnDiceWidgetExtension" */;
+			buildPhases = (
+				1531CBD72E995784002E0D8B /* Sources */,
+				1531CBD82E995784002E0D8B /* Frameworks */,
+				1531CBD92E995784002E0D8B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1531CBE12E995784002E0D8B /* DnDiceWidget */,
+			);
+			name = DnDiceWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = DnDiceWidgetExtension;
+			productReference = 1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		15DDEF132E96E2D600360F5E /* Nano04DnDice */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15DDEF252E96E2DA00360F5E /* Build configuration list for PBXNativeTarget "Nano04DnDice" */;
@@ -73,10 +161,12 @@
 				15DDEF102E96E2D600360F5E /* Sources */,
 				15DDEF112E96E2D600360F5E /* Frameworks */,
 				15DDEF122E96E2D600360F5E /* Resources */,
+				1531CBF42E995785002E0D8B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1531CBEE2E995785002E0D8B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				15DDEF162E96E2D600360F5E /* Nano04DnDice */,
@@ -99,6 +189,9 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					1531CBDA2E995784002E0D8B = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					15DDEF132E96E2D600360F5E = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -122,11 +215,19 @@
 			projectRoot = "";
 			targets = (
 				15DDEF132E96E2D600360F5E /* Nano04DnDice */,
+				1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1531CBD92E995784002E0D8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		15DDEF122E96E2D600360F5E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,6 +238,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1531CBD72E995784002E0D8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		15DDEF102E96E2D600360F5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -146,7 +254,75 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1531CBEE2E995785002E0D8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */;
+			targetProxy = 1531CBED2E995785002E0D8B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		1531CBF12E995785002E0D8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DnDiceWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DnDiceWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Nano04DnDice.DnDiceWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1531CBF22E995785002E0D8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DnDiceWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DnDiceWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Nano04DnDice.DnDiceWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		15DDEF262E96E2DA00360F5E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -154,7 +330,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Nano04DnDice/Nano04DnDice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				EMIT_FRONTEND_COMMAND_LINES = YES;
 				ENABLE_BITCODE = NO;
@@ -199,7 +375,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Nano04DnDice/Nano04DnDice.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 982D3NRR89;
 				EMIT_FRONTEND_COMMAND_LINES = YES;
 				ENABLE_PREVIEWS = YES;
@@ -361,6 +537,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1531CBF02E995785002E0D8B /* Build configuration list for PBXNativeTarget "DnDiceWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1531CBF12E995785002E0D8B /* Debug */,
+				1531CBF22E995785002E0D8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		15DDEF0F2E96E2D600360F5E /* Build configuration list for PBXProject "Nano04DnDice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

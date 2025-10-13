@@ -11,6 +11,7 @@ struct TopButtonsView: View {
     let accentColor: Color
     let onShowThemes: () -> Void
     let onShowCustomizer: () -> Void
+    let onShowAR: () -> Void
     
     @State private var isMenuOpen = false
     
@@ -53,6 +54,18 @@ struct TopButtonsView: View {
                         // Botões do Menu - abaixo do hambúrguer
                         if isMenuOpen {
                             VStack(alignment: .trailing, spacing: 12) {
+                                MenuButton(
+                                    icon: "arkit",
+                                    title: "AR DICE",
+                                    accentColor: accentColor,
+                                    action: {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            isMenuOpen = false
+                                        }
+                                        onShowAR()
+                                    }
+                                )
+                                
                                 MenuButton(
                                     icon: "rectangle.stack.fill",
                                     title: "THEMES",

@@ -21,6 +21,7 @@ class DiceRollerViewModel: ObservableObject {
     @Published var showThemesList = false
     @Published var showCustomizer = false
     @Published var showCustomDice = false
+    @Published var showARDice = false
     @Published var customDiceSides: String = "20"
     @Published var proficiencyBonus: Int = 0
     

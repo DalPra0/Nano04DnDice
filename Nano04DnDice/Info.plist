@@ -27,5 +27,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Precisamos da câmera para usar Realidade Aumentada e jogar o dado D20 no mundo real!</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>O app não usa o microfone, mas a permissão de câmera pode solicitar isto.</string>
 </dict>
 </plist>

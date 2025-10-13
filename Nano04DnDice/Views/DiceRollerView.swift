@@ -53,7 +53,8 @@ struct DiceRollerView: View {
                     TopButtonsView(
                         accentColor: currentTheme.accentColor.color,
                         onShowThemes: { viewModel.showThemesList = true },
-                        onShowCustomizer: { viewModel.showCustomizer = true }
+                        onShowCustomizer: { viewModel.showCustomizer = true },
+                        onShowAR: { viewModel.showARDice = true }
                     )
                     .zIndex(1000)
                 }
@@ -85,6 +86,9 @@ struct DiceRollerView: View {
                     accentColor: currentTheme.accentColor.color,
                     borderColor: currentTheme.diceBorderColor.color
                 )
+            }
+            .fullScreenCover(isPresented: $viewModel.showARDice) {
+                ARDiceView(themeManager: themeManager)
             }
         }
         .navigationViewStyle(.stack)

@@ -52,13 +52,6 @@
 			);
 			target = 1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */;
 		};
-		15B067812E9DA08000317158 /* Exceptions for "Nano04DnDice" folder in "DnDiceWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Resources/Models/D20.usdz,
-			);
-			target = 1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */;
-		};
 		15DDEF242E96E2DA00360F5E /* Exceptions for "Nano04DnDice" folder in "Nano04DnDice" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -81,7 +74,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				15DDEF242E96E2DA00360F5E /* Exceptions for "Nano04DnDice" folder in "Nano04DnDice" target */,
-				15B067812E9DA08000317158 /* Exceptions for "Nano04DnDice" folder in "DnDiceWidgetExtension" target */,
 			);
 			path = Nano04DnDice;
 			sourceTree = "<group>";

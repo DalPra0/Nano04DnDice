@@ -94,7 +94,7 @@ struct ARDiceView: View {
         .onDisappear {
             arCoordinator.stopSession()
         }
-        .onChange(of: arCoordinator.diceResult) { newResult in
+        .onChange(of: arCoordinator.diceResult) { oldValue, newResult in
             if newResult != nil {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                     showResult = true

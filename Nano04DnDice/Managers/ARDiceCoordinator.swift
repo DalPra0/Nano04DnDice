@@ -68,22 +68,125 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     // MARK: - Throw Dice
     func throwDice(force: Float) {
-        guard surfaceDetected, let plane = detectedPlane else { return }
+        guard surfaceDetected, let plane = detectedPlane else {
+            print("⚠️ Superfície não detectada ou anchor nulo")
+            return
+        }
         
         isDiceThrown = true
         diceResult = nil
         
-        // Load do modelo D20
-        guard let diceModel = try? ModelEntity.loadModel(named: "D20") else {
-            print("❌ Erro ao carregar D20.usdz")
+        // Load do modelo D20 - tentando diferentes formas
+        var diceModel: ModelEntity?
+        
+        // Tentativa 1: Nome direto
+        if let model = try? ModelEntity.loadModel(named: "D20") {
+            diceModel = model
+            print("✅ D20 carregado com nome 'D20'")
+        }
+        // Tentativa 2: Com extensão
+        else if let model = try? ModelEntity.loadModel(named: "D20.usdz") {
+            diceModel = model
+            print("✅ D20 carregado com nome 'D20.usdz'")
+        }
+        // Tentativa 3: Bundle path
+        else if let url = Bundle.main.url(forResource: "D20", withExtension: "usdz") {
+            do {
+                let loadedEntity = try ModelEntity.load(contentsOf: url)
+                // ModelEntity.load retorna Entity, então precisamos buscar o ModelEntity filho
+                if let model = loadedEntity as? ModelEntity {
+                    diceModel = model
+                    print("✅ D20 carregado via Bundle URL (cast direto): \(url)")
+                } else if let model = loadedEntity.children.first as? ModelEntity {
+                    diceModel = model
+                    print("✅ D20 carregado via Bundle URL (primeiro filho): \(url)")
+                } else {
+                    print("⚠️ Entity carregado mas não é ModelEntity")
+                }
+            } catch {
+                print("❌ Erro ao carregar de URL: \(error)")
+            }
+        }
+        else {
+            print("❌ Erro ao carregar D20.usdz de TODAS as formas")
+            print("📁 Verifique se o arquivo está no target e em Resources/Models/")
+            
+            // Lista todos os .usdz no bundle para debug
+            if let resourcePath = Bundle.main.resourcePath {
+                let fileManager = FileManager.default
+                if let files = try? fileManager.contentsOfDirectory(atPath: resourcePath) {
+                    let usdzFiles = files.filter { $0.hasSuffix(".usdz") }
+                    print("📦 Arquivos .usdz encontrados: \(usdzFiles)")
+                }
+            }
+            
+            isDiceThrown = false
             return
         }
         
+        guard let dice = diceModel else {
+            print("❌ Modelo é nulo após tentativas")
+            print("🎲 Usando dado FALLBACK (esfera dourada)")
+            
+            // Cria um dado fallback (esfera simples)
+            let mesh = MeshResource.generateSphere(radius: 0.025)
+            var material = SimpleMaterial()
+            material.color = .init(tint: .systemYellow)
+            material.metallic = .float(0.8)
+            material.roughness = .float(0.2)
+            
+            let fallbackDice = ModelEntity(mesh: mesh, materials: [material])
+            fallbackDice.position = [0, 0.3, 0]
+            
+            // Adiciona física
+            let physicsMaterial = PhysicsMaterialResource.generate(
+                staticFriction: 0.8,
+                dynamicFriction: 0.6,
+                restitution: 0.5
+            )
+            
+            let collisionShape = ShapeResource.generateSphere(radius: 0.025)
+            
+            fallbackDice.components.set(PhysicsBodyComponent(
+                massProperties: .default,
+                material: physicsMaterial,
+                mode: .dynamic
+            ))
+            
+            fallbackDice.components.set(CollisionComponent(shapes: [collisionShape]))
+            
+            // Aplica força
+            let throwDirection = SIMD3<Float>(
+                Float.random(in: -0.5...0.5),
+                -force * 2,
+                Float.random(in: -0.5...0.5)
+            )
+            fallbackDice.addForce(throwDirection, relativeTo: nil)
+            
+            let randomTorque = SIMD3<Float>(
+                Float.random(in: -10...10),
+                Float.random(in: -10...10),
+                Float.random(in: -10...10)
+            )
+            fallbackDice.addTorque(randomTorque, relativeTo: nil)
+            
+            plane.addChild(fallbackDice)
+            diceEntity = fallbackDice
+            
+            AudioManager.shared.playDiceRoll()
+            startResultDetection()
+            return
+        }
+        
+        print("🎲 Configurando dado...")
+        
         // Configura escala (ajuste se necessário)
-        diceModel.scale = [0.05, 0.05, 0.05] // 5cm de diâmetro
+        dice.scale = [0.05, 0.05, 0.05] // 5cm de diâmetro
         
         // Posição inicial: 30cm acima da superfície detectada
-        diceModel.position = [0, 0.3, 0]
+        dice.position = [0, 0.3, 0]
+        
+        print("📍 Posição do dado: \(dice.position)")
         
         // Adiciona física ao dado
         let physicsMaterial = PhysicsMaterialResource.generate(
@@ -95,13 +198,13 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         // Collision shape (esfera aproximada para performance)
         let collisionShape = ShapeResource.generateSphere(radius: 0.025)
         
-        diceModel.components.set(PhysicsBodyComponent(
+        dice.components.set(PhysicsBodyComponent(
             massProperties: .default,
             material: physicsMaterial,
             mode: .dynamic
         ))
         
-        diceModel.components.set(CollisionComponent(shapes: [collisionShape]))
+        dice.components.set(CollisionComponent(shapes: [collisionShape]))
         
         // Aplica força inicial (arremesso)
         let throwDirection = SIMD3<Float>(
@@ -110,7 +213,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             Float.random(in: -0.5...0.5)  // Rotação Z aleatória
         )
         
-        diceModel.addForce(throwDirection, relativeTo: nil)
+        dice.addForce(throwDirection, relativeTo: nil)
         
         // Aplica torque (rotação) aleatório
         let randomTorque = SIMD3<Float>(
@@ -118,11 +221,16 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             Float.random(in: -10...10),
             Float.random(in: -10...10)
         )
-        diceModel.addTorque(randomTorque, relativeTo: nil)
+        dice.addTorque(randomTorque, relativeTo: nil)
+        
+        print("💫 Força aplicada: \(throwDirection)")
+        print("🌀 Torque aplicado: \(randomTorque)")
         
         // Adiciona à cena
-        plane.addChild(diceModel)
-        diceEntity = diceModel
+        plane.addChild(dice)
+        diceEntity = dice
+        
+        print("✅ Dado adicionado à cena!")
         
         // Som de arremesso
         AudioManager.shared.playDiceRoll()
@@ -213,7 +321,7 @@ extension ARDiceCoordinator: ARSessionDelegate {
         material.color = .init(tint: .white.withAlphaComponent(0.1))
         
         let planeEntity = ModelEntity(mesh: mesh, materials: [material])
-        planeEntity.position = [extent.rotationOnYAxis.x, 0, extent.rotationOnYAxis.z]
+        planeEntity.position = [0, 0, 0] // Centralizado no anchor
         
         anchor.addChild(planeEntity)
     }
@@ -228,11 +336,5 @@ extension simd_quatf {
         let z = atan2(2 * (self.vector.w * self.vector.z + self.vector.x * self.vector.y),
                       1 - 2 * (self.vector.y * self.vector.y + self.vector.z * self.vector.z))
         return SIMD3<Float>(x, y, z)
-    }
-}
-
-extension ARPlaneAnchor.PlaneExtent {
-    var rotationOnYAxis: SIMD2<Float> {
-        return SIMD2<Float>(self.rotationOnYAxis, self.rotationOnYAxis)
     }
 }

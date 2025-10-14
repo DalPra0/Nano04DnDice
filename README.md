@@ -1,349 +1,503 @@
 <div align="center">
 
-<!-- 🖼️ COLOQUE A IMAGEM hero.png AQUI -->
-<img src="./Screenshots/hero.png" alt="DnDice Hero" width="100%">
+# 🎲 DNDICE ⚔️
 
-# 🎲 DnDice
+[![Platform](https://img.shields.io/badge/Platform-iOS%2015.0%2B-black.svg?style=for-the-badge&logo=apple&logoColor=FFD700)](#)
+[![Swift](https://img.shields.io/badge/Swift-5.9-black.svg?style=for-the-badge&logo=swift&logoColor=FFD700)](#)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-4.0-black.svg?style=for-the-badge&logo=swift&logoColor=FFD700)](#)
+[![RealityKit](https://img.shields.io/badge/RealityKit-AR-black.svg?style=for-the-badge&logo=apple&logoColor=FFD700)](#)
+[![License](https://img.shields.io/badge/License-MIT-FFD700.svg?style=for-the-badge)](#)
 
-### The Ultimate Customizable Dice Roller for RPG Players
+*"Roll for initiative... in STYLE"* ⚔️
 
-[![Platform](https://img.shields.io/badge/Platform-iOS%2015.0%2B-blue.svg?style=flat)](https://www.apple.com/ios/)
-[![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg?style=flat)](https://swift.org)
-[![SwiftUI](https://img.shields.io/badge/SwiftUI-4.0-blue.svg?style=flat)](https://developer.apple.com/xcode/swiftui/)
-[![RealityKit](https://img.shields.io/badge/RealityKit-AR-green.svg?style=flat)](https://developer.apple.com/augmented-reality/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](LICENSE)
-
-**Roll dice like never before. Customize everything. Play in AR.**
-
-[Features](#-features) • [Screenshots](#-screenshots) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Roadmap](#-roadmap)
+![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Cinzel&size=28&duration=3000&pause=1000&color=FFD700&background=000000&center=true&vCenter=true&width=800&height=80&lines=The+Ultimate+Dice+Roller+for+RPG+Players;Customize+Everything.+Roll+in+AR.+Play+Your+Way.;D4+to+D20+%7C+Themes+%7C+Physics+%7C+Magic)
 
 </div>
 
 ---
 
-## 🎯 About
+## ⚔️ **YOUR QUEST BEGINS HERE**
 
-**DnDice** is a premium dice rolling app designed for tabletop RPG players who want complete control over their gaming experience. Built with SwiftUI and powered by Three.js for stunning 3D dice physics, DnDice combines beautiful design with powerful customization.
+<div align="center">
 
-Whether you're playing D&D, Pathfinder, Call of Cthulhu, or any other RPG system, DnDice adapts to your game style with **unlimited customization** and **immersive AR support**.
+<!-- 🖼️ COLOQUE A IMAGEM hero.png AQUI -->
+<img src="./Screenshots/hero.png" alt="DnDice - The Ultimate Dice Roller" style="border: 3px solid #FFD700; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);">
+
+</div>
+
+**DnDice** não é só um app de dados. É uma **experiência imersiva** onde cada rolagem importa, cada tema conta uma história, e cada customização reflete seu estilo de jogo.
+
+Construído com **Three.js** para física 3D realista, **RealityKit** para jogar dados na mesa REAL, e amor por **RPG de mesa**. 
+
+> *"Some dice apps show numbers. DnDice shows your destiny."* 🎭
 
 <!-- 🎬 COLOQUE O GIF dice-roll.gif AQUI (OPCIONAL) -->
 <div align="center">
-<img src="./Screenshots/dice-roll.gif" alt="Dice Rolling Demo" width="600">
+<img src="./Screenshots/dice-roll.gif" alt="Witness the Magic" width="600" style="border-radius: 10px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);">
+
+*Watch the D20 spin through the cosmic void...*
 </div>
 
 ---
 
-## ✨ Features
+## 🎯 **CORE FEATURES**
 
-### 🎲 **Complete Dice Collection**
-- **Standard Dice**: D4, D6, D8, D10, D12, D20
-- **Custom Dice**: Create any dice from 2 to 100 sides
-- **Multiple Dice**: Roll up to 20 dice simultaneously with statistics
-- **Roll Modes**: Normal, Blessed (advantage), Cursed (disadvantage)
-- **Proficiency Bonus**: Add modifiers from -10 to +10
+<table>
+<tr>
+<td width="50%" align="center">
 
-### 🎨 **Unlimited Customization**
-- **7 Preset Themes**: Classic D&D, Medieval, Cyberpunk, Horror, Norse, Arcane, Light Mode
-- **Custom Themes**: Change every color, texture, font, and effect
-- **Smart Contrast**: Text automatically adapts to background luminance
-- **11 Fonts**: From elegant PlayfairDisplay to modern Ubuntu
-- **5 Textures**: Standard, Metallic, Wooden, Stone, Crystal
+### 🎲 **DICE ARSENAL**
+![D20](https://img.shields.io/badge/D20-Ready-FFD700?style=for-the-badge)
+![D12](https://img.shields.io/badge/D12-Ready-FFD700?style=for-the-badge)
+![D10](https://img.shields.io/badge/D10-Ready-FFD700?style=for-the-badge)
+![D8](https://img.shields.io/badge/D8-Ready-FFD700?style=for-the-badge)
+![D6](https://img.shields.io/badge/D6-Ready-FFD700?style=for-the-badge)
+![D4](https://img.shields.io/badge/D4-Ready-FFD700?style=for-the-badge)
 
-### 📱 **Adaptive Interface**
-- **Portrait Mode**: Large dice view with intuitive controls
-- **Landscape Mode**: Quick-roll interface for fast gameplay
-- **Shake to Roll**: Shake your device to roll dice
-- **Responsive Design**: Perfect on iPhone, iPad, and Mac
+**Custom Dice**: 2-100 sides  
+**Multiple Rolls**: Up to 20 dice at once  
+**Roll Modes**: Normal | Blessed | Cursed  
+**Proficiency Bonus**: -10 to +10
 
-### 🌟 **Augmented Reality**
-- **Pokémon GO-style AR**: Throw dice onto real surfaces
-- **Realistic Physics**: Powered by RealityKit
-- **Surface Detection**: Automatic plane detection
-- **Immersive Experience**: Watch your D20 roll in the real world
+</td>
+<td width="50%" align="center">
 
-### 🎵 **Immersive Audio**
-- **Sound Effects**: Dice roll, critical success, fumble sounds
-- **Haptic Feedback**: Feel every roll
-- **Volume Control**: Adjustable master volume
+### 🎨 **INFINITE CUSTOMIZATION**
+![Themes](https://img.shields.io/badge/7_Preset-Themes-FFD700?style=for-the-badge)
+![Custom](https://img.shields.io/badge/∞_Custom-Themes-FFD700?style=for-the-badge)
+
+**Colors**: Every pixel, your choice  
+**Textures**: 5 materials (metal, wood, stone...)  
+**Fonts**: 11 typography options  
+**Effects**: Glow, shadows, particles  
+**Smart Contrast**: Auto-adapting text
+
+</td>
+</tr>
+</table>
+
+<div align="center">
+
+### 📱 **ADAPTIVE INTERFACE** • 🌟 **AR MAGIC** • 🎵 **IMMERSIVE AUDIO**
+
+</div>
 
 ---
 
-## 📸 Screenshots
+## 🎪 **THE MAGIC IN ACTION**
 
-### Portrait Mode
 <div align="center">
 
-<!-- 🖼️ COLOQUE A IMAGEM portrait.png AQUI -->
-<img src="./Screenshots/portrait.png" alt="Portrait Mode" width="300">
-
-*Large dice display with all controls at your fingertips*
+| 📱 **PORTRAIT MODE** | 🖥️ **LANDSCAPE MODE** |
+|:---:|:---:|
+| <!-- 🖼️ portrait.png --> <img src="./Screenshots/portrait.png" width="300" style="border: 2px solid #FFD700; border-radius: 10px;"> | <!-- 🖼️ landscape.png --> <img src="./Screenshots/landscape.png" width="500" style="border: 2px solid #FFD700; border-radius: 10px;"> |
+| *Large dice view with intuitive controls* | *Quick-roll interface for fast gameplay* |
 
 </div>
 
-### Landscape Mode
-<div align="center">
+---
 
-<!-- 🖼️ COLOQUE A IMAGEM landscape.png AQUI -->
-<img src="./Screenshots/landscape.png" alt="Landscape Mode" width="600">
+## 🎨 **THEMES SHOWCASE**
 
-*Quick-roll interface for fast-paced gaming*
-
-</div>
-
-### Themes Gallery
 <div align="center">
 
 <!-- 🖼️ COLOQUE A IMAGEM themes.png AQUI -->
-<img src="./Screenshots/themes.png" alt="Themes" width="300">
+<img src="./Screenshots/themes.png" alt="7 Preset Themes" width="350" style="border: 2px solid #FFD700; border-radius: 10px;">
 
-*Choose from 7 beautiful preset themes or create your own*
+### Choose Your Aesthetic ⚔️
+
+| 🏰 **Classic D&D** | 🌲 **Medieval** | 🌆 **Cyberpunk** |
+|:---:|:---:|:---:|
+| Golden elegance | Wooden warmth | Neon madness |
+| **🌑 Horror** | **⚡ Norse** | **✨ Arcane** |
+| Cosmic dread | Viking power | Mystical glow |
+
+**+ Light Mode for the brave souls who play in daylight** ☀️
 
 </div>
 
-### Full Customization
+---
+
+## 🛠️ **FULL CUSTOMIZATION POWER**
+
 <div align="center">
 
 <!-- 🖼️ COLOQUE A IMAGEM customization.png AQUI -->
-<img src="./Screenshots/customization.png" alt="Customization" width="300">
-
-*Customize every aspect of your dice and interface*
+<img src="./Screenshots/customization.png" alt="Customize Everything" width="350" style="border: 2px solid #FFD700; border-radius: 10px;">
 
 </div>
 
-### Augmented Reality
+```swift
+// 🎨 Change EVERYTHING
+DiceTheme(
+    diceFace: .crimson,        // The vessel
+    diceBorder: .gold,         // The binding
+    diceNumber: .silver,       // The fate
+    background: .voidBlack,    // The cosmos
+    accent: .arcaneBlue,       // The magic
+    texture: .metallic,        // The material
+    font: "Cinzel",           // The prophecy
+    glow: 1.0,                // The power
+    particles: true           // The enchantment
+)
+```
+
+---
+
+## 🌟 **AUGMENTED REALITY MODE**
+
 <div align="center">
 
 <!-- 🖼️ COLOQUE A IMAGEM ar-mode.png AQUI -->
-<img src="./Screenshots/ar-mode.png" alt="AR Mode" width="600">
+<img src="./Screenshots/ar-mode.png" alt="AR Dice Magic" width="700" style="border: 2px solid #FFD700; border-radius: 10px;">
 
-*Throw dice onto real surfaces with realistic physics*
+### **THROW DICE INTO REALITY** 🎲✨
+
+**Pokémon GO-style interface:**  
+👉 Detect surfaces  
+👉 Drag the D20  
+👉 Release to throw  
+👉 Watch physics magic happen  
+
+*Powered by **RealityKit** • Realistic collision • Actual gravity*
 
 </div>
 
-### Multiple Dice & Roll Modes
+---
+
+## 🎲 **ROLL MODES & SPECIAL FEATURES**
+
+<table>
+<tr>
+<td width="50%" align="center">
+
+<!-- 🖼️ roll-modes.png -->
+<img src="./Screenshots/roll-modes.png" width="300" style="border: 2px solid #FFD700; border-radius: 10px;">
+
+### ⚔️ **BLESSED MODE**
+*Roll with advantage*
+
+Roll **2 dice**, keep the **highest**  
+Perfect for critical moments  
+Green glow of fortune ✨
+
+### 💀 **CURSED MODE**
+*Roll with disadvantage*
+
+Roll **2 dice**, keep the **lowest**  
+When fate turns against you  
+Red shadow of doom 🔥
+
+</td>
+<td width="50%" align="center">
+
+<!-- 🖼️ multiple-dice.png -->
+<img src="./Screenshots/multiple-dice.png" width="300" style="border: 2px solid #FFD700; border-radius: 10px;">
+
+### 🎲 **MULTIPLE DICE**
+*Roll up to 20 dice at once*
+
+**Instant Stats:**
+- 📊 Total (BIG number)
+- 📈 Average
+- 🔺 Max roll
+- 🔻 Min roll
+
+**Presets:** 2D6, 3D6, 4D6, 8D6...
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎯 **TECH STACK**
+
 <div align="center">
 
-<!-- 🖼️ COLOQUE AS IMAGENS multiple-dice.png E roll-modes.png AQUI LADO A LADO -->
-<img src="./Screenshots/multiple-dice.png" alt="Multiple Dice" width="300">
-<img src="./Screenshots/roll-modes.png" alt="Roll Modes" width="300">
+![SwiftUI](https://img.shields.io/badge/-SwiftUI-black?style=for-the-badge&logo=swift&logoColor=FFD700)
+![RealityKit](https://img.shields.io/badge/-RealityKit-black?style=for-the-badge&logo=apple&logoColor=FFD700)
+![Three.js](https://img.shields.io/badge/-Three.js-black?style=for-the-badge&logo=three.js&logoColor=FFD700)
+![ARKit](https://img.shields.io/badge/-ARKit-black?style=for-the-badge&logo=apple&logoColor=FFD700)
+![AVFoundation](https://img.shields.io/badge/-AVFoundation-black?style=for-the-badge&logo=apple&logoColor=FFD700)
 
-*Roll multiple dice at once • Advantage/Disadvantage system*
+</div>
+
+### 🏗️ **Architecture**
+
+```
+📱 SwiftUI + MVVM
+├── 🎲 Three.js (r128) - 3D Physics Engine
+├── 🌟 RealityKit - AR Rendering
+├── 🎵 AVFoundation - Audio System
+├── 🎨 Custom Contrast Engine (ITU-R BT.709)
+└── 💾 UserDefaults + Core Data Ready
+```
+
+**12 Modular Components** • **Clean MVVM** • **Reactive with Combine**
+
+---
+
+## 🎮 **GAMEPLAY FLOW**
+
+```mermaid
+graph TD
+    A[🏠 Launch DnDice] --> B{Choose Your Path}
+    B -->|📱 Portrait| C[🎲 Standard Roll]
+    B -->|🖥️ Landscape| D[⚡ Quick Roll]
+    B -->|🌟 AR Mode| E[🎭 Reality Dice]
+    C --> F{🎨 Customize?}
+    D --> F
+    E --> F
+    F -->|Yes| G[🎨 Theme Creator]
+    F -->|No| H[🎲 ROLL!]
+    G --> H
+    H --> I{Result}
+    I -->|🎯 Critical!| J[⭐ SUCCESS]
+    I -->|💀 Fumble!| K[☠️ FAILURE]
+    I -->|📊 Normal| L[✓ Continue]
+```
+
+---
+
+## 📱 **DEVICE COMPATIBILITY**
+
+<div align="center">
+
+| Device | Portrait | Landscape | AR | Status |
+|:---:|:---:|:---:|:---:|:---:|
+| 📱 iPhone 16 Pro | ✅ | ✅ | ✅ | **Perfect** |
+| 📱 iPhone 15 | ✅ | ✅ | ✅ | **Perfect** |
+| 📱 iPhone 14 | ✅ | ✅ | ✅ | **Perfect** |
+| 📱 iPhone SE | ✅ | ✅ | ⚠️ | **Limited AR** |
+| 📱 iPad | ✅ | ✅ | ✅ | **Optimized** |
+| 💻 Mac Catalyst | ✅ | ✅ | ❌ | **Supported** |
 
 </div>
 
 ---
 
-## 🛠️ Tech Stack
-
-### **Frontend**
-- **SwiftUI** - Modern declarative UI framework
-- **MVVM Architecture** - Clean separation of concerns
-- **Combine** - Reactive programming
-
-### **3D & Graphics**
-- **Three.js (r128)** - WebView-based 3D rendering
-- **WebKit** - Native web integration
-- **Custom Geometries** - D4, D6, D8, D10, D12, D20
-
-### **Augmented Reality**
-- **RealityKit** - AR rendering engine
-- **ARKit** - Plane detection & tracking
-- **Physics Engine** - Collision, friction, restitution
-
-### **Audio & Haptics**
-- **AVFoundation** - Audio playback
-- **CoreHaptics** - Haptic feedback
-
-### **Persistence**
-- **UserDefaults** - Theme storage (JSON)
-- **Core Data** - Ready for future features
-
-### **Design System**
-- **Custom Fonts** - 11 fonts including PlayfairDisplay
-- **Color+Contrast** - Automatic luminance calculation (ITU-R BT.709)
-- **Modular Components** - 12+ reusable SwiftUI views
-
----
-
-## 📦 Installation
+## 🚀 **INSTALLATION**
 
 ### **Requirements**
-- iOS 15.0+
-- Xcode 15.0+
-- Swift 5.9+
-- Device with ARKit support (for AR features)
+```yaml
+Platform: iOS 15.0+
+Language: Swift 5.9
+Framework: SwiftUI 4.0
+AR: ARKit compatible device
+Audio: AVFoundation
+```
 
-### **Setup**
+### **Quick Start**
 
-1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/DnDice.git
+# 1. Clone the legendary repository
+git clone https://github.com/DalPra0/DnDice.git
 cd DnDice
-```
 
-2. **Open in Xcode**
-```bash
+# 2. Open in Xcode
 open Nano04DnDice.xcodeproj
+
+# 3. Add required assets
+# - Fonts in Resources/Fonts/
+# - Audio in Resources/Audio/
+# - D20.usdz in Resources/Models/
+
+# 4. Build & Roll! (⌘ + R)
 ```
 
-3. **Add required assets** (if not included)
-   - Place custom fonts in `Resources/Fonts/`
-   - Place audio files in `Resources/Audio/`
-   - Place D20.usdz in `Resources/Models/`
-
-4. **Build and Run**
-   - Select your target device
-   - Press `Cmd + R`
-
-### **Project Structure**
+### 📂 **Project Structure**
 ```
 Nano04DnDice/
-├── App/                    # App entry point
-├── Views/                  # SwiftUI views
-│   ├── Components/         # Reusable components (12)
+├── 🎯 Views/              # 13 SwiftUI views
 │   ├── DiceRollerView.swift
 │   ├── DiceRollerLandscapeView.swift
 │   ├── ThemesListView.swift
 │   ├── ThemeCustomizerView.swift
-│   └── ARDiceView.swift
-├── ViewModels/             # Business logic
-├── Models/                 # Data models
-├── Managers/               # Services (Audio, Theme, AR)
-├── Extensions/             # Swift extensions
-└── Resources/              # Assets (fonts, audio, 3D models)
+│   ├── ARDiceView.swift
+│   └── Components/        # 12 modular components
+├── 🧠 ViewModels/         # MVVM business logic
+├── 📊 Models/             # Data structures
+├── ⚙️ Managers/           # Audio, Theme, AR, Shake
+├── 🎨 Extensions/         # Color+Contrast, Color+Hex
+└── 🎵 Resources/          # Fonts, Audio, 3D Models
 ```
 
 ---
 
-## 🗺️ Roadmap
+## 🗺️ **ROADMAP**
 
-### **✅ Completed (Phase 1-3)**
-- [x] 6 standard dice types (D4-D20)
-- [x] Custom dice (2-100 sides)
-- [x] Multiple dice rolling
-- [x] 7 preset themes
-- [x] Full theme customization
-- [x] Portrait/Landscape modes
-- [x] Shake detection
-- [x] AR mode with RealityKit
-- [x] Roll modes (Blessed/Cursed)
-- [x] Proficiency bonus
-- [x] Audio & haptic feedback
-- [x] Smart contrast system
+### ✅ **PHASE 1-3: COMPLETE**
+- [x] 🎲 Standard dice (D4-D20)
+- [x] 🎨 7 preset themes
+- [x] ✨ Full customization
+- [x] 📱 Portrait/Landscape modes
+- [x] 🤝 Shake to roll
+- [x] 🌟 AR mode with RealityKit
+- [x] ⚔️ Roll modes (Blessed/Cursed)
+- [x] 🎵 Audio & haptic feedback
+- [x] 📊 Multiple dice rolling
+- [x] 🎭 Smart contrast system
 
-### **🚧 In Progress (Phase 4)**
-- [ ] Session tracking
-- [ ] Character sheet integration
-- [ ] Initiative tracker
-- [ ] Roll history with context
-- [ ] Modifier calculator
-- [ ] Quick notes
+### 🚧 **PHASE 4: IN PROGRESS**
+- [ ] 📝 Session tracking
+- [ ] 📋 Character sheet integration
+- [ ] ⚡ Initiative tracker
+- [ ] 📖 Roll history with context
+- [ ] 🧮 Modifier calculator
+- [ ] 📝 Campaign notes
 
-### **🔮 Future Ideas**
-- [ ] iCloud sync
-- [ ] Multiplayer support
-- [ ] Widget support
-- [ ] Apple Watch companion
-- [ ] Siri shortcuts
-- [ ] Dice bag presets
-- [ ] Campaign manager
-- [ ] Export roll statistics
-- [ ] Community themes marketplace
+### 🔮 **FUTURE DREAMS**
+- [ ] ☁️ iCloud sync
+- [ ] 👥 Multiplayer support
+- [ ] 📱 Widget support
+- [ ] ⌚ Apple Watch companion
+- [ ] 🗣️ Siri shortcuts
+- [ ] 🎒 Dice bag presets
+- [ ] 📊 Statistics export
+- [ ] 🌍 Community themes marketplace
 
 ---
 
-## 🏗️ Architecture
+## 🎨 **DESIGN PHILOSOPHY**
 
-DnDice follows the **MVVM (Model-View-ViewModel)** pattern for clean separation of concerns:
+<div align="center">
+
+### *"Elegance meets Functionality in the Realm of Chance"* ⚔️
+
+</div>
 
 ```
-┌─────────────┐
-│    View     │ ← SwiftUI Views (12+ components)
-└──────┬──────┘
-       │ observes
-       ▼
-┌─────────────┐
-│  ViewModel  │ ← Business Logic (@Published properties)
-└──────┬──────┘
-       │ updates
-       ▼
-┌─────────────┐
-│    Model    │ ← Data Models (Codable structs)
-└─────────────┘
+🎯 PRINCIPLES:
+
+1. DARK ELEGANCE
+   └─ Deep blacks • Golden accents • Subtle shadows
+
+2. TACTILE FEEDBACK
+   └─ Every roll feels REAL • Haptics • Audio cues
+
+3. ADAPTIVE INTELLIGENCE  
+   └─ Smart contrast • Responsive layouts • Context-aware UI
+
+4. IMMERSIVE EXPERIENCE
+   └─ 3D physics • AR integration • Atmospheric audio
 ```
 
-**Key Components:**
-- **DiceRollerViewModel**: Main state management
-- **ThemeManager**: Theme persistence & application
-- **AudioManager**: Sound & haptic feedback
-- **ARDiceCoordinator**: AR session & physics
+---
 
-For more details, see [ARCHITECTURE.md](ARCHITECTURE.md)
+## 🤝 **CONTRIBUTING**
+
+We welcome fellow adventurers! 🗡️
+
+```bash
+# Fork the realm
+# Create your feature branch
+git checkout -b feature/EpicFeature
+
+# Commit your changes
+git commit -m '✨ Add some EpicFeature'
+
+# Push to the branch
+git push origin feature/EpicFeature
+
+# Open a Pull Request
+```
+
+### 📜 **Contribution Guidelines**
+- ✅ Follow MVVM architecture
+- ✅ Use SwiftUI best practices
+- ✅ Comment in Portuguese (código em inglês)
+- ✅ Test on multiple devices
+- ✅ Keep components modular
+- ✅ Add documentation for new features
 
 ---
 
-## 🎨 Design Philosophy
+## ⚖️ **LICENSE**
 
-DnDice embraces a **dark, elegant aesthetic** inspired by classic tabletop RPGs:
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file.
 
-- **PlayfairDisplay** - Serif font for elegance
-- **Golden Accents** (#FFD700) - Premium feel
-- **Deep Blacks** - Immersive dark mode
-- **Smooth Animations** - Polished interactions
-- **Accessible Contrast** - Automatic text adaptation
+```
+Permission granted to:
+✓ Use commercially
+✓ Modify freely  
+✓ Distribute widely
+✓ Use privately
 
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** your changes (`git commit -m 'Add AmazingFeature'`)
-4. **Push** to the branch (`git push origin feature/AmazingFeature`)
-5. **Open** a Pull Request
-
-### **Development Guidelines**
-- Follow MVVM architecture
-- Use SwiftUI best practices
-- Comment in Portuguese for consistency
-- Test on multiple devices
-- Keep components modular
+Conditions:
+⚠️ Include copyright notice
+⚠️ Include license text
+```
 
 ---
 
-## 📝 License
+## 🙏 **ACKNOWLEDGMENTS**
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+<div align="center">
+
+**Standing on the shoulders of giants** 🏰
+
+![Three.js](https://img.shields.io/badge/Three.js-Dice_Physics-black?style=for-the-badge&logo=three.js&logoColor=FFD700)
+![RealityKit](https://img.shields.io/badge/Apple-RealityKit_/_ARKit-black?style=for-the-badge&logo=apple&logoColor=FFD700)
+![PlayfairDisplay](https://img.shields.io/badge/Google_Fonts-PlayfairDisplay-black?style=for-the-badge&logo=google&logoColor=FFD700)
+
+**Special thanks to:**
+- The **RPG community** for endless inspiration
+- **Gary Gygax & Dave Arneson** for D&D
+- **Wizards of the Coast** for keeping the flame alive
+- Every DM who ever said *"Roll for initiative"* ⚔️
+
+</div>
 
 ---
 
-## 🙏 Acknowledgments
+## 📬 **CONTACT**
 
-- **Three.js** - 3D rendering engine
-- **RealityKit & ARKit** - Apple's AR frameworks
-- **PlayfairDisplay** - Google Fonts
-- **RPG Community** - For inspiration and feedback
-
----
-
-## 📬 Contact
+<div align="center">
 
 **Lucas Dal Pra Brascher**
 
-- GitHub: [@DalPra0](https://github.com/DalPra0)
-- Email: your.email@example.com
+[![GitHub](https://img.shields.io/badge/GitHub-DalPra0-black?style=for-the-badge&logo=github&logoColor=FFD700)](https://github.com/DalPra0)
+[![Email](https://img.shields.io/badge/Email-Contact-black?style=for-the-badge&logo=gmail&logoColor=FFD700)](mailto:your.email@example.com)
+
+*Questions? Suggestions? Critical failures?*  
+**Open an issue or send a raven** 🦅
+
+</div>
 
 ---
 
 <div align="center">
 
-### ⭐ Star this repo if you find it useful!
+## 🎲 **ROLL THE DICE. SHAPE YOUR DESTINY.**
 
-**Made with ❤️ for the RPG community**
+### ⭐ **Star this repo if you love rolling dice!** ⭐
 
-[⬆ Back to top](#-dndice)
+---
+
+![Dice](https://img.shields.io/badge/D20-CRITICAL_HIT-FFD700?style=for-the-badge)
+![RPG](https://img.shields.io/badge/RPG-APPROVED-FFD700?style=for-the-badge)
+![iOS](https://img.shields.io/badge/iOS-15.0+-FFD700?style=for-the-badge)
+
+---
+
+### 🎭 **Made with ❤️ for the tabletop community**
+
+*"May your rolls be high and your initiative higher"* ⚔️
+
+![Stars](https://img.shields.io/github/stars/DalPra0/DnDice?style=social)
+![Forks](https://img.shields.io/github/forks/DalPra0/DnDice?style=social)
+
+**⚠️ WARNING: This app may cause addiction to rolling dice**  
+**🎲 Side effects include: Perfect character creation, legendary loot, epic victories**
+
+---
+
+*Built with SwiftUI, powered by physics, blessed by the dice gods* 🎲✨  
+*NanoChallenge 2025 • Where code meets critical rolls*
+
+**"Natural 20 every time you open the app"** 🎯
+
+[⬆️ Back to Top](#-dndice-)
 
 </div>

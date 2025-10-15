@@ -38,6 +38,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         // Enable scene reconstruction if device supports it (better geometry for raycasts)
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             configuration.sceneReconstruction = .mesh
+
         }
 
         // Enable frame semantics for scene depth if available (improves occlusion)
@@ -85,7 +86,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     // MARK: - Throw Dice
-    func throwDice(force: Float, at screenPoint: CGPoint? = nil) {
+    func throwDice(force: Float, direction: SIMD3<Float> = SIMD3(0, -1, -1), at screenPoint: CGPoint? = nil) {
         
         guard surfaceDetected, let plane = detectedPlane else {
             return
@@ -119,23 +120,23 @@ class ARDiceCoordinator: NSObject, ObservableObject {
                 dice = findModel(in: loadedEntity)
                 
                 if let finalDice = dice {
-                    self.applyPhysicsAndThrow(to: finalDice, force: force, plane: plane, screenPoint: screenPoint)
+                    self.applyPhysicsAndThrow(to: finalDice, force: force, direction: direction, plane: plane, screenPoint: screenPoint)
                 } else {
-                    self.throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
+                    self.throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
                 }
                 
             } catch {
-                self.throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
+                self.throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
             }
             return
         }
         
         // Se chegou aqui, Bundle.main.url não encontrou
-        throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
+        throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
     }
     
     // MARK: - Helper: Aplicar física e jogar
-    private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, plane: AnchorEntity, screenPoint: CGPoint?) {
+    private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
         // Configura escala - MAIOR para visualizar melhor!
         dice.scale = [0.1, 0.1, 0.1] // 10cm (antes era 5cm)
@@ -173,11 +174,14 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             ))
         }
         
-        // Aplica força inicial (arremesso) - MENOR pra não sair voando
+        // 🎯 FÍSICA POKÉMON GO: Usa a DIREÇÃO do arrasto!
+        // direction.x = esquerda/direita (do seu arrasto)
+        // direction.y = cima/baixo (do seu arrasto)
+        // direction.z = profundidade (sempre pra frente)
         let throwDirection = SIMD3<Float>(
-            Float.random(in: -0.2...0.2), // Menos rotação lateral
-            -force * 0.5,                 // Metade da força (antes era *2)
-            Float.random(in: -0.2...0.2)  // Menos rotação frente/trás
+            direction.x * force * 0.3,  // Componente lateral
+            abs(direction.y) * force * 0.4, // Componente vertical (sempre pra cima)
+            direction.z * force * 0.5   // Componente frontal (pra frente)
         )
         
         dice.addForce(throwDirection, relativeTo: nil)
@@ -240,7 +244,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     // MARK: - Helper: Dado Fallback (esfera dourada)
-    private func throwFallbackDice(force: Float, plane: AnchorEntity, screenPoint: CGPoint?) {
+    private func throwFallbackDice(force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
         // Cria um dado fallback (esfera simples)
         let mesh = MeshResource.generateSphere(radius: 0.05) // 5cm de raio
@@ -278,11 +282,11 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             ))
         }
         
-        // Aplica força - MESMA do dado real
+        // 🎯 Aplica força - MESMA lógica do dado real (com direção!)
         let throwDirection = SIMD3<Float>(
-            Float.random(in: -0.2...0.2),
-            -force * 0.5,
-            Float.random(in: -0.2...0.2)
+            direction.x * force * 0.3,
+            abs(direction.y) * force * 0.4,
+            direction.z * force * 0.5
         )
         
         let randomTorque = SIMD3<Float>(

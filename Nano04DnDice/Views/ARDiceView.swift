@@ -15,7 +15,7 @@ struct ARDiceView: View {
     @ObservedObject var themeManager: ThemeManager
     
     @State private var isDragging = false
-    @State private var dragOffset: CGFloat = 0
+    @State private var dragOffset: CGSize = .zero
     @State private var showResult = false
     
     private var currentTheme: DiceCustomization {
@@ -115,79 +115,132 @@ struct ARDiceView: View {
         VStack(spacing: 12) {
             // Indicador visual
             if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
-                Text("ARRASTE PARA JOGAR")
+                Text("SEGURE E ARRASTE PARA ARREMESSAR")
                     .font(.custom("PlayfairDisplay-Bold", size: 14))
                     .foregroundColor(currentTheme.accentColor.color)
                     .tracking(2)
                     .opacity(isDragging ? 0.3 : 1.0)
             }
             
-            // Container do dado
+            // Container do dado - POKÉMON GO STYLE!
             ZStack {
-                // Fundo
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.white.opacity(0.1))
-                    .frame(width: 120, height: 120)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(
-                                arCoordinator.surfaceDetected ? currentTheme.accentColor.color : Color.gray,
-                                lineWidth: 2
+                // Dado 3D na sua "mão" (sempre visível quando não arremessado)
+                if !arCoordinator.isDiceThrown {
+                    ZStack {
+                        // Sombra/glow
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [
+                                        currentTheme.accentColor.color.opacity(0.3),
+                                        Color.clear
+                                    ]),
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 80
+                                )
                             )
-                    )
-                    .shadow(color: currentTheme.accentColor.color.opacity(0.3), radius: 10, x: 0, y: 4)
-                
-                // Ícone do dado
-                Image(systemName: "dice.fill")
-                    .font(.system(size: 50))
-                    .foregroundColor(arCoordinator.surfaceDetected ? currentTheme.accentColor.color : .gray)
-                
-                // Efeito de pulso quando superfície detectada
-                if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
-                    Circle()
-                        .stroke(currentTheme.accentColor.color, lineWidth: 2)
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(arCoordinator.pulseAnimation ? 1.2 : 1.0)
-                        .opacity(arCoordinator.pulseAnimation ? 0 : 0.8)
+                            .frame(width: 160, height: 160)
+                        
+                        // Ícone do dado GRANDE (você segura ele!)
+                        Image(systemName: "dice.fill")
+                            .font(.system(size: 70))
+                            .foregroundColor(currentTheme.accentColor.color)
+                            .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
+                        
+                        // Efeito de "segurar" - círculo ao redor
+                        Circle()
+                            .stroke(currentTheme.accentColor.color, lineWidth: 3)
+                            .frame(width: 100, height: 100)
+                            .opacity(isDragging ? 0.8 : 0.3)
+                            .scaleEffect(isDragging ? 1.1 : 1.0)
+                        
+                        // Efeito de pulso quando superfície detectada
+                        if arCoordinator.surfaceDetected {
+                            Circle()
+                                .stroke(currentTheme.accentColor.color, lineWidth: 2)
+                                .frame(width: 120, height: 120)
+                                .scaleEffect(arCoordinator.pulseAnimation ? 1.3 : 1.0)
+                                .opacity(arCoordinator.pulseAnimation ? 0 : 0.6)
+                        }
+                    }
+                    .offset(x: isDragging ? dragOffset.width : 0,
+                           y: isDragging ? dragOffset.height : 0)
+                    .scaleEffect(isDragging ? 1.2 : 1.0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDragging)
+                } else {
+                    // Dado foi arremessado - mostra feedback
+                    VStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.green)
+                        Text("Dado arremessado!")
+                            .font(.custom("PlayfairDisplay-Regular", size: 14))
+                            .foregroundColor(.white)
+                    }
+                    .transition(.scale.combined(with: .opacity))
                 }
             }
-            .offset(y: dragOffset)
+            .frame(height: 200)
             .gesture(
                 DragGesture()
                     .onChanged { value in
                         if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
                             isDragging = true
-                            // Só permite arrastar pra cima
-                            dragOffset = min(0, value.translation.height)
+                            dragOffset = CGSize(
+                                width: value.translation.width,
+                                height: value.translation.height
+                            )
                         }
                     }
                     .onEnded { value in
                         isDragging = false
                         
-                        // Se arrastou pra cima com força suficiente
-                        if value.translation.height < -50 && arCoordinator.surfaceDetected {
-                            // Calcula a força do arremesso baseado na velocidade
-                            let throwForce = min(abs(value.predictedEndTranslation.height) / 100, 5.0)
+                        // Calcula a força e direção do arremesso
+                        if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
                             
-                            // 🎯 POSIÇÃO DO TOQUE: Usa onde o dedo soltou (estilo Pokémon GO!)
+                            // Distância total do arrasto
+                            let dragDistance = sqrt(
+                                pow(value.translation.width, 2) +
+                                pow(value.translation.height, 2)
+                            )
+                            
+                            // Velocidade do arrasto
+                            let dragVelocity = sqrt(
+                                pow(value.predictedEndTranslation.width, 2) +
+                                pow(value.predictedEndTranslation.height, 2)
+                            )
+                            
+                            // Força baseada em distância E velocidade
+                            let throwForce = min((dragDistance + dragVelocity) / 150, 8.0)
+                            
+                            // Direção normalizada (-1 a 1 para X e Y)
+                            let directionX = Float(value.translation.width / max(dragDistance, 1))
+                            let directionY = Float(value.translation.height / max(dragDistance, 1))
+                            
+                            // Posição do toque (onde soltou)
                             let touchPoint = value.location
                             
-                            // Joga o dado ONDE VOCÊ TOCOU!
-                            arCoordinator.throwDice(force: Float(throwForce), at: touchPoint)
-                            
-                            // Feedback háptico
-                            let generator = UIImpactFeedbackGenerator(style: .heavy)
-                            generator.impactOccurred()
+                            if dragDistance > 30 { // Mínimo de arrasto para ativar
+                                // 🎯 ARREMESSA o dado com direção e força!
+                                arCoordinator.throwDice(
+                                    force: Float(throwForce),
+                                    direction: SIMD3<Float>(directionX, -directionY, -1),
+                                    at: touchPoint
+                                )
+                                
+                                // Feedback háptico FORTE
+                                let generator = UIImpactFeedbackGenerator(style: .heavy)
+                                generator.impactOccurred()
+                            }
                         }
                         
                         // Reseta a posição
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                            dragOffset = 0
+                            dragOffset = .zero
                         }
                     }
             )
-            .disabled(arCoordinator.isDiceThrown)
-            .opacity(arCoordinator.isDiceThrown ? 0.3 : 1.0)
         }
         .padding()
         .background(

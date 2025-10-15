@@ -24,47 +24,32 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        print("🎬 === AR DICE COORDINATOR INICIALIZADO ===")
-        print("📱 Device: \(UIDevice.current.name)")
-        print("📂 Bundle: \(Bundle.main.bundlePath)")
         
         // Debug: Lista arquivos .usdz IMEDIATAMENTE
         if let resourcePath = Bundle.main.resourcePath {
             let fileManager = FileManager.default
             if let allFiles = try? fileManager.contentsOfDirectory(atPath: resourcePath) {
                 let usdzFiles = allFiles.filter { $0.hasSuffix(".usdz") }
-                print("📦 Arquivos .usdz no bundle: \(usdzFiles.count) arquivo(s)")
                 if !usdzFiles.isEmpty {
                     print("✅ D20.usdz está no bundle? \(usdzFiles.contains("D20.usdz"))")
-                    print("📦 Lista: \(usdzFiles)")
                 } else {
-                    print("❌ NENHUM arquivo .usdz encontrado no bundle!")
                 }
             }
             
             // Verifica subpasta Models/
             let modelsPath = (resourcePath as NSString).appendingPathComponent("Models")
             if fileManager.fileExists(atPath: modelsPath) {
-                print("✅ Pasta Models/ existe")
                 if let modelFiles = try? fileManager.contentsOfDirectory(atPath: modelsPath) {
-                    print("📦 Arquivos em Models/: \(modelFiles)")
                 }
             } else {
-                print("❌ Pasta Models/ NÃO existe")
             }
         }
         
         // Testa Bundle.main.url
         if let url = Bundle.main.url(forResource: "D20", withExtension: "usdz") {
-            print("✅ Bundle.main.url ENCONTROU D20.usdz!")
-            print("📍 URL: \(url)")
-            print("📍 Path: \(url.path)")
-            print("📍 Arquivo existe? \(FileManager.default.fileExists(atPath: url.path))")
         } else {
-            print("❌ Bundle.main.url NÃO encontrou D20.usdz")
         }
         
-        print("🎬 === FIM DO DEBUG INICIAL ===\n")
         
         setupARView()
         startPulseAnimation()
@@ -77,16 +62,32 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         configuration.planeDetection = [.horizontal] // Detecta superfícies horizontais
         configuration.environmentTexturing = .automatic
         
+        // Enable scene reconstruction if device supports it (better geometry for raycasts)
+        if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
+            configuration.sceneReconstruction = .mesh
+        }
+
+        // Enable frame semantics for scene depth if available (improves occlusion)
+        if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+            configuration.frameSemantics.insert(.sceneDepth)
+        }
+
         arView.session.delegate = self
         arView.automaticallyConfigureSession = false
+        
+        // ⚡ CRÍTICO: Habilita física e gravidade no ARView
+        arView.environment.background = .cameraFeed()
+        
+        // Configura física global
+        var physicsOrigin = PhysicsBodyComponent()
+        physicsOrigin.mode = .static
+        
     }
     
     func startSession() {
-        print("🎥 === INICIANDO SESSÃO AR ===")
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal]
         arView.session.run(configuration)
-        print("✅ Sessão AR iniciada - aguardando detecção de superfície...")
     }
     
     func stopSession() {
@@ -111,65 +112,45 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     // MARK: - Throw Dice
-    func throwDice(force: Float) {
-        print("\n🎲 === THROW DICE CHAMADO! ===")
-        print("💪 Força: \(force)")
-        print("🔍 Superfície detectada? \(surfaceDetected)")
-        print("📍 Plane existe? \(detectedPlane != nil)")
+    func throwDice(force: Float, at screenPoint: CGPoint? = nil) {
         
         guard surfaceDetected, let plane = detectedPlane else {
-            print("⚠️ Superfície não detectada ou anchor nulo")
-            print("❌ Abortando arremesso!")
             return
         }
         
         isDiceThrown = true
         diceResult = nil
         
-        print("🔍 === INICIANDO CARGA DO D20.USDZ ===")
         
         // DEBUG: Verifica bundle resources
         if let resourcePath = Bundle.main.resourcePath {
-            print("📂 Bundle path: \(resourcePath)")
             let fileManager = FileManager.default
             
             // Lista TUDO no bundle
             if let allFiles = try? fileManager.contentsOfDirectory(atPath: resourcePath) {
                 let usdzFiles = allFiles.filter { $0.hasSuffix(".usdz") }
-                print("📦 Total de arquivos no bundle: \(allFiles.count)")
-                print("📦 Arquivos .usdz encontrados: \(usdzFiles)")
             }
             
             // Verifica subpastas
             let modelsPath = (resourcePath as NSString).appendingPathComponent("Models")
             if fileManager.fileExists(atPath: modelsPath) {
-                print("✅ Pasta Models existe em: \(modelsPath)")
                 if let modelFiles = try? fileManager.contentsOfDirectory(atPath: modelsPath) {
-                    print("📦 Arquivos em Models/: \(modelFiles)")
                 }
             } else {
-                print("❌ Pasta Models NÃO existe!")
             }
             
             // Busca recursiva por D20.usdz
             if let enumerator = fileManager.enumerator(atPath: resourcePath) {
                 let d20Files = enumerator.allObjects.compactMap { $0 as? String }.filter { $0.contains("D20") }
-                print("🔍 Arquivos com 'D20' no nome: \(d20Files)")
             }
         }
         
         // TENTATIVA 1: Bundle.main.url (MAIS CONFIÁVEL)
-        print("\n🔄 Tentativa 1: Bundle.main.url...")
         if let url = Bundle.main.url(forResource: "D20", withExtension: "usdz") {
-            print("✅ URL encontrada: \(url)")
-            print("📍 Path absoluto: \(url.path)")
-            print("📍 Arquivo existe? \(FileManager.default.fileExists(atPath: url.path))")
             
             // CARREGAMENTO SÍNCRONO (funciona melhor no RealityKit!)
-            print("⏳ Carregando modelo...")
             do {
                 let loadedEntity = try Entity.load(contentsOf: url)
-                print("✅ Entity carregado! Tipo: \(type(of: loadedEntity))")
                 
                 var dice: ModelEntity?
                 
@@ -189,32 +170,23 @@ class ARDiceCoordinator: NSObject, ObservableObject {
                 dice = findModel(in: loadedEntity)
                 
                 if let finalDice = dice {
-                    print("✅ ModelEntity encontrado!")
-                    self.applyPhysicsAndThrow(to: finalDice, force: force, plane: plane)
+                    self.applyPhysicsAndThrow(to: finalDice, force: force, plane: plane, screenPoint: screenPoint)
                 } else {
-                    print("❌ Nenhum ModelEntity com geometria encontrado!")
-                    print("🔍 Hierarquia: \(loadedEntity)")
-                    self.throwFallbackDice(force: force, plane: plane)
+                    self.throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
                 }
                 
             } catch {
-                print("❌ ERRO ao carregar: \(error)")
-                print("❌ Descrição: \(error.localizedDescription)")
                 self.throwFallbackDice(force: force, plane: plane)
             }
             return
         }
         
         // Se chegou aqui, Bundle.main.url não encontrou
-        print("❌ Bundle.main.url falhou!")
-        print("❌ TODAS as tentativas falharam!")
         throwFallbackDice(force: force, plane: plane)
     }
     
     // MARK: - Helper: Aplicar física e jogar
     private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, plane: AnchorEntity) {
-        print("\n🎲 Configurando dado...")
-        print("📏 Escala original: \(dice.scale)")
         
         // Configura escala - MAIOR para visualizar melhor!
         dice.scale = [0.1, 0.1, 0.1] // 10cm (antes era 5cm)
@@ -224,7 +196,6 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         // Z = -0.3 (30cm na frente da câmera, mais próximo)
         dice.position = [0, 0.3, -0.3]
         
-        print("📍 Posição do dado: \(dice.position)")
         
         // FÍSICA MELHORADA - collision mais precisa
         let physicsMaterial = PhysicsMaterialResource.generate(
@@ -233,24 +204,25 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             restitution: 0.2      // Pouco quique (mais realista)
         )
         
-        // Collision shape: BOX (mais preciso que esfera pro D20)
-        let collisionShape = ShapeResource.generateBox(
-            width: 0.1,   // 10cm
-            height: 0.1,  // 10cm  
-            depth: 0.1    // 10cm
-        )
+        // ⚡ CRÍTICO: Gera collision shapes automaticamente do modelo (evita atravessamento!)
+        dice.generateCollisionShapes(recursive: true)
         
+        // Sobrescreve com PhysicsBody
         dice.components.set(PhysicsBodyComponent(
             massProperties: .init(mass: 0.05), // 50g (peso de um dado real)
             material: physicsMaterial,
             mode: .dynamic
         ))
         
-        dice.components.set(CollisionComponent(
-            shapes: [collisionShape],
-            mode: .default,
-            filter: .default
-        ))
+        // Se generateCollisionShapes falhou, usa box como fallback
+        if dice.collision == nil {
+            let collisionShape = ShapeResource.generateBox(width: 0.1, height: 0.1, depth: 0.1)
+            dice.components.set(CollisionComponent(
+                shapes: [collisionShape],
+                mode: .default,
+                filter: .default
+            ))
+        }
         
         // Aplica força inicial (arremesso) - MENOR pra não sair voando
         let throwDirection = SIMD3<Float>(
@@ -269,26 +241,58 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         )
         dice.addTorque(randomTorque, relativeTo: nil)
         
-        print("💫 Força aplicada: \(throwDirection)")
-        print("🌀 Torque aplicado: \(randomTorque)")
+        // ⚡ POSICIONAMENTO ROBUSTO: Usa raycast para colocar o dado no mundo real
+        let centerPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
         
-        // Adiciona à cena
-        plane.addChild(dice)
-        diceEntity = dice
+        // Tenta múltiplas estratégias de raycast
+        var raycastResults = arView.raycast(from: centerPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
         
-        print("✅ Dado adicionado à cena!")
-        print("👁️ Olhe na câmera AR agora!")
+        if raycastResults.isEmpty {
+            // Fallback: tenta com estimated plane
+            raycastResults = arView.raycast(from: centerPoint, allowing: .estimatedPlane, alignment: .horizontal)
+        }
         
+        if let raycastResult = raycastResults.first {
+            let worldTransform = raycastResult.worldTransform
+            
+            // Extrai posição do mundo
+            let translation = SIMD3<Float>(
+                worldTransform.columns.3.x,
+                worldTransform.columns.3.y,
+                worldTransform.columns.3.z
+            )
+            
+            
+            // Cria ARAnchor no ponto exato
+            let arAnchor = ARAnchor(transform: worldTransform)
+            arView.session.add(anchor: arAnchor)
+            
+            let spawnAnchor = AnchorEntity(anchor: arAnchor)
+            
+            // Posiciona dado 30cm ACIMA do ponto detectado
+            dice.position = [0, 0.3, 0]
+            
+            spawnAnchor.addChild(dice)
+            arView.scene.addAnchor(spawnAnchor)
+            diceEntity = dice
+            
+        } else {
+            // Fallback: usa plane anchor
+            dice.position = [0, 0.3, -0.3]
+            plane.addChild(dice)
+            diceEntity = dice
+        }
+
+
         // Som de arremesso
         Nano04DnDice.AudioManager.shared.playDiceRoll()
-        
+
         // Inicia detecção de resultado
         startResultDetection()
     }
     
     // MARK: - Helper: Dado Fallback (esfera dourada)
     private func throwFallbackDice(force: Float, plane: AnchorEntity) {
-        print("\n🎲 Usando dado FALLBACK (esfera dourada)")
         
         // Cria um dado fallback (esfera simples)
         let mesh = MeshResource.generateSphere(radius: 0.05) // 5cm de raio
@@ -298,11 +302,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         material.roughness = .float(0.2)
         
         let fallbackDice = ModelEntity(mesh: mesh, materials: [material])
-        fallbackDice.position = [0, 0.3, -0.3] // Mesma posição do dado real
-        fallbackDice.scale = [1.0, 1.0, 1.0] // Escala normal
         
-        print("📍 Posição fallback: \(fallbackDice.position)")
-        print("📏 Escala fallback: \(fallbackDice.scale)")
         
         // Adiciona física - MESMA configuração do dado real
         let physicsMaterial = PhysicsMaterialResource.generate(
@@ -311,7 +311,8 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             restitution: 0.2
         )
         
-        let collisionShape = ShapeResource.generateSphere(radius: 0.05)
+        // Gera collision automática da esfera
+        fallbackDice.generateCollisionShapes(recursive: false)
         
         fallbackDice.components.set(PhysicsBodyComponent(
             massProperties: .init(mass: 0.05),
@@ -319,11 +320,15 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             mode: .dynamic
         ))
         
-        fallbackDice.components.set(CollisionComponent(
-            shapes: [collisionShape],
-            mode: .default,
-            filter: .default
-        ))
+        // Se collision auto falhou, usa sphere shape
+        if fallbackDice.collision == nil {
+            let collisionShape = ShapeResource.generateSphere(radius: 0.05)
+            fallbackDice.components.set(CollisionComponent(
+                shapes: [collisionShape],
+                mode: .default,
+                filter: .default
+            ))
+        }
         
         // Aplica força - MESMA do dado real
         let throwDirection = SIMD3<Float>(
@@ -331,23 +336,39 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             -force * 0.5,
             Float.random(in: -0.2...0.2)
         )
-        fallbackDice.addForce(throwDirection, relativeTo: nil)
         
         let randomTorque = SIMD3<Float>(
             Float.random(in: -3...3),
             Float.random(in: -3...3),
             Float.random(in: -3...3)
         )
+        
+        // ⚡ POSICIONAMENTO ROBUSTO (mesmo do dado principal)
+        let centerPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
+        var raycastResults = arView.raycast(from: centerPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
+        
+        if raycastResults.isEmpty {
+            raycastResults = arView.raycast(from: centerPoint, allowing: .estimatedPlane, alignment: .horizontal)
+        }
+        
+        if let raycastResult = raycastResults.first {
+            let worldTransform = raycastResult.worldTransform
+            let arAnchor = ARAnchor(transform: worldTransform)
+            arView.session.add(anchor: arAnchor)
+            let spawnAnchor = AnchorEntity(anchor: arAnchor)
+            fallbackDice.position = [0, 0.3, 0]
+            spawnAnchor.addChild(fallbackDice)
+            arView.scene.addAnchor(spawnAnchor)
+            diceEntity = fallbackDice
+        } else {
+            fallbackDice.position = [0, 0.3, -0.3]
+            plane.addChild(fallbackDice)
+            diceEntity = fallbackDice
+        }
+        
+        fallbackDice.addForce(throwDirection, relativeTo: nil)
         fallbackDice.addTorque(randomTorque, relativeTo: nil)
         
-        print("💫 Força fallback: \(throwDirection)")
-        print("🌀 Torque fallback: \(randomTorque)")
-        
-        plane.addChild(fallbackDice)
-        diceEntity = fallbackDice
-        
-        print("✅ Esfera dourada adicionada!")
-        print("👁️ Olhe na câmera AR agora!")
         
         Nano04DnDice.AudioManager.shared.playDiceRoll()
         startResultDetection()
@@ -366,7 +387,14 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         
         // Detecta qual face está pra cima analisando a orientação
         let rotation = dice.orientation
-        let eulerAngles = rotation.eulerAngles
+        
+        // Calcula euler angles diretamente
+        let x = atan2(2 * (rotation.vector.w * rotation.vector.x + rotation.vector.y * rotation.vector.z),
+                      1 - 2 * (rotation.vector.x * rotation.vector.x + rotation.vector.y * rotation.vector.y))
+        let y = asin(2 * (rotation.vector.w * rotation.vector.y - rotation.vector.z * rotation.vector.x))
+        let z = atan2(2 * (rotation.vector.w * rotation.vector.z + rotation.vector.x * rotation.vector.y),
+                      1 - 2 * (rotation.vector.y * rotation.vector.y + rotation.vector.z * rotation.vector.z))
+        let eulerAngles = SIMD3<Float>(x, y, z)
         
         // Lógica simplificada: mapeia rotação pra número de 1-20
         // (Em produção, você mapearia cada face específica do modelo)
@@ -406,13 +434,9 @@ extension ARDiceCoordinator: ARSessionDelegate {
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
         for anchor in anchors {
             if let planeAnchor = anchor as? ARPlaneAnchor {
-                print("🎯 === SUPERFÍCIE DETECTADA! ===")
-                print("📏 Tamanho: \(planeAnchor.planeExtent.width)m x \(planeAnchor.planeExtent.height)m")
-                print("📍 Posição: \(planeAnchor.transform)")
                 
                 DispatchQueue.main.async {
                     self.surfaceDetected = true
-                    print("✅ surfaceDetected = true")
                 }
                 
                 // Cria anchor entity na superfície detectada
@@ -421,8 +445,6 @@ extension ARDiceCoordinator: ARSessionDelegate {
                     arView.scene.addAnchor(anchorEntity)
                     detectedPlane = anchorEntity
                     
-                    print("✅ AnchorEntity criado e adicionado à cena")
-                    print("👆 Agora você pode ARRASTAR o dado pra cima!")
                     
                     // Adiciona um plano visual sutil
                     addSurfaceIndicator(to: anchorEntity, planeAnchor: planeAnchor)
@@ -433,12 +455,11 @@ extension ARDiceCoordinator: ARSessionDelegate {
     
     // MARK: - Surface Indicator
     private func addSurfaceIndicator(to anchor: AnchorEntity, planeAnchor: ARPlaneAnchor) {
+        // 🎯 SOLUÇÃO: Plano GIGANTE invisível que cobre todo o chão (10m x 10m)
+        // Assim o dado NUNCA cai infinito, não importa onde você jogue!
+        
+        // Mesh visual PEQUENO (só para indicar onde foi detectado)
         let extent = planeAnchor.planeExtent
-        
-        print("🏗️ Criando plano com física...")
-        print("📏 Dimensões: \(extent.width)m x \(extent.height)m")
-        
-        // Mesh visual
         let mesh = MeshResource.generatePlane(
             width: extent.width,
             depth: extent.height
@@ -447,31 +468,42 @@ extension ARDiceCoordinator: ARSessionDelegate {
         var material = SimpleMaterial()
         material.color = .init(tint: .white.withAlphaComponent(0.1))
         
-        let planeEntity = ModelEntity(mesh: mesh, materials: [material])
-        planeEntity.position = [0, 0, 0] // Centralizado no anchor
+        let visualPlane = ModelEntity(mesh: mesh, materials: [material])
+        visualPlane.position = [0, 0, 0]
         
-        // ⚡ ADICIONA FÍSICA AO PLANO (ESTÁTICO)
+        // ⚡ FÍSICA: Plano GIGANTE invisível (10m x 10m) - SEMPRE pega o dado!
+        let GIANT_SIZE: Float = 10.0 // 10 metros
         let planeShape = ShapeResource.generateBox(
-            width: extent.width,
-            height: 0.01, // 1cm de espessura
-            depth: extent.height
+            width: GIANT_SIZE,
+            height: 0.05, // 5cm de espessura para garantir colisão
+            depth: GIANT_SIZE
         )
         
-        planeEntity.components.set(PhysicsBodyComponent(
+        let physicsMaterial = PhysicsMaterialResource.generate(
+            staticFriction: 1.0,
+            dynamicFriction: 0.8,
+            restitution: 0.1 // Pouco bounce
+        )
+        
+        // Entidade INVISÍVEL com física gigante
+        let physicsPlane = ModelEntity()
+        physicsPlane.position = [0, -0.025, 0] // 2.5cm abaixo para centralizar a caixa
+        
+        physicsPlane.components.set(PhysicsBodyComponent(
             massProperties: .default,
-            material: nil,
+            material: physicsMaterial,
             mode: .static // ESTÁTICO = não se move, mas colide!
         ))
         
-        planeEntity.components.set(CollisionComponent(
+        physicsPlane.components.set(CollisionComponent(
             shapes: [planeShape],
             mode: .default,
             filter: .default
         ))
         
-        print("✅ Plano com física criado! (modo: static)")
-        
-        anchor.addChild(planeEntity)
+        // Adiciona ambos (visual pequeno + física gigante)
+        anchor.addChild(visualPlane)
+        anchor.addChild(physicsPlane)
     }
 }
 

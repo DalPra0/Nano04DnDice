@@ -24,33 +24,6 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        
-        // Debug: Lista arquivos .usdz IMEDIATAMENTE
-        if let resourcePath = Bundle.main.resourcePath {
-            let fileManager = FileManager.default
-            if let allFiles = try? fileManager.contentsOfDirectory(atPath: resourcePath) {
-                let usdzFiles = allFiles.filter { $0.hasSuffix(".usdz") }
-                if !usdzFiles.isEmpty {
-                    print("✅ D20.usdz está no bundle? \(usdzFiles.contains("D20.usdz"))")
-                } else {
-                }
-            }
-            
-            // Verifica subpasta Models/
-            let modelsPath = (resourcePath as NSString).appendingPathComponent("Models")
-            if fileManager.fileExists(atPath: modelsPath) {
-                if let modelFiles = try? fileManager.contentsOfDirectory(atPath: modelsPath) {
-                }
-            } else {
-            }
-        }
-        
-        // Testa Bundle.main.url
-        if let url = Bundle.main.url(forResource: "D20", withExtension: "usdz") {
-        } else {
-        }
-        
-        
         setupARView()
         startPulseAnimation()
     }
@@ -121,31 +94,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         isDiceThrown = true
         diceResult = nil
         
-        
-        // DEBUG: Verifica bundle resources
-        if let resourcePath = Bundle.main.resourcePath {
-            let fileManager = FileManager.default
-            
-            // Lista TUDO no bundle
-            if let allFiles = try? fileManager.contentsOfDirectory(atPath: resourcePath) {
-                let usdzFiles = allFiles.filter { $0.hasSuffix(".usdz") }
-            }
-            
-            // Verifica subpastas
-            let modelsPath = (resourcePath as NSString).appendingPathComponent("Models")
-            if fileManager.fileExists(atPath: modelsPath) {
-                if let modelFiles = try? fileManager.contentsOfDirectory(atPath: modelsPath) {
-                }
-            } else {
-            }
-            
-            // Busca recursiva por D20.usdz
-            if let enumerator = fileManager.enumerator(atPath: resourcePath) {
-                let d20Files = enumerator.allObjects.compactMap { $0 as? String }.filter { $0.contains("D20") }
-            }
-        }
-        
-        // TENTATIVA 1: Bundle.main.url (MAIS CONFIÁVEL)
+        // Tenta carregar o modelo D20.usdz
         if let url = Bundle.main.url(forResource: "D20", withExtension: "usdz") {
             
             // CARREGAMENTO SÍNCRONO (funciona melhor no RealityKit!)
@@ -262,15 +211,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         if let raycastResult = raycastResults.first {
             let worldTransform = raycastResult.worldTransform
             
-            // Extrai posição do mundo
-            let translation = SIMD3<Float>(
-                worldTransform.columns.3.x,
-                worldTransform.columns.3.y,
-                worldTransform.columns.3.z
-            )
-            
-            
-            // Cria ARAnchor no ponto exato
+            // Cria ARAnchor no ponto exato onde você tocou
             let arAnchor = ARAnchor(transform: worldTransform)
             arView.session.add(anchor: arAnchor)
             

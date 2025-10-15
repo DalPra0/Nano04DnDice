@@ -176,17 +176,17 @@ class ARDiceCoordinator: NSObject, ObservableObject {
                 }
                 
             } catch {
-                self.throwFallbackDice(force: force, plane: plane)
+                self.throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
             }
             return
         }
         
         // Se chegou aqui, Bundle.main.url não encontrou
-        throwFallbackDice(force: force, plane: plane)
+        throwFallbackDice(force: force, plane: plane, screenPoint: screenPoint)
     }
     
     // MARK: - Helper: Aplicar física e jogar
-    private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, plane: AnchorEntity) {
+    private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, plane: AnchorEntity, screenPoint: CGPoint?) {
         
         // Configura escala - MAIOR para visualizar melhor!
         dice.scale = [0.1, 0.1, 0.1] // 10cm (antes era 5cm)
@@ -241,15 +241,22 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         )
         dice.addTorque(randomTorque, relativeTo: nil)
         
-        // ⚡ POSICIONAMENTO ROBUSTO: Usa raycast para colocar o dado no mundo real
-        let centerPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
+        // ⚡ POSICIONAMENTO ROBUSTO: Usa raycast para colocar o dado ONDE VOCÊ TOCOU!
+        let raycastPoint: CGPoint
+        if let screenPoint = screenPoint {
+            // Usuário tocou em um ponto específico - usa esse ponto!
+            raycastPoint = screenPoint
+        } else {
+            // Fallback: centro da tela
+            raycastPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
+        }
         
-        // Tenta múltiplas estratégias de raycast
-        var raycastResults = arView.raycast(from: centerPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
+        // Tenta múltiplas estratégias de raycast NO PONTO ONDE VOCÊ TOCOU
+        var raycastResults = arView.raycast(from: raycastPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
         
         if raycastResults.isEmpty {
             // Fallback: tenta com estimated plane
-            raycastResults = arView.raycast(from: centerPoint, allowing: .estimatedPlane, alignment: .horizontal)
+            raycastResults = arView.raycast(from: raycastPoint, allowing: .estimatedPlane, alignment: .horizontal)
         }
         
         if let raycastResult = raycastResults.first {
@@ -292,7 +299,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     // MARK: - Helper: Dado Fallback (esfera dourada)
-    private func throwFallbackDice(force: Float, plane: AnchorEntity) {
+    private func throwFallbackDice(force: Float, plane: AnchorEntity, screenPoint: CGPoint?) {
         
         // Cria um dado fallback (esfera simples)
         let mesh = MeshResource.generateSphere(radius: 0.05) // 5cm de raio
@@ -343,12 +350,18 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             Float.random(in: -3...3)
         )
         
-        // ⚡ POSICIONAMENTO ROBUSTO (mesmo do dado principal)
-        let centerPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
-        var raycastResults = arView.raycast(from: centerPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
+        // ⚡ POSICIONAMENTO ROBUSTO (mesmo do dado principal - onde você tocou!)
+        let raycastPoint: CGPoint
+        if let screenPoint = screenPoint {
+            raycastPoint = screenPoint
+        } else {
+            raycastPoint = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
+        }
+        
+        var raycastResults = arView.raycast(from: raycastPoint, allowing: .existingPlaneGeometry, alignment: .horizontal)
         
         if raycastResults.isEmpty {
-            raycastResults = arView.raycast(from: centerPoint, allowing: .estimatedPlane, alignment: .horizontal)
+            raycastResults = arView.raycast(from: raycastPoint, allowing: .estimatedPlane, alignment: .horizontal)
         }
         
         if let raycastResult = raycastResults.first {

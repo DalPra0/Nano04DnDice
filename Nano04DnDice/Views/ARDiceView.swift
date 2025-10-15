@@ -169,8 +169,11 @@ struct ARDiceView: View {
                             // Calcula a força do arremesso baseado na velocidade
                             let throwForce = min(abs(value.predictedEndTranslation.height) / 100, 5.0)
                             
-                            // Joga o dado!
-                            arCoordinator.throwDice(force: Float(throwForce))
+                            // 🎯 POSIÇÃO DO TOQUE: Usa onde o dedo soltou (estilo Pokémon GO!)
+                            let touchPoint = value.location
+                            
+                            // Joga o dado ONDE VOCÊ TOCOU!
+                            arCoordinator.throwDice(force: Float(throwForce), at: touchPoint)
                             
                             // Feedback háptico
                             let generator = UIImpactFeedbackGenerator(style: .heavy)

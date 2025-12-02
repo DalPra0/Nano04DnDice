@@ -30,7 +30,6 @@ class AudioManager: ObservableObject {
         }
     }
     
-    // MARK: - Dice Sounds
     
     func playSFX(_ soundName: String, volume: Float = 1.0) {
         guard isSFXEnabled else { return }
@@ -54,7 +53,6 @@ class AudioManager: ObservableObject {
         }
     }
     
-    // MARK: - Specific Dice Sounds
     
     func playDiceRoll() {
         playSFX("dice_roll", volume: 0.8)

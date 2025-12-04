@@ -10,6 +10,7 @@
 		1531CBDE2E995784002E0D8B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDD2E995784002E0D8B /* WidgetKit.framework */; };
 		1531CBE02E995784002E0D8B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDF2E995784002E0D8B /* SwiftUI.framework */; };
 		1531CBEF2E995785002E0D8B /* DnDiceWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		155F48EC2EE213620076A7A7 /* DnDiceWatchApp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		15DDEF2C2E96E31B00360F5E /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = 15DDEF2B2E96E31B00360F5E /* Inject */; };
 /* End PBXBuildFile section */
 
@@ -20,6 +21,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1531CBDA2E995784002E0D8B;
 			remoteInfo = DnDiceWidgetExtension;
+		};
+		155F48EA2EE213620076A7A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 15DDEF0C2E96E2D600360F5E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 155F48E12EE213600076A7A7;
+			remoteInfo = "DnDiceWatchApp Watch App";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -35,12 +43,24 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		155F48F02EE213620076A7A7 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				155F48EC2EE213620076A7A7 /* DnDiceWatchApp Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DnDiceWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1531CBDD2E995784002E0D8B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		1531CBDF2E995784002E0D8B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DnDiceWatchApp Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DDEF142E96E2D600360F5E /* Nano04DnDice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nano04DnDice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -70,6 +90,11 @@
 			path = DnDiceWidget;
 			sourceTree = "<group>";
 		};
+		155F48E32EE213600076A7A7 /* DnDiceWatchApp Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "DnDiceWatchApp Watch App";
+			sourceTree = "<group>";
+		};
 		15DDEF162E96E2D600360F5E /* Nano04DnDice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -87,6 +112,13 @@
 			files = (
 				1531CBE02E995784002E0D8B /* SwiftUI.framework in Frameworks */,
 				1531CBDE2E995784002E0D8B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		155F48DF2EE213600076A7A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +147,7 @@
 			children = (
 				15DDEF162E96E2D600360F5E /* Nano04DnDice */,
 				1531CBE12E995784002E0D8B /* DnDiceWidget */,
+				155F48E32EE213600076A7A7 /* DnDiceWatchApp Watch App */,
 				1531CBDC2E995784002E0D8B /* Frameworks */,
 				15DDEF152E96E2D600360F5E /* Products */,
 			);
@@ -125,6 +158,7 @@
 			children = (
 				15DDEF142E96E2D600360F5E /* Nano04DnDice.app */,
 				1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */,
+				155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,6 +188,28 @@
 			productReference = 1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		155F48E12EE213600076A7A7 /* DnDiceWatchApp Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 155F48ED2EE213620076A7A7 /* Build configuration list for PBXNativeTarget "DnDiceWatchApp Watch App" */;
+			buildPhases = (
+				155F48DE2EE213600076A7A7 /* Sources */,
+				155F48DF2EE213600076A7A7 /* Frameworks */,
+				155F48E02EE213600076A7A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				155F48E32EE213600076A7A7 /* DnDiceWatchApp Watch App */,
+			);
+			name = "DnDiceWatchApp Watch App";
+			packageProductDependencies = (
+			);
+			productName = "DnDiceWatchApp Watch App";
+			productReference = 155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		15DDEF132E96E2D600360F5E /* Nano04DnDice */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 15DDEF252E96E2DA00360F5E /* Build configuration list for PBXNativeTarget "Nano04DnDice" */;
@@ -162,11 +218,13 @@
 				15DDEF112E96E2D600360F5E /* Frameworks */,
 				15DDEF122E96E2D600360F5E /* Resources */,
 				1531CBF42E995785002E0D8B /* Embed Foundation Extensions */,
+				155F48F02EE213620076A7A7 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				1531CBEE2E995785002E0D8B /* PBXTargetDependency */,
+				155F48EB2EE213620076A7A7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				15DDEF162E96E2D600360F5E /* Nano04DnDice */,
@@ -186,11 +244,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					1531CBDA2E995784002E0D8B = {
 						CreatedOnToolsVersion = 26.0;
+					};
+					155F48E12EE213600076A7A7 = {
+						CreatedOnToolsVersion = 26.1.1;
 					};
 					15DDEF132E96E2D600360F5E = {
 						CreatedOnToolsVersion = 26.0;
@@ -216,12 +277,20 @@
 			targets = (
 				15DDEF132E96E2D600360F5E /* Nano04DnDice */,
 				1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */,
+				155F48E12EE213600076A7A7 /* DnDiceWatchApp Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1531CBD92E995784002E0D8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		155F48E02EE213600076A7A7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -245,6 +314,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		155F48DE2EE213600076A7A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		15DDEF102E96E2D600360F5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -259,6 +335,11 @@
 			isa = PBXTargetDependency;
 			target = 1531CBDA2E995784002E0D8B /* DnDiceWidgetExtension */;
 			targetProxy = 1531CBED2E995785002E0D8B /* PBXContainerItemProxy */;
+		};
+		155F48EB2EE213620076A7A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 155F48E12EE213600076A7A7 /* DnDiceWatchApp Watch App */;
+			targetProxy = 155F48EA2EE213620076A7A7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -326,6 +407,72 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		155F48EE2EE213620076A7A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DnDiceWatchApp;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dalpra.Nano04DnDice;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Nano04DnDice.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.1;
+			};
+			name = Debug;
+		};
+		155F48EF2EE213620076A7A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 982D3NRR89;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = DnDiceWatchApp;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dalpra.Nano04DnDice;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dalpra.Nano04DnDice.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Release;
 		};
@@ -550,6 +697,15 @@
 			buildConfigurations = (
 				1531CBF12E995785002E0D8B /* Debug */,
 				1531CBF22E995785002E0D8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		155F48ED2EE213620076A7A7 /* Build configuration list for PBXNativeTarget "DnDiceWatchApp Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				155F48EE2EE213620076A7A7 /* Debug */,
+				155F48EF2EE213620076A7A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

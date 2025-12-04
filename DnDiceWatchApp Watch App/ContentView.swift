@@ -7,9 +7,10 @@
 
 import SwiftUI
 import WatchKit
+import Combine
 
 struct ContentView: View {
-    @StateObject private var viewModel = WatchDiceViewModel()
+    @StateObject private var viewModel = WatchDiceViewModel.shared
     @State private var isAnimating = false
     
     var body: some View {
@@ -198,6 +199,8 @@ struct RollButtonView: View {
 // MARK: - View Model
 
 class WatchDiceViewModel: ObservableObject {
+    static let shared = WatchDiceViewModel()
+    
     @Published var selectedDice: WatchDiceType = .d20
     @Published var lastResult: Int?
     @Published var isRolling = false
@@ -205,7 +208,7 @@ class WatchDiceViewModel: ObservableObject {
     
     private let historyKey = "watchRollHistory"
     
-    init() {
+    private init() {
         loadHistory()
     }
     

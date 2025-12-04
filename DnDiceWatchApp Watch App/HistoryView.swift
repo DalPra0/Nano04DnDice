@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import Combine
 
 struct HistoryView: View {
-    @StateObject private var viewModel = WatchDiceViewModel()
+    @StateObject private var viewModel = WatchDiceViewModel.shared
     
     var body: some View {
         List {

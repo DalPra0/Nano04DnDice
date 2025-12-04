@@ -46,7 +46,9 @@ struct DiceRollerView: View {
                         onShowAR: { viewModel.showARDice = true },
                         onShowHistory: { viewModel.showHistory = true },
                         onShowDetailedStats: { viewModel.showDetailedStats = true },
-                        onShowAudioSettings: { viewModel.showAudioSettings = true }
+                        onShowAudioSettings: { viewModel.showAudioSettings = true },
+                        onShowCampaignManager: { viewModel.showCampaignManager = true },
+                        onShowCharacterSheet: { viewModel.showCharacterSheet = true }
                     )
                     .zIndex(1000)
                 }
@@ -60,6 +62,12 @@ struct DiceRollerView: View {
             }
             .sheet(isPresented: $viewModel.showAudioSettings) {
                 AudioSettingsView(themeManager: themeManager)
+            }
+            .sheet(isPresented: $viewModel.showCampaignManager) {
+                CampaignManagerView()
+            }
+            .sheet(isPresented: $viewModel.showCharacterSheet) {
+                CharacterSheetView()
             }
             .sheet(isPresented: $viewModel.showThemesList) {
                 ThemesListView()

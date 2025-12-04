@@ -9,6 +9,8 @@ struct TopButtonsView: View {
     let onShowHistory: () -> Void
     let onShowDetailedStats: () -> Void
     let onShowAudioSettings: () -> Void
+    let onShowCampaignManager: () -> Void
+    let onShowCharacterSheet: () -> Void
     
     @State private var isMenuOpen = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
@@ -55,6 +57,38 @@ struct TopButtonsView: View {
                         
                         if isMenuOpen {
                             VStack(alignment: .trailing, spacing: 12) {
+                                MenuButton(
+                                    icon: "person.text.rectangle.fill",
+                                    title: "CHARACTER",
+                                    accentColor: accentColor,
+                                    action: {
+                                        if reduceMotion {
+                                            isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
+                                        }
+                                        onShowCharacterSheet()
+                                    }
+                                )
+                                
+                                MenuButton(
+                                    icon: "book.fill",
+                                    title: "CAMPAIGN",
+                                    accentColor: accentColor,
+                                    action: {
+                                        if reduceMotion {
+                                            isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
+                                        }
+                                        onShowCampaignManager()
+                                    }
+                                )
+                                
                                 MenuButton(
                                     icon: "speaker.wave.3.fill",
                                     title: "AUDIO",
@@ -201,20 +235,28 @@ struct MenuButton: View {
     
     private var accessibilityLabelText: String {
         switch title {
+        case "CHARACTER": return "Ficha de personagem"
+        case "CAMPAIGN": return "Gerenciador de campanha"
         case "HISTORY": return "Histórico de rolagens"
         case "AR DICE": return "Dado em realidade aumentada"
         case "THEMES": return "Temas"
         case "CUSTOMIZE": return "Customizar tema"
+        case "AUDIO": return "Configurações de áudio"
+        case "STATS": return "Estatísticas detalhadas"
         default: return title
         }
     }
     
     private var accessibilityHintText: String {
         switch title {
+        case "CHARACTER": return "Visualiza e edita ficha do personagem"
+        case "CAMPAIGN": return "Gerencia NPCs, inventário e campanhas"
         case "HISTORY": return "Visualiza estatísticas e histórico de rolagens anteriores"
         case "AR DICE": return "Abre visualização AR para jogar dado em 3D"
         case "THEMES": return "Escolhe um tema pré-definido"
         case "CUSTOMIZE": return "Cria seu próprio tema personalizado"
+        case "AUDIO": return "Personaliza efeitos sonoros"
+        case "STATS": return "Visualiza estatísticas avançadas e análises"
         default: return ""
         }
     }

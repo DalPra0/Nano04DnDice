@@ -26,6 +26,8 @@ class DiceRollerViewModel: ObservableObject {
     @Published var showHistory = false
     @Published var showDetailedStats = false
     @Published var showAudioSettings = false
+    @Published var showCampaignManager = false
+    @Published var showCharacterSheet = false
     
     private let audioManager = AudioManager.shared
     private let historyManager = DiceRollHistoryManager.shared

@@ -24,12 +24,11 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     private func setupARView() {
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = [.horizontal] // Detecta superfícies horizontais
+        configuration.planeDetection = [.horizontal]
         configuration.environmentTexturing = .automatic
         
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
             configuration.sceneReconstruction = .mesh
-
         }
 
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
@@ -38,12 +37,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
 
         arView.session.delegate = self
         arView.automaticallyConfigureSession = false
-        
         arView.environment.background = .cameraFeed()
-        
-        var physicsOrigin = PhysicsBodyComponent()
-        physicsOrigin.mode = .static
-        
     }
     
     func startSession() {
@@ -119,21 +113,18 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
-        dice.scale = [0.1, 0.1, 0.1] // 10cm (antes era 5cm)
-        
-        dice.position = [0, 0.3, -0.3]
-        
+        dice.scale = [0.1, 0.1, 0.1]
         
         let physicsMaterial = PhysicsMaterialResource.generate(
-            staticFriction: 1.0,  // Mais atrito (não desliza muito)
-            dynamicFriction: 0.8, // Atrito ao mover
-            restitution: 0.2      // Pouco quique (mais realista)
+            staticFriction: 1.0,
+            dynamicFriction: 0.8,
+            restitution: 0.2
         )
         
         dice.generateCollisionShapes(recursive: true)
         
         dice.components.set(PhysicsBodyComponent(
-            massProperties: .init(mass: 0.05), // 50g (peso de um dado real)
+            massProperties: .init(mass: 0.05),
             material: physicsMaterial,
             mode: .dynamic
         ))
@@ -146,21 +137,6 @@ class ARDiceCoordinator: NSObject, ObservableObject {
                 filter: .default
             ))
         }
-        
-        let throwDirection = SIMD3<Float>(
-            direction.x * force * 0.3,  // Componente lateral
-            abs(direction.y) * force * 0.4, // Componente vertical (sempre pra cima)
-            direction.z * force * 0.5   // Componente frontal (pra frente)
-        )
-        
-        dice.addForce(throwDirection, relativeTo: nil)
-        
-        let randomTorque = SIMD3<Float>(
-            Float.random(in: -3...3),  // Antes era -10...10
-            Float.random(in: -3...3),
-            Float.random(in: -3...3)
-        )
-        dice.addTorque(randomTorque, relativeTo: nil)
         
         let raycastPoint: CGPoint
         if let screenPoint = screenPoint {
@@ -177,40 +153,47 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         
         if let raycastResult = raycastResults.first {
             let worldTransform = raycastResult.worldTransform
-            
             let arAnchor = ARAnchor(transform: worldTransform)
             arView.session.add(anchor: arAnchor)
-            
             let spawnAnchor = AnchorEntity(anchor: arAnchor)
             
             dice.position = [0, 0.3, 0]
-            
             spawnAnchor.addChild(dice)
             arView.scene.addAnchor(spawnAnchor)
             diceEntity = dice
-            
         } else {
             dice.position = [0, 0.3, -0.3]
             plane.addChild(dice)
             diceEntity = dice
         }
-
+        
+        let throwDirection = SIMD3<Float>(
+            direction.x * force * 0.3,
+            abs(direction.y) * force * 0.4,
+            direction.z * force * 0.5
+        )
+        dice.addForce(throwDirection, relativeTo: nil)
+        
+        let randomTorque = SIMD3<Float>(
+            Float.random(in: -3...3),
+            Float.random(in: -3...3),
+            Float.random(in: -3...3)
+        )
+        dice.addTorque(randomTorque, relativeTo: nil)
 
         Nano04DnDice.AudioManager.shared.playDiceRoll()
-
         startResultDetection()
     }
     
     private func throwFallbackDice(force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
-        let mesh = MeshResource.generateSphere(radius: 0.05) // 5cm de raio
+        let mesh = MeshResource.generateSphere(radius: 0.05)
         var material = SimpleMaterial()
         material.color = .init(tint: .systemYellow)
         material.metallic = .float(0.8)
         material.roughness = .float(0.2)
         
         let fallbackDice = ModelEntity(mesh: mesh, materials: [material])
-        
         
         let physicsMaterial = PhysicsMaterialResource.generate(
             staticFriction: 1.0,
@@ -278,7 +261,6 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         fallbackDice.addForce(throwDirection, relativeTo: nil)
         fallbackDice.addTorque(randomTorque, relativeTo: nil)
         
-        
         Nano04DnDice.AudioManager.shared.playDiceRoll()
         startResultDetection()
     }
@@ -293,19 +275,12 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         guard let dice = diceEntity else { return }
         
         let rotation = dice.orientation
-        
-        let x = atan2(2 * (rotation.vector.w * rotation.vector.x + rotation.vector.y * rotation.vector.z),
-                      1 - 2 * (rotation.vector.x * rotation.vector.x + rotation.vector.y * rotation.vector.y))
-        let y = asin(2 * (rotation.vector.w * rotation.vector.y - rotation.vector.z * rotation.vector.x))
-        let z = atan2(2 * (rotation.vector.w * rotation.vector.z + rotation.vector.x * rotation.vector.y),
-                      1 - 2 * (rotation.vector.y * rotation.vector.y + rotation.vector.z * rotation.vector.z))
-        let eulerAngles = SIMD3<Float>(x, y, z)
-        
+        let eulerAngles = rotation.eulerAngles
         let result = mapRotationToD20Face(eulerAngles: eulerAngles)
         
         DispatchQueue.main.async {
             self.diceResult = result
-            self.isDiceThrown = false // Permite jogar novamente
+            self.isDiceThrown = false
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
                 dice.removeFromParent()
@@ -349,7 +324,6 @@ extension ARDiceCoordinator: ARSessionDelegate {
     }
     
     private func addSurfaceIndicator(to anchor: AnchorEntity, planeAnchor: ARPlaneAnchor) {
-        
         let extent = planeAnchor.planeExtent
         let mesh = MeshResource.generatePlane(
             width: extent.width,
@@ -362,26 +336,26 @@ extension ARDiceCoordinator: ARSessionDelegate {
         let visualPlane = ModelEntity(mesh: mesh, materials: [material])
         visualPlane.position = [0, 0, 0]
         
-        let GIANT_SIZE: Float = 10.0 // 10 metros
+        let GIANT_SIZE: Float = 10.0
         let planeShape = ShapeResource.generateBox(
             width: GIANT_SIZE,
-            height: 0.05, // 5cm de espessura para garantir colisão
+            height: 0.05,
             depth: GIANT_SIZE
         )
         
         let physicsMaterial = PhysicsMaterialResource.generate(
             staticFriction: 1.0,
             dynamicFriction: 0.8,
-            restitution: 0.1 // Pouco bounce
+            restitution: 0.1
         )
         
         let physicsPlane = ModelEntity()
-        physicsPlane.position = [0, -0.025, 0] // 2.5cm abaixo para centralizar a caixa
+        physicsPlane.position = [0, -0.025, 0]
         
         physicsPlane.components.set(PhysicsBodyComponent(
             massProperties: .default,
             material: physicsMaterial,
-            mode: .static // ESTÁTICO = não se move, mas colide!
+            mode: .static
         ))
         
         physicsPlane.components.set(CollisionComponent(

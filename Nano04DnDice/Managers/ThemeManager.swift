@@ -1,9 +1,3 @@
-//
-//  ThemeManager.swift
-//  Nano04DnDice
-//
-//  Gerenciador de temas e customizações
-//
 
 import SwiftUI
 import Combine
@@ -18,7 +12,6 @@ class ThemeManager: ObservableObject {
     private let currentThemeKey = "currentTheme"
     
     init() {
-        // Carregar tema atual ou usar o clássico
         if let data = UserDefaults.standard.data(forKey: currentThemeKey),
            let theme = try? JSONDecoder().decode(DiceCustomization.self, from: data) {
             self.currentTheme = theme
@@ -26,11 +19,9 @@ class ThemeManager: ObservableObject {
             self.currentTheme = PresetThemes.classic
         }
         
-        // Carregar temas salvos
         loadSavedThemes()
     }
     
-    // MARK: - Theme Management
     
     func applyTheme(_ theme: DiceCustomization) {
         currentTheme = theme
@@ -58,7 +49,6 @@ class ThemeManager: ObservableObject {
         return newTheme
     }
     
-    // MARK: - Persistence
     
     private func saveCurrentTheme() {
         if let encoded = try? JSONEncoder().encode(currentTheme) {
@@ -77,13 +67,11 @@ class ThemeManager: ObservableObject {
            let themes = try? JSONDecoder().decode([DiceCustomization].self, from: data) {
             self.savedThemes = themes
         } else {
-            // Se não há temas salvos, adicionar os presets
             self.savedThemes = PresetThemes.allThemes
             saveToDisk()
         }
     }
     
-    // MARK: - Preset Themes
     
     func loadPresetThemes() {
         let presets = PresetThemes.allThemes

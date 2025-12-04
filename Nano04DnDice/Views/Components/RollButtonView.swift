@@ -1,9 +1,3 @@
-//
-//  RollButtonView.swift
-//  Nano04DnDice
-//
-//  Componente - Botão de rolar COMPACTO
-//
 
 import SwiftUI
 
@@ -41,7 +35,6 @@ struct RollButtonView: View {
     #endif
 }
 
-// MARK: - Action Button Component
 
 struct ActionButton: View {
     let title: String

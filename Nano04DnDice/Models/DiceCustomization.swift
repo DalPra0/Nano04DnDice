@@ -1,9 +1,3 @@
-//
-//  DiceCustomization.swift
-//  Nano04DnDice
-//
-//  Modelo de customização visual dos dados
-//
 
 import SwiftUI
 
@@ -11,29 +5,23 @@ struct DiceCustomization: Codable, Identifiable {
     var id = UUID()
     var name: String
     
-    // Cores
     var diceFaceColor: CodableColor
     var diceBorderColor: CodableColor
     var diceNumberColor: CodableColor
     var backgroundColor: CodableColor
     var accentColor: CodableColor
     
-    // Background
     var backgroundType: BackgroundType
     var customBackgroundImageName: String?
     
-    // Textura do dado
     var diceTexture: DiceTexture
     
-    // Fonte
     var fontName: String
     
-    // Efeitos
     var glowIntensity: Double
     var shadowEnabled: Bool
     var particlesEnabled: Bool
     
-    // Gameplay
     var proficiencyBonus: Int
     
     enum BackgroundType: String, Codable {
@@ -51,7 +39,6 @@ struct DiceCustomization: Codable, Identifiable {
         case crystal
     }
     
-    // Inicializador padrão
     init(
         name: String = "Novo Tema",
         diceFaceColor: Color = .white,
@@ -85,7 +72,6 @@ struct DiceCustomization: Codable, Identifiable {
     }
 }
 
-// MARK: - CodableColor (para salvar Color no Core Data)
 
 struct CodableColor: Codable {
     var red: Double
@@ -111,7 +97,6 @@ struct CodableColor: Codable {
     }
 }
 
-// MARK: - Color Extension para Hex
 
 extension Color {
     init?(hex: String) {

@@ -1,9 +1,3 @@
-//
-//  AudioManager.swift
-//  Nano04DnDice
-//
-//  Sistema de áudio para dados de RPG
-//
 
 import AVFoundation
 import SwiftUI

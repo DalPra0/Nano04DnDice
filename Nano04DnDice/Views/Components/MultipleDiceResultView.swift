@@ -8,7 +8,6 @@ struct MultipleDiceResultView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Individual Results - MAIOR
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(Array(result.results.enumerated()), id: \.offset) { index, value in
@@ -30,7 +29,6 @@ struct MultipleDiceResultView: View {
             }
             .frame(height: 120)
             
-            // Total - MUITO MAIOR
             VStack(spacing: 8) {
                 Text("TOTAL")
                     .font(.custom("PlayfairDisplay-Bold", size: 16))
@@ -44,7 +42,6 @@ struct MultipleDiceResultView: View {
             .padding(.vertical, 8)
             .padding(.vertical, 8)
             
-            // Stats (if multiple dice) - MAIS COMPACTO
             if result.quantity > 1 {
                 HStack(spacing: 32) {
                     statItem(label: "AVG", value: String(format: "%.1f", result.average))
@@ -56,7 +53,6 @@ struct MultipleDiceResultView: View {
                 .padding(.top, 4)
             }
             
-            // Continue Button - MAIOR
             Button(action: onContinue) {
                 Text("CONTINUE")
                     .font(.custom("PlayfairDisplay-Bold", size: 20))

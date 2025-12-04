@@ -1,9 +1,3 @@
-//
-//  DiceRollerView.swift
-//  Nano04DnDice
-//
-//  Main View - PORTRAIT MODE - Dice on top, controls below
-//
 
 import SwiftUI
 
@@ -23,13 +17,11 @@ struct DiceRollerView: View {
     var body: some View {
         Group {
             if isLandscape {
-                // LANDSCAPE MODE
                 DiceRollerLandscapeView(
                     viewModel: viewModel,
                     themeManager: themeManager
                 )
             } else {
-                // PORTRAIT MODE
                 portraitView
             }
         }
@@ -42,14 +34,11 @@ struct DiceRollerView: View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
-                    // Background
                     currentTheme.backgroundColor.color
                         .ignoresSafeArea()
                     
-                    // Main Content - PORTRAIT LAYOUT (sem o TopButtons aqui)
                     mainContentPortrait(geometry: geometry)
                     
-                    // Menu Hambúrguer - POR CIMA DE TUDO
                     TopButtonsView(
                         accentColor: currentTheme.accentColor.color,
                         onShowThemes: { viewModel.showThemesList = true },
@@ -74,7 +63,6 @@ struct DiceRollerView: View {
                 )
             }
             .sheet(isPresented: $viewModel.showMultipleDice, onDismiss: {
-                // Limpa o resultado quando fechar o sheet
                 viewModel.multipleDiceResult = nil
             }) {
                 MultipleDiceSheet(
@@ -109,39 +97,31 @@ struct DiceRollerView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Portrait Layout
     
-    // MARK: - Main Content - PORTRAIT MODE
     
     private func mainContentPortrait(geometry: GeometryProxy) -> some View {
         let screenWidth = geometry.size.width
         let screenHeight = geometry.size.height
         
         return VStack(spacing: 0) {
-            // Espaçamento no topo para não cortar o ROLLING D20
             Spacer()
                 .frame(height: 50)
             
-            // TOP HALF - DICE DISPLAY (50% da tela)
             topSection(screenWidth: screenWidth, screenHeight: screenHeight)
                 .frame(height: screenHeight * 0.50)
             
-            // BOTTOM HALF - CONTROLS (50% da tela)
             bottomSection(screenWidth: screenWidth, screenHeight: screenHeight)
                 .frame(height: screenHeight * 0.50)
         }
     }
     
-    // MARK: - Top Section (Dice)
     
     private func topSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        // DADO MAIORZÃO - quase tocando nas laterais
         let diceSize = min(screenWidth * 0.92, screenHeight * 0.42)
         
         return VStack(spacing: 20) {
             Spacer(minLength: 0)
             
-            // Header compacto - NA FRENTE (zIndex alto)
             DiceHeaderView(
                 diceName: viewModel.selectedDiceType.name,
                 accentColor: currentTheme.accentColor.color,
@@ -149,7 +129,6 @@ struct DiceRollerView: View {
             )
             .zIndex(10)
             
-            // Dice Display - ENORME com mais espaçamento
             DiceDisplayView(
                 diceSize: diceSize,
                 currentNumber: viewModel.result ?? viewModel.currentRoll,
@@ -159,7 +138,6 @@ struct DiceRollerView: View {
                 accentColor: currentTheme.accentColor.color,
                 diceSides: viewModel.selectedDiceType.sides,
                 onRollComplete: { _ in 
-                    // Ignora o resultado do WebView, usa o currentRoll já calculado
                     viewModel.handleRollComplete(viewModel.currentRoll)
                 }
             )
@@ -172,11 +150,9 @@ struct DiceRollerView: View {
         .padding(.bottom, 24)
     }
     
-    // MARK: - Bottom Section (Controls)
     
     private func bottomSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
         VStack(spacing: 12) {
-            // Dice Selector - COM ESPAÇAMENTO DO DADO
             DiceSelectorView(
                 selectedDiceType: viewModel.selectedDiceType,
                 accentColor: currentTheme.accentColor.color,
@@ -186,7 +162,6 @@ struct DiceRollerView: View {
             )
             .padding(.top, 8)
             
-            // Roll Mode Selector - COLLAPSIBLE
             RollModeSelectorView(
                 selectedMode: viewModel.rollMode,
                 accentColor: currentTheme.accentColor.color,
@@ -194,7 +169,6 @@ struct DiceRollerView: View {
                 onSelectMode: viewModel.selectRollMode
             )
             
-            // Result or Roll Button
             if let multipleDiceResult = viewModel.multipleDiceResult {
                 MultipleDiceResultView(
                     result: multipleDiceResult,

@@ -1,9 +1,3 @@
-//
-//  ARDiceView.swift
-//  Nano04DnDice
-//
-//  AR Dice Experience - Pokemon GO Style
-//
 
 import SwiftUI
 import RealityKit
@@ -24,12 +18,10 @@ struct ARDiceView: View {
     
     var body: some View {
         ZStack {
-            // AR View (câmera + world tracking)
             ARViewContainer(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
-                // Header com botão de fechar
                 HStack {
                     Button(action: {
                         dismiss()
@@ -44,7 +36,6 @@ struct ARDiceView: View {
                     Spacer()
                 }
                 
-                // Instruções no topo
                 if !arCoordinator.surfaceDetected {
                     Text("Aponte a câmera para uma superfície plana")
                         .font(.custom("PlayfairDisplay-Regular", size: 16))
@@ -59,7 +50,6 @@ struct ARDiceView: View {
                 
                 Spacer()
                 
-                // Resultado do dado (quando parar de rolar)
                 if showResult, let result = arCoordinator.diceResult {
                     VStack(spacing: 8) {
                         Text("RESULTADO")
@@ -83,7 +73,6 @@ struct ARDiceView: View {
                 
                 Spacer()
                 
-                // Dado arrastável na parte de baixo (estilo Pokémon GO)
                 diceThrowArea
                     .padding(.bottom, 40)
             }
@@ -100,7 +89,6 @@ struct ARDiceView: View {
                     showResult = true
                 }
                 
-                // Esconde o resultado depois de 3 segundos
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     withAnimation {
                         showResult = false
@@ -110,10 +98,8 @@ struct ARDiceView: View {
         }
     }
     
-    // MARK: - Área do dado arrastável
     private var diceThrowArea: some View {
         VStack(spacing: 12) {
-            // Indicador visual
             if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
                 Text("SEGURE E ARRASTE PARA ARREMESSAR")
                     .font(.custom("PlayfairDisplay-Bold", size: 14))
@@ -122,12 +108,9 @@ struct ARDiceView: View {
                     .opacity(isDragging ? 0.3 : 1.0)
             }
             
-            // Container do dado - POKÉMON GO STYLE!
             ZStack {
-                // Dado 3D na sua "mão" (sempre visível quando não arremessado)
                 if !arCoordinator.isDiceThrown {
                     ZStack {
-                        // Sombra/glow
                         Circle()
                             .fill(
                                 RadialGradient(
@@ -142,20 +125,17 @@ struct ARDiceView: View {
                             )
                             .frame(width: 160, height: 160)
                         
-                        // Ícone do dado GRANDE (você segura ele!)
                         Image(systemName: "dice.fill")
                             .font(.system(size: 70))
                             .foregroundColor(currentTheme.accentColor.color)
                             .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
                         
-                        // Efeito de "segurar" - círculo ao redor
                         Circle()
                             .stroke(currentTheme.accentColor.color, lineWidth: 3)
                             .frame(width: 100, height: 100)
                             .opacity(isDragging ? 0.8 : 0.3)
                             .scaleEffect(isDragging ? 1.1 : 1.0)
                         
-                        // Efeito de pulso quando superfície detectada
                         if arCoordinator.surfaceDetected {
                             Circle()
                                 .stroke(currentTheme.accentColor.color, lineWidth: 2)
@@ -169,7 +149,6 @@ struct ARDiceView: View {
                     .scaleEffect(isDragging ? 1.2 : 1.0)
                     .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDragging)
                 } else {
-                    // Dado foi arremessado - mostra feedback
                     VStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50))
@@ -196,46 +175,37 @@ struct ARDiceView: View {
                     .onEnded { value in
                         isDragging = false
                         
-                        // Calcula a força e direção do arremesso
                         if arCoordinator.surfaceDetected && !arCoordinator.isDiceThrown {
                             
-                            // Distância total do arrasto
                             let dragDistance = sqrt(
                                 pow(value.translation.width, 2) +
                                 pow(value.translation.height, 2)
                             )
                             
-                            // Velocidade do arrasto
                             let dragVelocity = sqrt(
                                 pow(value.predictedEndTranslation.width, 2) +
                                 pow(value.predictedEndTranslation.height, 2)
                             )
                             
-                            // Força baseada em distância E velocidade
                             let throwForce = min((dragDistance + dragVelocity) / 150, 8.0)
                             
-                            // Direção normalizada (-1 a 1 para X e Y)
                             let directionX = Float(value.translation.width / max(dragDistance, 1))
                             let directionY = Float(value.translation.height / max(dragDistance, 1))
                             
-                            // Posição do toque (onde soltou)
                             let touchPoint = value.location
                             
                             if dragDistance > 30 { // Mínimo de arrasto para ativar
-                                // 🎯 ARREMESSA o dado com direção e força!
                                 arCoordinator.throwDice(
                                     force: Float(throwForce),
                                     direction: SIMD3<Float>(directionX, -directionY, -1),
                                     at: touchPoint
                                 )
                                 
-                                // Feedback háptico FORTE
                                 let generator = UIImpactFeedbackGenerator(style: .heavy)
                                 generator.impactOccurred()
                             }
                         }
                         
-                        // Reseta a posição
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                             dragOffset = .zero
                         }
@@ -251,7 +221,6 @@ struct ARDiceView: View {
     }
 }
 
-// MARK: - AR View Container (UIViewRepresentable)
 struct ARViewContainer: UIViewRepresentable {
     let coordinator: ARDiceCoordinator
     
@@ -260,6 +229,5 @@ struct ARViewContainer: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: ARView, context: Context) {
-        // Updates handled by coordinator
     }
 }

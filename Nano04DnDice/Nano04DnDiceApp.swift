@@ -1,7 +1,3 @@
-//
-//  Nano04DnDiceApp.swift
-//  Nano04DnDice
-//
 
 import SwiftUI
 import CoreData
@@ -23,8 +19,6 @@ struct Nano04DnDiceApp: App {
 #elseif canImport(Inject)
 @_exported import Inject
 #else
-// This code can be found in the Swift package:
-// https://github.com/johnno1962/HotSwiftUI
 
 #if DEBUG
 import Combine

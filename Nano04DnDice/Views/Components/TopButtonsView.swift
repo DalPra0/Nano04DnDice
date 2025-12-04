@@ -1,9 +1,3 @@
-//
-//  TopButtonsView.swift
-//  Nano04DnDice
-//
-//  Componente - Menu Hambúrguer com overlay
-//
 
 import SwiftUI
 
@@ -17,7 +11,6 @@ struct TopButtonsView: View {
     
     var body: some View {
         ZStack {
-            // Overlay escuro - TELA INTEIRA (atrás dos botões do menu)
             if isMenuOpen {
                 Color.black.opacity(0.75)
                     .ignoresSafeArea()
@@ -29,13 +22,11 @@ struct TopButtonsView: View {
                     .zIndex(998)
             }
             
-            // Menu no canto superior direito - POR CIMA DO OVERLAY
             VStack {
                 HStack {
                     Spacer()
                     
                     VStack(alignment: .trailing, spacing: 0) {
-                        // Botão Hambúrguer
                         Button(action: {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 isMenuOpen.toggle()
@@ -51,7 +42,6 @@ struct TopButtonsView: View {
                                 )
                         }
                         
-                        // Botões do Menu - abaixo do hambúrguer
                         if isMenuOpen {
                             VStack(alignment: .trailing, spacing: 12) {
                                 MenuButton(
@@ -110,7 +100,6 @@ struct TopButtonsView: View {
     #endif
 }
 
-// MARK: - Menu Button Component
 
 struct MenuButton: View {
     let icon: String

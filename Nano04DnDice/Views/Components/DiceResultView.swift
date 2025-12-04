@@ -1,9 +1,3 @@
-//
-//  DiceResultView.swift
-//  Nano04DnDice
-//
-//  Componente - Resultado COMPACTO
-//
 
 import SwiftUI
 
@@ -33,7 +27,6 @@ struct DiceResultView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            // Roll Mode Info
             if rollMode != .normal, let second = secondResult {
                 VStack(spacing: 4) {
                     Text(rollMode == .blessed ? "BLESSED" : "CURSED")
@@ -54,7 +47,6 @@ struct DiceResultView: View {
                 }
             }
             
-            // Result Number with Bonus
             if proficiencyBonus != 0 {
                 HStack(spacing: 4) {
                     Text("\(baseRoll)")
@@ -79,7 +71,6 @@ struct DiceResultView: View {
                     .foregroundColor(accentColor)
             }
             
-            // Critical/Fumble Text
             if let text = resultText {
                 Text(text)
                     .font(.custom("PlayfairDisplay-Black", size: 24))
@@ -87,7 +78,6 @@ struct DiceResultView: View {
                     .tracking(2)
             }
             
-            // Continue Button
             ActionButton(
                 title: "CONTINUE",
                 accentColor: accentColor,
@@ -103,7 +93,6 @@ struct DiceResultView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Computed Properties
     
     private var resultText: String? {
         if isCritical {

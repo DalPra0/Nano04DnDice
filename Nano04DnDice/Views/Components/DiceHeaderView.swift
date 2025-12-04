@@ -1,9 +1,3 @@
-//
-//  DiceHeaderView.swift
-//  Nano04DnDice
-//
-//  Componente - Header COMPACTO
-//
 
 import SwiftUI
 
@@ -16,7 +10,6 @@ struct DiceHeaderView: View {
         VStack(spacing: 8) {
             OrnamentalDivider(color: accentColor)
             
-            // ROLLING D** - Tudo em uma linha só
             HStack(spacing: 6) {
                 Text("ROLLING")
                     .font(.custom("PlayfairDisplay-Bold", size: 20))
@@ -40,7 +33,6 @@ struct DiceHeaderView: View {
     #endif
 }
 
-// MARK: - Ornamental Divider Component
 
 struct OrnamentalDivider: View {
     let color: Color

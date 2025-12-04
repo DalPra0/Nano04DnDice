@@ -1,9 +1,3 @@
-//
-//  DiceType.swift
-//  Nano04DnDice
-//
-//  Model - Tipos de dados disponíveis
-//
 
 import Foundation
 

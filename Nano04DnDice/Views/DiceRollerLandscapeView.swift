@@ -1,9 +1,3 @@
-//
-//  DiceRollerLandscapeView.swift
-//  Nano04DnDice
-//
-//  Landscape Mode - Quick roll interface
-//
 
 import SwiftUI
 
@@ -17,22 +11,18 @@ struct DiceRollerLandscapeView: View {
     
     var body: some View {
         ZStack {
-            // Background full screen pra cobrir tudo
             currentTheme.backgroundColor.color
                 .edgesIgnoringSafeArea(.all)
             
             GeometryReader { geometry in
                 HStack(spacing: 0) {
-                    // ESQUERDA: Dado 3D (50% da tela)
                     ZStack {
                         currentTheme.backgroundColor.color
                         
                         VStack(spacing: 20) {
                             Spacer()
                             
-                            // Dado 3D - CENTRALIZADO com retângulo
                             VStack(spacing: 16) {
-                                // Resultado acima do dado
                                 if let result = viewModel.result {
                                     VStack(spacing: 4) {
                                         Text("RESULT")
@@ -51,7 +41,6 @@ struct DiceRollerLandscapeView: View {
                                         .tracking(2)
                                 }
                                 
-                                // Dado 3D
                                 ThreeJSWebView(
                                     currentNumber: viewModel.result ?? 1,
                                     isRolling: viewModel.rolling,
@@ -82,18 +71,15 @@ struct DiceRollerLandscapeView: View {
                         }
                     }
                     
-                    // DIREITA: Seletor de dados + Botão (50% da tela)
                     VStack(spacing: 0) {
                         Spacer()
                         
                         VStack(spacing: 32) {
-                            // Header
                             Text(viewModel.selectedDiceType.shortName.uppercased())
                                 .font(.custom("PlayfairDisplay-Black", size: 36))
                                 .foregroundColor(currentTheme.accentColor.color)
                                 .tracking(1)
                             
-                            // Grid 2x3 com TODOS os dados - ALINHADO
                             VStack(spacing: 14) {
                                 HStack(spacing: 14) {
                                     diceButton(.d4)
@@ -110,7 +96,6 @@ struct DiceRollerLandscapeView: View {
                             }
                             .padding(.horizontal, 28)
                             
-                            // Botão ROLL - destaque
                             Button(action: {
                                 if !viewModel.rolling {
                                     viewModel.rollDice()

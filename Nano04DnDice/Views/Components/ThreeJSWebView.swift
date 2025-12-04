@@ -1,9 +1,3 @@
-//
-//  ThreeJSWebView.swift
-//  Nano04DnDice
-//
-//  WebView com Three.js para renderizar dado 3D
-//
 
 import SwiftUI
 import WebKit
@@ -28,7 +22,6 @@ struct ThreeJSWebView: UIViewRepresentable {
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
-        // Se mudou o tipo de dado, recarrega a cena
         if context.coordinator.currentDiceSides != diceSides {
             context.coordinator.currentDiceSides = diceSides
             loadThreeJSScene(webView: webView)
@@ -126,10 +119,8 @@ struct ThreeJSWebView: UIViewRepresentable {
                             const r = 0.6;  // raio do pentágono
                             const h = 1.0;  // altura de cada pirâmide
                             
-                            // Vértice superior (índice 0)
                             vertices10.push(0, h, 0);
                             
-                            // Pentágono no meio - 5 vértices (índices 1-5)
                             for (let i = 0; i < 5; i++) {
                                 const angle = (i * Math.PI * 2) / 5;
                                 vertices10.push(
@@ -139,19 +130,16 @@ struct ThreeJSWebView: UIViewRepresentable {
                                 );
                             }
                             
-                            // Vértice inferior (índice 6)
                             vertices10.push(0, -h, 0);
                             
                             const indices10 = [];
                             
-                            // 5 faces da pirâmide SUPERIOR
                             for (let i = 0; i < 5; i++) {
                                 const curr = i + 1;
                                 const next = ((i + 1) % 5) + 1;
                                 indices10.push(0, curr, next);
                             }
                             
-                            // 5 faces da pirâmide INFERIOR
                             for (let i = 0; i < 5; i++) {
                                 const curr = i + 1;
                                 const next = ((i + 1) % 5) + 1;
@@ -194,12 +182,10 @@ struct ThreeJSWebView: UIViewRepresentable {
                     });
                     
                     dice = new THREE.Mesh(geometry, material);
-                    // Rotação inicial mais agradável
                     dice.rotation.x = Math.PI * 0.15;
                     dice.rotation.y = Math.PI * 0.2;
                     scene.add(dice);
                     
-                    // EdgesGeometry com threshold de 10 graus - mostra apenas arestas principais
                     const edges = new THREE.EdgesGeometry(geometry, 10);
                     const line = new THREE.LineSegments(edges);
                     line.material.color.setHex(0xffd700);
@@ -268,7 +254,6 @@ struct ThreeJSWebView: UIViewRepresentable {
                             rollTime += 50;
                             setTimeout(rollAnimation, 50);
                         } else {
-                            // USA O NÚMERO QUE VEIO DO SWIFT
                             const finalResult = targetNumber;
                             currentNumber = finalResult;
                             updateNumberDisplay();

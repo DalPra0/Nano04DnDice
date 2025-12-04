@@ -1,9 +1,3 @@
-//
-//  CustomDiceSheet.swift
-//  Nano04DnDice
-//
-//  Componente - Modal para criar dado customizado
-//
 
 import SwiftUI
 
@@ -26,18 +20,14 @@ struct CustomDiceSheet: View {
                     
                     headerView
                     
-                    // Input Field
                     inputView
                     
-                    // Proficiency Bonus (logo abaixo do input)
                     bonusView
                     
-                    // Quick Select
                     quickSelectView
                     
                     Spacer()
                     
-                    // Confirm Button
                     confirmButton
                 }
             }
@@ -62,7 +52,6 @@ struct CustomDiceSheet: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Subviews
     
     private var headerView: some View {
         VStack(spacing: 16) {
@@ -194,7 +183,6 @@ struct CustomDiceSheet: View {
         .padding(.bottom, 40)
     }
     
-    // MARK: - Computed Properties
     
     private var isValidInput: Bool {
         if let sides = Int(diceSides) {

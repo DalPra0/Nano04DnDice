@@ -1,9 +1,3 @@
-//
-//  ThemeCustomizerView.swift
-//  Nano04DnDice
-//
-//  Tela de customização visual completa
-//
 
 import SwiftUI
 
@@ -34,31 +28,22 @@ struct ThemeCustomizerView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
-                        // Header
                         headerView
                         
-                        // Nome do Tema
                         themeNameSection
                         
-                        // Cores do Dado
                         diceColorsSection
                         
-                        // Cores do App
                         appColorsSection
                         
-                        // Textura
                         textureSection
                         
-                        // Fonte
                         fontSection
                         
-                        // Efeitos
                         effectsSection
                         
-                        // Preview
                         previewSection
                         
-                        // Buttons
                         buttonsSection
                     }
                     .padding(20)
@@ -91,7 +76,6 @@ struct ThemeCustomizerView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Components
     
     private var headerView: some View {
         VStack(spacing: 8) {
@@ -109,7 +93,6 @@ struct ThemeCustomizerView: View {
         .padding(.bottom, 10)
     }
     
-    // MARK: - Theme Name
     
     private var themeNameSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -130,7 +113,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Dice Colors
     
     private var diceColorsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -162,7 +144,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - App Colors
     
     private var appColorsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -182,7 +163,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Texture
     
     private var textureSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -242,7 +222,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Font
     
     private var fontSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -310,7 +289,6 @@ struct ThemeCustomizerView: View {
         return font.replacingOccurrences(of: "-", with: " ")
     }
     
-    // MARK: - Effects
     
     private var effectsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -349,7 +327,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Gameplay
     
     private var gameplaySection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -382,7 +359,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Preview
     
     private var previewSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -392,7 +368,6 @@ struct ThemeCustomizerView: View {
                 customTheme.backgroundColor.color
                 
                 VStack(spacing: 16) {
-                    // Preview Dice
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(
                             LinearGradient(
@@ -420,7 +395,6 @@ struct ThemeCustomizerView: View {
         }
     }
     
-    // MARK: - Buttons
     
     private var buttonsSection: some View {
         HStack(spacing: 16) {
@@ -456,7 +430,6 @@ struct ThemeCustomizerView: View {
         .padding(.top, 20)
     }
     
-    // MARK: - Helpers
     
     private func sectionHeader(title: String) -> some View {
         Text(title)
@@ -562,7 +535,6 @@ struct ThemeCustomizerView: View {
     }
 }
 
-// MARK: - Color Picker Sheet
 
 struct ColorPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -601,7 +573,6 @@ struct ColorPickerSheet: View {
     #endif
 }
 
-// MARK: - Extension
 
 extension ThemeCustomizerView.ColorPickerType: Identifiable {
     var id: String {

@@ -1,9 +1,3 @@
-//
-//  DiceBonusSheet.swift
-//  Nano04DnDice
-//
-//  Componente - Modal para configurar bônus de proficiência
-//
 
 import SwiftUI
 
@@ -49,7 +43,6 @@ struct DiceBonusSheet: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Subviews
     
     private var headerView: some View {
         VStack(spacing: 16) {
@@ -100,7 +93,6 @@ struct DiceBonusSheet: View {
                 .opacity(proficiencyBonus >= 10 ? 0.3 : 1.0)
             }
             
-            // Quick preset buttons
             HStack(spacing: 12) {
                 ForEach([0, 2, 5], id: \.self) { bonus in
                     Button(action: {

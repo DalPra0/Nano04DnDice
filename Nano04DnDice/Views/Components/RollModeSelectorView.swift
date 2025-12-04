@@ -1,9 +1,3 @@
-//
-//  RollModeSelectorView.swift
-//  Nano04DnDice
-//
-//  Component - COLLAPSIBLE Roll Mode Selector
-//
 
 import SwiftUI
 
@@ -17,7 +11,6 @@ struct RollModeSelectorView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header - Always visible (collapsible)
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded.toggle()
@@ -30,7 +23,6 @@ struct RollModeSelectorView: View {
                     
                     Spacer()
                     
-                    // Current mode indicator
                     Text(selectedMode.displayName)
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
                         .foregroundColor(accentColor)
@@ -51,7 +43,6 @@ struct RollModeSelectorView: View {
                 )
             }
             
-            // Expandable content
             if isExpanded {
                 VStack(spacing: 6) {
                     modeButton(.normal, icon: "circle", label: "Normal")
@@ -74,12 +65,10 @@ struct RollModeSelectorView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Subviews
     
     private func modeButton(_ mode: RollMode, icon: String, label: String) -> some View {
         Button(action: { 
             onSelectMode(mode)
-            // Fecha o accordion automaticamente após selecionar
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 isExpanded = false
             }

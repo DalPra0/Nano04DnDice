@@ -1,15 +1,8 @@
-//
-//  DiceRollerViewModel.swift
-//  Nano04DnDice
-//
-//  ViewModel principal - gerencia estado e lógica do dado
-//
 
 import SwiftUI
 import Combine
 
 class DiceRollerViewModel: ObservableObject {
-    // MARK: - Published Properties
     @Published var rolling = false
     @Published var result: Int?
     @Published var secondResult: Int?
@@ -30,10 +23,8 @@ class DiceRollerViewModel: ObservableObject {
     @Published var multipleDiceType: DiceType = .d6
     @Published var multipleDiceResult: MultipleDiceRoll?
     
-    // MARK: - Dependencies
     private let audioManager = AudioManager.shared
     
-    // MARK: - Computed Properties
     var hasResult: Bool {
         result != nil
     }
@@ -53,7 +44,6 @@ class DiceRollerViewModel: ObservableObject {
         return result >= (selectedDiceType.sides / 2)
     }
     
-    // MARK: - Public Methods
     
     func startAmbientAnimation() {
         withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
@@ -85,11 +75,9 @@ class DiceRollerViewModel: ObservableObject {
         result = nil
         secondResult = nil
         
-        // Calcula o resultado final ANTES de atribuir a currentRoll
         let firstRoll = Int.random(in: 1...selectedDiceType.sides)
         var finalRoll = firstRoll
         
-        // Handle blessed/cursed rolls
         if rollMode != .normal {
             let secondRoll = Int.random(in: 1...selectedDiceType.sides)
             secondResult = secondRoll
@@ -101,7 +89,6 @@ class DiceRollerViewModel: ObservableObject {
             }
         }
         
-        // Atribui apenas UMA VEZ para evitar o "pulo" de 2 números
         currentRoll = finalRoll
         
         audioManager.playDiceRoll()
@@ -110,7 +97,6 @@ class DiceRollerViewModel: ObservableObject {
             glowIntensity = 1.0
         }
         
-        // NÃO chama handleRollComplete aqui - deixa o WebView chamar quando a animação terminar
     }
     
     func handleRollComplete(_ finalResult: Int) {
@@ -121,7 +107,6 @@ class DiceRollerViewModel: ObservableObject {
             glowIntensity = 0.3
         }
         
-        // Crítico e fumble são baseados no DADO, não no total com bônus
         if finalResult == selectedDiceType.sides {
             audioManager.playCritical()
         } else if finalResult == 1 {

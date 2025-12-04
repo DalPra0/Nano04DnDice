@@ -1,9 +1,3 @@
-//
-//  RollMode.swift
-//  Nano04DnDice
-//
-//  Model - Roll Modes (Normal/Blessed/Cursed)
-//
 
 import Foundation
 

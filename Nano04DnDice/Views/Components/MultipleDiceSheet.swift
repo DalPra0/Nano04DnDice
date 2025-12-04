@@ -53,9 +53,7 @@ struct MultipleDiceSheet: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Components
     
-    // Setup completo (seleção de dados)
     private var setupView: some View {
         VStack(spacing: 32) {
             headerView
@@ -65,16 +63,13 @@ struct MultipleDiceSheet: View {
         }
     }
     
-    // Resultado dos dados
     private func resultView(_ roll: MultipleDiceRoll) -> some View {
         VStack(spacing: 0) {
-            // Header discreto
             Text(roll.displayName)
                 .font(.custom("PlayfairDisplay-Bold", size: 20))
                 .foregroundColor(accentColor.opacity(0.6))
                 .padding(.bottom, 32)
             
-            // TOTAL - Gigante e protagonista
             VStack(spacing: 8) {
                 Text("TOTAL")
                     .font(.custom("PlayfairDisplay-Bold", size: 18))
@@ -88,7 +83,6 @@ struct MultipleDiceSheet: View {
             }
             .padding(.vertical, 20)
             
-            // Dados individuais - horizontal, elegante
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     ForEach(Array(roll.results.enumerated()), id: \.offset) { index, value in
@@ -99,7 +93,6 @@ struct MultipleDiceSheet: View {
             }
             .padding(.vertical, 24)
             
-            // Stats - uma linha, compacto
             if roll.quantity > 1 {
                 HStack(spacing: 0) {
                     Spacer()
@@ -123,19 +116,16 @@ struct MultipleDiceSheet: View {
         }
     }
     
-    // Card individual de cada dado
     private func diceResultCard(value: Int, maxValue: Int, index: Int) -> some View {
         let isCritical = value == maxValue
         let isFumble = value == 1
         let cardColor: Color = isCritical ? .green : (isFumble ? .red : accentColor)
         
         return VStack(spacing: 8) {
-            // Número do dado - grande
             Text("\(value)")
                 .font(.custom("PlayfairDisplay-Black", size: 48))
                 .foregroundColor(cardColor)
             
-            // Índice discreto
             Text("dice \(index)")
                 .font(.custom("PlayfairDisplay-Regular", size: 11))
                 .foregroundColor(.white.opacity(0.5))
@@ -153,7 +143,6 @@ struct MultipleDiceSheet: View {
         )
     }
     
-    // Stats individuais
     private func statItem(label: String, value: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
@@ -166,7 +155,6 @@ struct MultipleDiceSheet: View {
         }
     }
     
-    // Botão Continue (quando tem resultado)
     private var continueButton: some View {
         Button(action: {
             dismiss()
@@ -184,7 +172,6 @@ struct MultipleDiceSheet: View {
         .padding(.horizontal, 20)
     }
     
-    // MARK: - Original Components
     
     private var headerView: some View {
         VStack(spacing: 8) {
@@ -302,7 +289,6 @@ struct MultipleDiceSheet: View {
     private var rollButton: some View {
         Button(action: {
             onConfirm()
-            // NÃO fecha o sheet - resultado vai aparecer aqui mesmo
         }) {
             Text("ROLL \(quantity)D\(diceType.sides)")
                 .font(.custom("PlayfairDisplay-Bold", size: 20))

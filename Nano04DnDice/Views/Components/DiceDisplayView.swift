@@ -1,9 +1,3 @@
-//
-//  DiceDisplayView.swift
-//  Nano04DnDice
-//
-//  Componente - Exibição do dado 3D - DADO MAIOR DENTRO DO FRAME
-//
 
 import SwiftUI
 
@@ -19,7 +13,6 @@ struct DiceDisplayView: View {
     
     var body: some View {
         ZStack {
-            // Border
             RoundedRectangle(cornerRadius: 20)
                 .stroke(
                     LinearGradient(
@@ -36,7 +29,6 @@ struct DiceDisplayView: View {
                 .frame(width: diceSize, height: diceSize)
                 .shadow(color: diceBorderColor.opacity(0.5), radius: 16)
             
-            // Background
             RoundedRectangle(cornerRadius: 18)
                 .fill(
                     RadialGradient(
@@ -51,7 +43,6 @@ struct DiceDisplayView: View {
                 )
                 .frame(width: diceSize - 6, height: diceSize - 6)
             
-            // Dice 3D - MAIORZÃO - padding mínimo
             ThreeJSWebView(
                 currentNumber: currentNumber,
                 isRolling: isRolling,

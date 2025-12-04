@@ -1,9 +1,3 @@
-//
-//  PresetThemes.swift
-//  Nano04DnDice
-//
-//  Temas pré-definidos do app
-//
 
 import SwiftUI
 

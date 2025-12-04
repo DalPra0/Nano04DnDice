@@ -1,9 +1,3 @@
-//
-//  ThemesListView.swift
-//  Nano04DnDice
-//
-//  Lista de temas salvos e presets
-//
 
 import SwiftUI
 
@@ -22,10 +16,8 @@ struct ThemesListView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Header
                         headerView
                         
-                        // Preset Themes
                         sectionHeader(title: "PRESET THEMES", icon: "star.fill")
                         
                         ForEach(PresetThemes.allThemes) { theme in
@@ -39,7 +31,6 @@ struct ThemesListView: View {
                             .background(Color.white.opacity(0.3))
                             .padding(.vertical, 10)
                         
-                        // Custom Themes
                         sectionHeader(title: "MY THEMES", icon: "paintbrush.fill")
                         
                         let customThemes = themeManager.savedThemes.filter { theme in
@@ -97,7 +88,6 @@ struct ThemesListView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Components
     
     private var headerView: some View {
         VStack(spacing: 8) {
@@ -156,7 +146,6 @@ struct ThemesListView: View {
     }
 }
 
-// MARK: - Theme Card View
 
 struct ThemeCardView: View {
     let theme: DiceCustomization
@@ -168,10 +157,8 @@ struct ThemeCardView: View {
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 16) {
-                // Color Preview
                 colorPreview
                 
-                // Theme Info
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(theme.name)
@@ -191,7 +178,6 @@ struct ThemeCardView: View {
                         .foregroundColor(.white.opacity(0.6))
                 }
                 
-                // Delete Button
                 if showDeleteButton {
                     Button(action: {
                         onDelete?()

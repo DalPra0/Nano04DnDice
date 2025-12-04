@@ -1,9 +1,3 @@
-//
-//  DiceSelectorView.swift
-//  Nano04DnDice
-//
-//  Componente - Grid COMPACTO
-//
 
 import SwiftUI
 
@@ -16,14 +10,12 @@ struct DiceSelectorView: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            // Standard Dice
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                 ForEach([DiceType.d4, .d6, .d8, .d10, .d12, .d20], id: \.self) { dice in
                     diceButton(dice)
                 }
             }
             
-            // Custom Dice & Multiple Dice Buttons
             HStack(spacing: 8) {
                 customDiceButton
                 multipleDiceButton
@@ -36,7 +28,6 @@ struct DiceSelectorView: View {
     @ObserveInjection var forceRedraw
     #endif
     
-    // MARK: - Subviews
     
     private func diceButton(_ dice: DiceType) -> some View {
         Button(action: { onSelectDice(dice) }) {

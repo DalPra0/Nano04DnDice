@@ -103,8 +103,8 @@ struct AddCharacterView: View {
             intelligence: intelligence,
             wisdom: wisdom,
             charisma: charisma,
-            maxHitPoints: calculateHP(),
-            hitPoints: calculateHP()
+            hitPoints: calculateHP(),
+            maxHitPoints: calculateHP()
         )
         manager.addCharacter(character)
         dismiss()

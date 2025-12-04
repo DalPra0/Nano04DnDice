@@ -45,6 +45,9 @@ struct DiceSelectorView: View {
                         )
                 )
         }
+        .accessibilityLabel("Dado de \(dice.sides) lados")
+        .accessibilityHint(selectedDiceType == dice ? "Selecionado" : "Toque para selecionar")
+        .accessibilityAddTraits(selectedDiceType == dice ? [.isButton, .isSelected] : .isButton)
     }
     
     private var customDiceButton: some View {
@@ -67,6 +70,9 @@ struct DiceSelectorView: View {
                     )
             )
         }
+        .accessibilityLabel(selectedDiceType.isCustom ? "Dado customizado de \(selectedDiceType.sides) lados" : "Dado customizado")
+        .accessibilityHint(selectedDiceType.isCustom ? "Selecionado. Toque para editar" : "Toque para configurar dado customizado")
+        .accessibilityAddTraits(selectedDiceType.isCustom ? [.isButton, .isSelected] : .isButton)
     }
     
     private var multipleDiceButton: some View {
@@ -89,5 +95,7 @@ struct DiceSelectorView: View {
                     )
             )
         }
+        .accessibilityLabel("Múltiplos dados")
+        .accessibilityHint("Toque para rolar vários dados ao mesmo tempo")
     }
 }

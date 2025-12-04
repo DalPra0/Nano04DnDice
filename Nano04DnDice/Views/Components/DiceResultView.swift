@@ -44,6 +44,8 @@ struct DiceResultView: View {
                             .font(.custom("PlayfairDisplay-Bold", size: 24))
                             .foregroundColor(accentColor)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Rolou \(baseRoll) e \(second), usando \(baseRoll)")
                 }
             }
             
@@ -65,10 +67,13 @@ struct DiceResultView: View {
                         .font(.custom("PlayfairDisplay-Black", size: 48))
                         .foregroundColor(accentColor)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Resultado: \(baseRoll) mais \(proficiencyBonus) igual a \(result)")
             } else {
                 Text("\(result)")
                     .font(.custom("PlayfairDisplay-Black", size: 56))
                     .foregroundColor(accentColor)
+                    .accessibilityLabel("Resultado: \(result)")
             }
             
             if let text = resultText {
@@ -76,6 +81,7 @@ struct DiceResultView: View {
                     .font(.custom("PlayfairDisplay-Black", size: 24))
                     .foregroundColor(resultColor)
                     .tracking(2)
+                    .accessibilityLabel(text == "CRITICAL!" ? "Crítico!" : text == "FUMBLE!" ? "Falha crítica!" : text)
             }
             
             ActionButton(
@@ -85,6 +91,8 @@ struct DiceResultView: View {
                 glowIntensity: glowIntensity,
                 action: onContinue
             )
+            .accessibilityLabel("Continuar")
+            .accessibilityHint("Toque para rolar novamente")
         }
         .enableInjection()
     }

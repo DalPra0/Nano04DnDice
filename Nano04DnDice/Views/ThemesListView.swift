@@ -103,6 +103,8 @@ struct ThemesListView: View {
                 .foregroundColor(.white.opacity(0.7))
         }
         .padding(.bottom, 20)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Escolha seu tema. Selecione um tema ou crie o seu próprio")
     }
     
     private func sectionHeader(title: String, icon: String) -> some View {
@@ -117,6 +119,9 @@ struct ThemesListView: View {
             Spacer()
         }
         .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(title)
+        .accessibilityAddTraits(.isHeader)
     }
     
     private var emptyStateView: some View {
@@ -143,6 +148,8 @@ struct ThemesListView: View {
                         .fill(Color.white.opacity(0.05))
                 )
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Nenhum tema customizado ainda. Use customizar para criar seu primeiro tema")
     }
 }
 
@@ -187,6 +194,8 @@ struct ThemeCardView: View {
                             .padding(8)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Deletar tema \(theme.name)")
+                    .accessibilityHint("Toque para excluir este tema")
                 }
             }
             .padding(16)
@@ -212,6 +221,9 @@ struct ThemeCardView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(theme.name). \(theme.diceTexture.rawValue)\(isCurrentTheme ? ". Selecionado" : "")")
+        .accessibilityHint(isCurrentTheme ? "" : "Toque para aplicar este tema")
+        .accessibilityAddTraits(isCurrentTheme ? [.isButton, .isSelected] : .isButton)
         .enableInjection()
     }
 

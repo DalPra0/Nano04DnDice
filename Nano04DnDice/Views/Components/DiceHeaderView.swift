@@ -22,6 +22,8 @@ struct DiceHeaderView: View {
             }
             .lineLimit(1)
             .minimumScaleFactor(0.6)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Rolando \(diceName)")
             
             OrnamentalDivider(color: accentColor)
         }

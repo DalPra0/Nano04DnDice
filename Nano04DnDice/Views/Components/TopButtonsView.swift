@@ -8,6 +8,7 @@ struct TopButtonsView: View {
     let onShowAR: () -> Void
     
     @State private var isMenuOpen = false
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     var body: some View {
         ZStack {
@@ -28,8 +29,12 @@ struct TopButtonsView: View {
                     
                     VStack(alignment: .trailing, spacing: 0) {
                         Button(action: {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            if reduceMotion {
                                 isMenuOpen.toggle()
+                            } else {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    isMenuOpen.toggle()
+                                }
                             }
                         }) {
                             Image(systemName: "line.3.horizontal")
@@ -41,6 +46,9 @@ struct TopButtonsView: View {
                                         .fill(Color.white.opacity(0.1))
                                 )
                         }
+                        .accessibilityLabel(isMenuOpen ? "Fechar menu" : "Abrir menu")
+                        .accessibilityHint("Menu com opções de AR, temas e customização")
+                        .accessibilityAddTraits(.isButton)
                         
                         if isMenuOpen {
                             VStack(alignment: .trailing, spacing: 12) {
@@ -49,8 +57,12 @@ struct TopButtonsView: View {
                                     title: "AR DICE",
                                     accentColor: accentColor,
                                     action: {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        if reduceMotion {
                                             isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
                                         }
                                         onShowAR()
                                     }
@@ -61,8 +73,12 @@ struct TopButtonsView: View {
                                     title: "THEMES",
                                     accentColor: accentColor,
                                     action: {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        if reduceMotion {
                                             isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
                                         }
                                         onShowThemes()
                                     }
@@ -73,8 +89,12 @@ struct TopButtonsView: View {
                                     title: "CUSTOMIZE",
                                     accentColor: accentColor,
                                     action: {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        if reduceMotion {
                                             isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
                                         }
                                         onShowCustomizer()
                                     }
@@ -123,7 +143,27 @@ struct MenuButton: View {
                     .fill(accentColor)
             )
         }
+        .accessibilityLabel(accessibilityLabelText)
+        .accessibilityHint(accessibilityHintText)
         .enableInjection()
+    }
+    
+    private var accessibilityLabelText: String {
+        switch title {
+        case "AR DICE": return "Dado em realidade aumentada"
+        case "THEMES": return "Temas"
+        case "CUSTOMIZE": return "Customizar tema"
+        default: return title
+        }
+    }
+    
+    private var accessibilityHintText: String {
+        switch title {
+        case "AR DICE": return "Abre visualização AR para jogar dado em 3D"
+        case "THEMES": return "Escolhe um tema pré-definido"
+        case "CUSTOMIZE": return "Cria seu próprio tema personalizado"
+        default: return ""
+        }
     }
 
     #if DEBUG

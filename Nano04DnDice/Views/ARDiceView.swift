@@ -7,6 +7,7 @@ struct ARDiceView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var arCoordinator = ARDiceCoordinator()
     @ObservedObject var themeManager: ThemeManager
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     @State private var isDragging = false
     @State private var dragOffset: CGSize = .zero
@@ -31,6 +32,8 @@ struct ARDiceView: View {
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                     }
+                    .accessibilityLabel("Fechar visualização AR")
+                    .accessibilityHint("Volta para a tela principal")
                     .padding(20)
                     
                     Spacer()
@@ -46,6 +49,8 @@ struct ARDiceView: View {
                                 .fill(Color.black.opacity(0.6))
                         )
                         .padding(.top, 20)
+                        .accessibilityLabel("Procurando superfície")
+                        .accessibilityHint("Mova o dispositivo lentamente sobre uma superfície plana como mesa ou chão")
                 }
                 
                 Spacer()
@@ -69,6 +74,9 @@ struct ARDiceView: View {
                     )
                     .padding(.bottom, 200)
                     .transition(.scale.combined(with: .opacity))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Resultado: \(result)")
+                    .accessibilityAddTraits(.updatesFrequently)
                 }
                 
                 Spacer()
@@ -84,14 +92,24 @@ struct ARDiceView: View {
             arCoordinator.stopSession()
         }
         .onChange(of: arCoordinator.diceResult) { oldValue, newResult in
-            if newResult != nil {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            if let result = newResult {
+                if reduceMotion {
                     showResult = true
+                } else {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        showResult = true
+                    }
                 }
                 
+                UIAccessibility.post(notification: .announcement, argument: "Resultado: \(result)")
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation {
+                    if reduceMotion {
                         showResult = false
+                    } else {
+                        withAnimation {
+                            showResult = false
+                        }
                     }
                 }
             }
@@ -106,6 +124,8 @@ struct ARDiceView: View {
                     .foregroundColor(currentTheme.accentColor.color)
                     .tracking(2)
                     .opacity(isDragging ? 0.3 : 1.0)
+                    .accessibilityLabel("Arraste o dado para arremessar")
+                    .accessibilityHint("Arraste em qualquer direção. Quanto mais longe, mais forte o arremesso")
             }
             
             ZStack {
@@ -147,7 +167,22 @@ struct ARDiceView: View {
                     .offset(x: isDragging ? dragOffset.width : 0,
                            y: isDragging ? dragOffset.height : 0)
                     .scaleEffect(isDragging ? 1.2 : 1.0)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isDragging)
+                    .animation(reduceMotion ? .none : .spring(response: 0.3, dampingFraction: 0.6), value: isDragging)
+                    .accessibilityLabel(arCoordinator.surfaceDetected ? "Dado pronto para arremessar" : "Aguardando detecção de superfície")
+                    .accessibilityHint(arCoordinator.surfaceDetected ? "Toque duas vezes para arremessar com força média para frente" : "")
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityAction {
+                        if arCoordinator.surfaceDetected {
+                            arCoordinator.throwDice(
+                                force: 4.0,
+                                direction: SIMD3<Float>(0, 0, -1),
+                                at: CGPoint(x: 200, y: 400)
+                            )
+                            UIAccessibility.post(notification: .announcement, argument: "Dado arremessado")
+                            let generator = UIImpactFeedbackGenerator(style: .heavy)
+                            generator.impactOccurred()
+                        }
+                    }
                 } else {
                     VStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
@@ -158,6 +193,9 @@ struct ARDiceView: View {
                             .foregroundColor(.white)
                     }
                     .transition(.scale.combined(with: .opacity))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Dado arremessado")
+                    .accessibilityHint("Aguardando resultado")
                 }
             }
             .frame(height: 200)
@@ -206,8 +244,12 @@ struct ARDiceView: View {
                             }
                         }
                         
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                        if reduceMotion {
                             dragOffset = .zero
+                        } else {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                dragOffset = .zero
+                            }
                         }
                     }
             )

@@ -16,6 +16,8 @@ struct RollButtonView: View {
                 Text(rollMode == .blessed ? "BLESSED" : "CURSED")
                     .font(.custom("PlayfairDisplay-Bold", size: 14))
                     .foregroundColor(rollMode == .blessed ? .green : .red)
+                    .accessibilityLabel(rollMode == .blessed ? "Modo abençoado" : "Modo amaldiçoado")
+                    .accessibilityHint(rollMode == .blessed ? "Rola dois dados e usa o maior" : "Rola dois dados e usa o menor")
             }
             
             ActionButton(
@@ -26,6 +28,9 @@ struct RollButtonView: View {
                 disabled: isRolling,
                 action: onRoll
             )
+            .accessibilityLabel(isRolling ? "Rolando dado" : "Rolar dado de \(diceType.sides) lados")
+            .accessibilityHint(isRolling ? "" : "Toque para rolar o dado")
+            .accessibilityAddTraits(isRolling ? .updatesFrequently : [])
         }
         .enableInjection()
     }
@@ -72,6 +77,8 @@ struct ActionButton: View {
         .disabled(disabled)
         .scaleEffect(disabled ? 0.95 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: disabled)
+        .accessibilityAddTraits(disabled ? .isButton : [.isButton])
+        .accessibilityValue(disabled ? "Desabilitado" : "")
         .enableInjection()
     }
 

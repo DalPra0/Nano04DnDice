@@ -8,12 +8,17 @@ struct RollModeSelectorView: View {
     let onSelectMode: (RollMode) -> Void
     
     @State private var isExpanded: Bool = false
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     var body: some View {
         VStack(spacing: 0) {
             Button(action: {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                if reduceMotion {
                     isExpanded.toggle()
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        isExpanded.toggle()
+                    }
                 }
             }) {
                 HStack {
@@ -42,6 +47,9 @@ struct RollModeSelectorView: View {
                         )
                 )
             }
+            .accessibilityLabel("Modo de rolagem: \(selectedMode.displayName)")
+            .accessibilityHint(isExpanded ? "Toque para fechar opções" : "Toque para ver opções de modo")
+            .accessibilityAddTraits(.isButton)
             
             if isExpanded {
                 VStack(spacing: 6) {
@@ -69,8 +77,12 @@ struct RollModeSelectorView: View {
     private func modeButton(_ mode: RollMode, icon: String, label: String) -> some View {
         Button(action: { 
             onSelectMode(mode)
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            if reduceMotion {
                 isExpanded = false
+            } else {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isExpanded = false
+                }
             }
         }) {
             HStack(spacing: 8) {
@@ -91,6 +103,25 @@ struct RollModeSelectorView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(selectedMode == mode ? accentColor : Color.clear)
             )
+        }
+        .accessibilityLabel(accessibilityLabelForMode(mode))
+        .accessibilityHint(accessibilityHintForMode(mode))
+        .accessibilityAddTraits(selectedMode == mode ? [.isButton, .isSelected] : .isButton)
+    }
+    
+    private func accessibilityLabelForMode(_ mode: RollMode) -> String {
+        switch mode {
+        case .normal: return "Modo normal"
+        case .blessed: return "Modo abençoado"
+        case .cursed: return "Modo amaldiçoado"
+        }
+    }
+    
+    private func accessibilityHintForMode(_ mode: RollMode) -> String {
+        switch mode {
+        case .normal: return "Rola um dado normalmente"
+        case .blessed: return "Rola dois dados e usa o maior resultado"
+        case .cursed: return "Rola dois dados e usa o menor resultado"
         }
     }
 }

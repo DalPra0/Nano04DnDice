@@ -1,0 +1,209 @@
+
+import SwiftUI
+
+struct DiceRollHistoryView: View {
+    @Environment(\.dismiss) var dismiss
+    @StateObject private var historyManager = DiceRollHistoryManager.shared
+    @State private var showStatistics = false
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color.black.opacity(0.95)
+                    .ignoresSafeArea()
+                
+                if historyManager.history.isEmpty {
+                    emptyStateView
+                } else {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            statisticsCard
+                            
+                            Divider()
+                                .background(Color.white.opacity(0.3))
+                                .padding(.vertical, 10)
+                            
+                            VStack(spacing: 12) {
+                                ForEach(historyManager.history) { entry in
+                                    HistoryEntryCard(entry: entry)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 20)
+                        }
+                        .padding(.top, 20)
+                    }
+                }
+            }
+            .navigationTitle("Roll History")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                    .foregroundColor(Color(hex: "#FFD700"))
+                }
+                
+                if !historyManager.history.isEmpty {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            historyManager.clearHistory()
+                        }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                        }
+                        .accessibilityLabel("Clear history")
+                    }
+                }
+            }
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "clock.arrow.circlepath")
+                .font(.system(size: 70))
+                .foregroundColor(.white.opacity(0.3))
+            
+            Text("No Roll History")
+                .font(.custom("PlayfairDisplay-Bold", size: 24))
+                .foregroundColor(.white)
+            
+            Text("Your dice rolls will appear here")
+                .font(.custom("PlayfairDisplay-Regular", size: 14))
+                .foregroundColor(.white.opacity(0.6))
+        }
+    }
+    
+    private var statisticsCard: some View {
+        let stats = historyManager.getStatistics()
+        
+        return VStack(spacing: 16) {
+            Text("Statistics")
+                .font(.custom("PlayfairDisplay-Bold", size: 22))
+                .foregroundColor(.white)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                StatItem(label: "Total Rolls", value: "\(stats.totalRolls)")
+                StatItem(label: "Average", value: String(format: "%.1f", stats.averageRoll))
+                StatItem(label: "Criticals", value: "\(stats.criticals)", color: .green)
+                StatItem(label: "Fumbles", value: "\(stats.fumbles)", color: .red)
+                StatItem(label: "Highest", value: "\(stats.highestRoll)")
+                StatItem(label: "Lowest", value: "\(stats.lowestRoll)")
+            }
+            
+            Text("Most Used: \(stats.mostUsedDice)")
+                .font(.custom("PlayfairDisplay-Regular", size: 14))
+                .foregroundColor(Color(hex: "#FFD700"))
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.black.opacity(0.6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
+        )
+        .padding(.horizontal, 20)
+    }
+}
+
+struct HistoryEntryCard: View {
+    let entry: DiceRollEntry
+    
+    private var timeAgo: String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return formatter.localizedString(for: entry.timestamp, relativeTo: Date())
+    }
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(entry.diceType.name)
+                        .font(.custom("PlayfairDisplay-Bold", size: 18))
+                        .foregroundColor(.white)
+                    
+                    if entry.rollMode != .normal {
+                        Text(entry.rollMode.displayName.uppercased())
+                            .font(.custom("PlayfairDisplay-Bold", size: 10))
+                            .foregroundColor(entry.rollMode == .blessed ? .green : .red)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill((entry.rollMode == .blessed ? Color.green : Color.red).opacity(0.2))
+                            )
+                    }
+                }
+                
+                Text(timeAgo)
+                    .font(.custom("PlayfairDisplay-Regular", size: 12))
+                    .foregroundColor(.white.opacity(0.5))
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 8) {
+                if let second = entry.secondResult {
+                    Text("[\(second)]")
+                        .font(.custom("PlayfairDisplay-Regular", size: 16))
+                        .foregroundColor(.white.opacity(0.4))
+                        .strikethrough()
+                }
+                
+                Text("\(entry.result)")
+                    .font(.custom("PlayfairDisplay-Black", size: 32))
+                    .foregroundColor(entry.isCritical ? .green : entry.isFumble ? .red : Color(hex: "#FFD700"))
+                
+                if entry.isCritical {
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.green)
+                } else if entry.isFumble {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.red)
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.5))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+}
+
+struct StatItem: View {
+    let label: String
+    let value: String
+    var color: Color = .white
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.custom("PlayfairDisplay-Black", size: 24))
+                .foregroundColor(color)
+            
+            Text(label)
+                .font(.custom("PlayfairDisplay-Regular", size: 12))
+                .foregroundColor(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.black.opacity(0.3))
+        )
+    }
+}
+
+#Preview {
+    DiceRollHistoryView()
+}

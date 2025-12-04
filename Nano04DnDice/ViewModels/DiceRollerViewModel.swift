@@ -23,7 +23,12 @@ class DiceRollerViewModel: ObservableObject {
     @Published var multipleDiceType: DiceType = .d6
     @Published var multipleDiceResult: MultipleDiceRoll?
     
+    @Published var showHistory = false
+    @Published var showDetailedStats = false
+    @Published var showAudioSettings = false
+    
     private let audioManager = AudioManager.shared
+    private let historyManager = DiceRollHistoryManager.shared
     
     var hasResult: Bool {
         result != nil
@@ -71,9 +76,17 @@ class DiceRollerViewModel: ObservableObject {
     }
     
     func rollDice() {
+        guard !rolling else {
+            print("[Dice] Already rolling, ignoring tap")
+            return
+        }
+        
         rolling = true
         result = nil
         secondResult = nil
+        
+        let haptic = UIImpactFeedbackGenerator(style: .medium)
+        haptic.impactOccurred()
         
         let firstRoll = Int.random(in: 1...selectedDiceType.sides)
         var finalRoll = firstRoll
@@ -103,14 +116,37 @@ class DiceRollerViewModel: ObservableObject {
         result = finalResult + proficiencyBonus
         rolling = false
         
+        let entry = DiceRollEntry(
+            diceType: selectedDiceType,
+            result: finalResult + proficiencyBonus,
+            secondResult: secondResult,
+            rollMode: rollMode,
+            proficiencyBonus: proficiencyBonus
+        )
+        historyManager.addRoll(entry)
+        
+        // Save to shared UserDefaults for widget
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.yourcompany.Nano04DnDice") {
+            sharedDefaults.set(finalResult + proficiencyBonus, forKey: "lastDiceResult")
+            sharedDefaults.set(selectedDiceType.name, forKey: "lastDiceType")
+            sharedDefaults.set(Date(), forKey: "lastRollDate")
+        }
+        
         withAnimation(.easeInOut(duration: 0.5)) {
             glowIntensity = 0.3
         }
         
         if finalResult == selectedDiceType.sides {
             audioManager.playCritical()
+            let haptic = UINotificationFeedbackGenerator()
+            haptic.notificationOccurred(.success)
         } else if finalResult == 1 {
             audioManager.playFumble()
+            let haptic = UINotificationFeedbackGenerator()
+            haptic.notificationOccurred(.error)
+        } else {
+            let haptic = UIImpactFeedbackGenerator(style: .light)
+            haptic.impactOccurred()
         }
     }
     
@@ -122,8 +158,16 @@ class DiceRollerViewModel: ObservableObject {
     }
     
     func rollMultipleDice() {
+        guard !rolling else {
+            print("[Dice] Already rolling, ignoring tap")
+            return
+        }
+        
         rolling = true
         multipleDiceResult = nil
+        
+        let haptic = UIImpactFeedbackGenerator(style: .heavy)
+        haptic.impactOccurred()
         
         var results: [Int] = []
         for _ in 0..<multipleDiceQuantity {
@@ -146,8 +190,15 @@ class DiceRollerViewModel: ObservableObject {
         
         if hasCritical {
             audioManager.playCritical()
+            let haptic = UINotificationFeedbackGenerator()
+            haptic.notificationOccurred(.success)
         } else if hasFumble {
             audioManager.playFumble()
+            let haptic = UINotificationFeedbackGenerator()
+            haptic.notificationOccurred(.error)
+        } else {
+            let haptic = UIImpactFeedbackGenerator(style: .light)
+            haptic.impactOccurred()
         }
     }
 }

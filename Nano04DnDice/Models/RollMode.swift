@@ -1,7 +1,6 @@
-
 import Foundation
 
-enum RollMode: String, CaseIterable {
+enum RollMode: String, CaseIterable, Codable {
     case normal = "Normal"
     case blessed = "Blessed"
     case cursed = "Cursed"

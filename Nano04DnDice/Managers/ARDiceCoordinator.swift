@@ -49,6 +49,26 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     func stopSession() {
         arView.session.pause()
         resultCheckTimer?.invalidate()
+        cleanup()
+    }
+    
+    private func cleanup() {
+        resultCheckTimer?.invalidate()
+        resultCheckTimer = nil
+        
+        diceEntity?.removeFromParent()
+        diceEntity = nil
+        
+        detectedPlane?.removeFromParent()
+        detectedPlane = nil
+        
+        cancellables.removeAll()
+        
+        arView.scene.anchors.removeAll()
+    }
+    
+    deinit {
+        cleanup()
     }
     
     private func startPulseAnimation() {
@@ -99,13 +119,17 @@ class ARDiceCoordinator: NSObject, ObservableObject {
                 if let finalDice = dice {
                     self.applyPhysicsAndThrow(to: finalDice, force: force, direction: direction, plane: plane, screenPoint: screenPoint)
                 } else {
+                    print("[AR] Warning: No ModelEntity found in D20.usdz, using fallback sphere")
                     self.throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
                 }
                 
             } catch {
+                print("[AR] Error loading D20.usdz: \(error.localizedDescription)")
                 self.throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
             }
             return
+        } else {
+            print("[AR] Error: D20.usdz not found in bundle at Resources/Models/D20.usdz")
         }
         
         throwFallbackDice(force: force, direction: direction, plane: plane, screenPoint: screenPoint)
@@ -274,9 +298,11 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     private func detectDiceResult() {
         guard let dice = diceEntity else { return }
         
+        // Get the dice's current orientation in world space
         let rotation = dice.orientation
-        let eulerAngles = rotation.eulerAngles
-        let result = mapRotationToD20Face(eulerAngles: eulerAngles)
+        
+        // Detect which face is pointing up using normal vectors
+        let result = detectTopFace(orientation: rotation)
         
         DispatchQueue.main.async {
             self.diceResult = result
@@ -289,16 +315,56 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         }
     }
     
-    private func mapRotationToD20Face(eulerAngles: SIMD3<Float>) -> Int {
+    /// Detects which face of the D20 is pointing up using face normal vectors
+    private func detectTopFace(orientation: simd_quatf) -> Int {
+        // D20 (icosahedron) face normals in local space
+        // Each normal corresponds to a face value (1-20)
+        let faceNormals: [SIMD3<Float>] = [
+            SIMD3<Float>(0, 1, 0),           // Face 1
+            SIMD3<Float>(0.8944, 0.4472, 0), // Face 2
+            SIMD3<Float>(0.2764, 0.4472, 0.8506), // Face 3
+            SIMD3<Float>(-0.7236, 0.4472, 0.5257), // Face 4
+            SIMD3<Float>(-0.7236, 0.4472, -0.5257), // Face 5
+            SIMD3<Float>(0.2764, 0.4472, -0.8506), // Face 6
+            SIMD3<Float>(0.7236, -0.4472, 0.5257), // Face 7
+            SIMD3<Float>(-0.2764, -0.4472, 0.8506), // Face 8
+            SIMD3<Float>(-0.8944, -0.4472, 0), // Face 9
+            SIMD3<Float>(-0.2764, -0.4472, -0.8506), // Face 10
+            SIMD3<Float>(0.7236, -0.4472, -0.5257), // Face 11
+            SIMD3<Float>(0, -1, 0),          // Face 12
+            SIMD3<Float>(0.5257, 0.8507, 0), // Face 13
+            SIMD3<Float>(-0.5257, 0.8507, 0), // Face 14
+            SIMD3<Float>(0, 0.8507, 0.5257), // Face 15
+            SIMD3<Float>(0, 0.8507, -0.5257), // Face 16
+            SIMD3<Float>(0, -0.8507, 0.5257), // Face 17
+            SIMD3<Float>(0, -0.8507, -0.5257), // Face 18
+            SIMD3<Float>(0.5257, -0.8507, 0), // Face 19
+            SIMD3<Float>(-0.5257, -0.8507, 0) // Face 20
+        ]
         
-        let x = eulerAngles.x
-        let y = eulerAngles.y
-        let z = eulerAngles.z
+        // World up direction (gravity direction)
+        let upDirection = SIMD3<Float>(0, 1, 0)
         
-        let combined = (x + y + z) * 100
-        let normalized = abs(Int(combined)) % 20 + 1
+        var maxDotProduct: Float = -1.0
+        var topFaceIndex = 0
         
-        return normalized
+        // Find which face normal aligns best with the up direction
+        for (index, normal) in faceNormals.enumerated() {
+            // Transform the face normal from local space to world space
+            let worldNormal = orientation.act(normal)
+            
+            // Calculate dot product with up direction
+            let dotProduct = simd_dot(worldNormal, upDirection)
+            
+            // Track the face with the highest dot product (most aligned with up)
+            if dotProduct > maxDotProduct {
+                maxDotProduct = dotProduct
+                topFaceIndex = index
+            }
+        }
+        
+        // Return face value (1-indexed)
+        return topFaceIndex + 1
     }
 }
 

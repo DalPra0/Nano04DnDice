@@ -43,12 +43,24 @@ struct DiceRollerView: View {
                         accentColor: currentTheme.accentColor.color,
                         onShowThemes: { viewModel.showThemesList = true },
                         onShowCustomizer: { viewModel.showCustomizer = true },
-                        onShowAR: { viewModel.showARDice = true }
+                        onShowAR: { viewModel.showARDice = true },
+                        onShowHistory: { viewModel.showHistory = true },
+                        onShowDetailedStats: { viewModel.showDetailedStats = true },
+                        onShowAudioSettings: { viewModel.showAudioSettings = true }
                     )
                     .zIndex(1000)
                 }
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $viewModel.showHistory) {
+                DiceRollHistoryView()
+            }
+            .sheet(isPresented: $viewModel.showDetailedStats) {
+                DetailedStatisticsView(themeManager: themeManager)
+            }
+            .sheet(isPresented: $viewModel.showAudioSettings) {
+                AudioSettingsView(themeManager: themeManager)
+            }
             .sheet(isPresented: $viewModel.showThemesList) {
                 ThemesListView()
             }

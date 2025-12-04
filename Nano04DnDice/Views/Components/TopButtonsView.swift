@@ -6,6 +6,9 @@ struct TopButtonsView: View {
     let onShowThemes: () -> Void
     let onShowCustomizer: () -> Void
     let onShowAR: () -> Void
+    let onShowHistory: () -> Void
+    let onShowDetailedStats: () -> Void
+    let onShowAudioSettings: () -> Void
     
     @State private var isMenuOpen = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
@@ -52,6 +55,54 @@ struct TopButtonsView: View {
                         
                         if isMenuOpen {
                             VStack(alignment: .trailing, spacing: 12) {
+                                MenuButton(
+                                    icon: "speaker.wave.3.fill",
+                                    title: "AUDIO",
+                                    accentColor: accentColor,
+                                    action: {
+                                        if reduceMotion {
+                                            isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
+                                        }
+                                        onShowAudioSettings()
+                                    }
+                                )
+                                
+                                MenuButton(
+                                    icon: "chart.bar.fill",
+                                    title: "STATS",
+                                    accentColor: accentColor,
+                                    action: {
+                                        if reduceMotion {
+                                            isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
+                                        }
+                                        onShowDetailedStats()
+                                    }
+                                )
+                                
+                                MenuButton(
+                                    icon: "clock.arrow.circlepath",
+                                    title: "HISTORY",
+                                    accentColor: accentColor,
+                                    action: {
+                                        if reduceMotion {
+                                            isMenuOpen = false
+                                        } else {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                isMenuOpen = false
+                                            }
+                                        }
+                                        onShowHistory()
+                                    }
+                                )
+                                
                                 MenuButton(
                                     icon: "arkit",
                                     title: "AR DICE",
@@ -150,6 +201,7 @@ struct MenuButton: View {
     
     private var accessibilityLabelText: String {
         switch title {
+        case "HISTORY": return "Histórico de rolagens"
         case "AR DICE": return "Dado em realidade aumentada"
         case "THEMES": return "Temas"
         case "CUSTOMIZE": return "Customizar tema"
@@ -159,6 +211,7 @@ struct MenuButton: View {
     
     private var accessibilityHintText: String {
         switch title {
+        case "HISTORY": return "Visualiza estatísticas e histórico de rolagens anteriores"
         case "AR DICE": return "Abre visualização AR para jogar dado em 3D"
         case "THEMES": return "Escolhe um tema pré-definido"
         case "CUSTOMIZE": return "Cria seu próprio tema personalizado"

@@ -9,14 +9,14 @@ struct DiceSelectorView: View {
     let onShowMultipleDice: () -> Void
     
     var body: some View {
-        VStack(spacing: 8) {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+        VStack(spacing: DesignSystem.Spacing.xs) {  // 8pt
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.Spacing.xs) {  // 8pt
                 ForEach([DiceType.d4, .d6, .d8, .d10, .d12, .d20], id: \.self) { dice in
                     diceButton(dice)
                 }
             }
             
-            HStack(spacing: 8) {
+            HStack(spacing: DesignSystem.Spacing.xs) {  // 8pt
                 customDiceButton
                 multipleDiceButton
             }
@@ -52,7 +52,7 @@ struct DiceSelectorView: View {
     
     private var customDiceButton: some View {
         Button(action: onShowCustomDice) {
-            HStack(spacing: 6) {
+            HStack(spacing: DesignSystem.Spacing.xxs + 2) {  // 6pt
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 14))
                 Text(selectedDiceType.isCustom ? "D\(selectedDiceType.sides)" : "D?")
@@ -62,10 +62,10 @@ struct DiceSelectorView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(selectedDiceType.isCustom ? accentColor : Color.black.opacity(0.5))
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                    .fill(selectedDiceType.isCustom ? accentColor : DesignSystem.Colors.backgroundSecondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
                             .stroke(accentColor.opacity(0.5), lineWidth: 1.5)
                     )
             )
@@ -77,7 +77,7 @@ struct DiceSelectorView: View {
     
     private var multipleDiceButton: some View {
         Button(action: onShowMultipleDice) {
-            HStack(spacing: 6) {
+            HStack(spacing: DesignSystem.Spacing.xxs + 2) {  // 6pt
                 Image(systemName: "square.on.square")
                     .font(.system(size: 14))
                 Text("×D")
@@ -87,10 +87,10 @@ struct DiceSelectorView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.5))
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                    .fill(DesignSystem.Colors.backgroundSecondary)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
                             .stroke(accentColor.opacity(0.5), lineWidth: 1.5)
                     )
             )

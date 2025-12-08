@@ -103,7 +103,7 @@ struct ThemesListView: View {
     
     
     private var headerView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignSystem.Spacing.xs) {  // 8pt
             Image(systemName: "paintpalette.fill")
                 .font(.system(size: 60))
             
@@ -113,9 +113,9 @@ struct ThemesListView: View {
             
             Text("Select a theme or create your own")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
         }
-        .padding(.bottom, 20)
+        .padding(.bottom, DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Escolha seu tema. Selecione um tema ou crie o seu próprio")
     }
@@ -141,27 +141,27 @@ struct ThemesListView: View {
         VStack(spacing: 12) {
             Image(systemName: "paintpalette")
                 .font(.system(size: 50))
-                .foregroundColor(.white.opacity(0.3))
+                .foregroundColor(DesignSystem.Colors.textDisabled)
             
             Text("No custom themes yet")
                 .font(.custom("PlayfairDisplay-Regular", size: 16))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
             
             Text("Use 'CUSTOMIZE' to create your first theme!")
                 .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(DesignSystem.Colors.textDisabled)
         }
         .frame(maxWidth: .infinity)
         .padding(40)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.white.opacity(0.2), lineWidth: 2)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                .stroke(DesignSystem.Colors.borderSubtle, lineWidth: 2)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
                         .fill(Color.white.opacity(0.05))
                 )
         )
-        .padding(.horizontal, 20)
+        .padding(.horizontal, DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
     }
     
     private var iCloudSyncSettingsView: some View {
@@ -256,7 +256,7 @@ struct ThemeCardView: View {
                     
                     Text(theme.diceTexture.rawValue.capitalized)
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
                 
                 if showDeleteButton {
@@ -265,30 +265,30 @@ struct ThemeCardView: View {
                     }) {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
-                            .padding(8)
+                            .padding(DesignSystem.Spacing.xs)  // 8pt
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Deletar tema \(theme.name)")
                     .accessibilityHint("Toque para excluir este tema")
                 }
             }
-            .padding(16)
+            .padding(DesignSystem.Spacing.md)  // 16pt
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                     .fill(
                         LinearGradient(
                             colors: [
-                                Color.black.opacity(0.6),
-                                Color.black.opacity(0.8)
+                                DesignSystem.Colors.backgroundTertiary,
+                                DesignSystem.Colors.backgroundSecondary
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                             .stroke(
-                                isCurrentTheme ? theme.accentColor.color : Color.white.opacity(0.2),
+                                isCurrentTheme ? theme.accentColor.color : Color.white.opacity(0.2),  // Mantém relativo ao tema
                                 lineWidth: isCurrentTheme ? 2 : 1
                             )
                     )
@@ -307,15 +307,15 @@ struct ThemeCardView: View {
     
     private var colorPreview: some View {
         HStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                 .fill(theme.diceFaceColor.color)
                 .frame(width: 20, height: 50)
             
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                 .fill(theme.diceBorderColor.color)
                 .frame(width: 20, height: 50)
             
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                 .fill(theme.accentColor.color)
                 .frame(width: 20, height: 50)
         }

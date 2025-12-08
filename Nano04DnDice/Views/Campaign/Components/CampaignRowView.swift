@@ -15,7 +15,7 @@ struct CampaignRowView: View {
                 .font(.title3)
                 .foregroundColor(isActive ? .yellow : .accentColor)
                 .frame(width: 40, height: 40)
-                .background(isActive ? Color.yellow.opacity(0.2) : Color.accentColor.opacity(0.2))
+                .background(isActive ? Color.yellow.opacity(0.2) : Color.accentColor.opacity(0.2))  // Mantém relativo às cores de tema
                 .cornerRadius(8)
             
             VStack(alignment: .leading, spacing: 4) {

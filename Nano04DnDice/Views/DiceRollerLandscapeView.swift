@@ -15,19 +15,22 @@ struct DiceRollerLandscapeView: View {
                 .edgesIgnoringSafeArea(.all)
             
             GeometryReader { geometry in
+                let safeArea = geometry.safeAreaInsets
+                let landscapePadding = max(safeArea.leading, safeArea.trailing)
+                
                 HStack(spacing: 0) {
                     ZStack {
                         currentTheme.backgroundColor.color
                         
-                        VStack(spacing: 20) {
+                        VStack(spacing: DesignSystem.Spacing.md) {
                             Spacer()
                             
-                            VStack(spacing: 16) {
+                            VStack(spacing: DesignSystem.Spacing.md) {
                                 if let result = viewModel.result {
                                     VStack(spacing: 4) {
                                         Text("RESULT")
                                             .font(.custom("PlayfairDisplay-Bold", size: 12))
-                                            .foregroundColor(.white.opacity(0.4))
+                                            .foregroundColor(DesignSystem.Colors.textDisabled)
                                             .tracking(3)
                                         
                                         Text("\(result)")
@@ -49,10 +52,10 @@ struct DiceRollerLandscapeView: View {
                                 )
                                 .aspectRatio(1, contentMode: .fit)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 16)
+                                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                                         .fill(Color.white.opacity(0.02))
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 16)
+                                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                                                 .stroke(currentTheme.diceBorderColor.color.opacity(0.25), lineWidth: 1.5)
                                         )
                                 )
@@ -74,27 +77,27 @@ struct DiceRollerLandscapeView: View {
                     VStack(spacing: 0) {
                         Spacer()
                         
-                        VStack(spacing: 32) {
+                        VStack(spacing: DesignSystem.Spacing.xxl) {
                             Text(viewModel.selectedDiceType.shortName.uppercased())
                                 .font(.custom("PlayfairDisplay-Black", size: 36))
                                 .foregroundColor(currentTheme.accentColor.color)
                                 .tracking(1)
                             
-                            VStack(spacing: 14) {
-                                HStack(spacing: 14) {
+                            VStack(spacing: DesignSystem.Spacing.sm) {
+                                HStack(spacing: DesignSystem.Spacing.sm) {
                                     diceButton(.d4)
                                     diceButton(.d6)
                                 }
-                                HStack(spacing: 14) {
+                                HStack(spacing: DesignSystem.Spacing.sm) {
                                     diceButton(.d8)
                                     diceButton(.d10)
                                 }
-                                HStack(spacing: 14) {
+                                HStack(spacing: DesignSystem.Spacing.sm) {
                                     diceButton(.d12)
                                     diceButton(.d20)
                                 }
                             }
-                            .padding(.horizontal, 28)
+                            .padding(.horizontal, DesignSystem.Spacing.lg)
                             
                             Button(action: {
                                 if !viewModel.rolling {
@@ -115,12 +118,14 @@ struct DiceRollerLandscapeView: View {
                             }
                             .disabled(viewModel.rolling)
                             .opacity(viewModel.rolling ? 0.5 : 1.0)
-                            .padding(.horizontal, 28)
+                            .padding(.horizontal, DesignSystem.Spacing.lg)
                         }
                         
-                        Spacer(minLength: 40)
+                        Spacer(minLength: max(40, landscapePadding))
                     }
                     .frame(width: geometry.size.width * 0.5)
+                    .padding(.leading, landscapePadding)
+                    .padding(.trailing, landscapePadding)
                     .background(currentTheme.backgroundColor.color)
                 }
             }
@@ -142,12 +147,12 @@ struct DiceRollerLandscapeView: View {
                 .font(.custom("PlayfairDisplay-Bold", size: 20))
                 .foregroundColor(isSelected ? .black : currentTheme.accentColor.color)
                 .frame(maxWidth: .infinity)
-                .frame(height: 50)
+                .frame(height: max(50, DesignSystem.ButtonSize.medium.height))  // Garante 44pt mínimo
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(isSelected ? currentTheme.accentColor.color : Color.white.opacity(0.03))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.sm)
+                        .fill(isSelected ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay.opacity(0.2))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.sm)
                                 .stroke(
                                     isSelected ? Color.clear : currentTheme.diceBorderColor.color.opacity(0.3),
                                     lineWidth: 1.5

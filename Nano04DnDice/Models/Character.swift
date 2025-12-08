@@ -42,6 +42,26 @@ struct PlayerCharacter: Identifiable, Codable {
     var notes: String
     var backstory: String
     
+    // MARK: - Cached Modifiers (Performance Optimization)
+    // Cache computed modifiers to avoid recalculating on every scroll/redraw
+    private var _cachedStrModifier: Int = 0
+    private var _cachedDexModifier: Int = 0
+    private var _cachedConModifier: Int = 0
+    private var _cachedIntModifier: Int = 0
+    private var _cachedWisModifier: Int = 0
+    private var _cachedChaModifier: Int = 0
+    
+    // MARK: - Codable
+    // Exclude cached properties from encoding/decoding
+    enum CodingKeys: String, CodingKey {
+        case id, name, characterClass, race, level, experiencePoints
+        case strength, dexterity, constitution, intelligence, wisdom, charisma
+        case armorClass, hitPoints, maxHitPoints, initiative, speed
+        case proficiencyBonus, proficientSkills, proficientSavingThrows
+        case equippedWeapon, equippedArmor, equippedItems
+        case notes, backstory
+    }
+    
     init(
         id: UUID = UUID(),
         name: String,
@@ -94,19 +114,27 @@ struct PlayerCharacter: Identifiable, Codable {
         self.equippedItems = equippedItems
         self.notes = notes
         self.backstory = backstory
+        
+        // Cache computed modifiers for performance
+        self._cachedStrModifier = modifier(for: strength)
+        self._cachedDexModifier = modifier(for: dexterity)
+        self._cachedConModifier = modifier(for: constitution)
+        self._cachedIntModifier = modifier(for: intelligence)
+        self._cachedWisModifier = modifier(for: wisdom)
+        self._cachedChaModifier = modifier(for: charisma)
     }
     
-    // Calculated Modifiers
+    // Calculated Modifiers (cached for performance)
     func modifier(for score: Int) -> Int {
         return (score - 10) / 2
     }
     
-    var strModifier: Int { modifier(for: strength) }
-    var dexModifier: Int { modifier(for: dexterity) }
-    var conModifier: Int { modifier(for: constitution) }
-    var intModifier: Int { modifier(for: intelligence) }
-    var wisModifier: Int { modifier(for: wisdom) }
-    var chaModifier: Int { modifier(for: charisma) }
+    var strModifier: Int { _cachedStrModifier }
+    var dexModifier: Int { _cachedDexModifier }
+    var conModifier: Int { _cachedConModifier }
+    var intModifier: Int { _cachedIntModifier }
+    var wisModifier: Int { _cachedWisModifier }
+    var chaModifier: Int { _cachedChaModifier }
     
     func skillModifier(for skill: Skill) -> Int {
         let baseModifier = modifier(for: abilityScore(for: skill))

@@ -109,8 +109,8 @@ struct DetailedStatisticsView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(selectedPeriod == period ? currentTheme.accentColor.color : Color.white.opacity(0.1))
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                                .fill(selectedPeriod == period ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
                         )
                 }
             }
@@ -129,8 +129,8 @@ struct DetailedStatisticsView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(selectedDiceFilter == nil ? currentTheme.accentColor.color : Color.white.opacity(0.1))
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                                .fill(selectedDiceFilter == nil ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
                         )
                 }
                 
@@ -144,8 +144,8 @@ struct DetailedStatisticsView: View {
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(selectedDiceFilter?.sides == dice.sides ? currentTheme.accentColor.color : Color.white.opacity(0.1))
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                                    .fill(selectedDiceFilter?.sides == dice.sides ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
                             )
                     }
                 }
@@ -169,9 +169,9 @@ struct DetailedStatisticsView: View {
                 MiniStatCard(label: "Range", value: "\(detailedStats.lowestRoll)-\(detailedStats.highestRoll)", color: .purple)
             }
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -224,9 +224,9 @@ struct DetailedStatisticsView: View {
                 .frame(height: 200)
             }
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -242,9 +242,9 @@ struct DetailedStatisticsView: View {
                 DicePerformanceRow(performance: perf, accentColor: currentTheme.accentColor.color)
             }
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -260,9 +260,9 @@ struct DetailedStatisticsView: View {
                 RollModeStatRow(stat: stat, accentColor: currentTheme.accentColor.color)
             }
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -281,7 +281,7 @@ struct DetailedStatisticsView: View {
                         .foregroundColor(currentTheme.accentColor.color)
                     Text("Most Active Hour")
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
                 .frame(maxWidth: .infinity)
                 
@@ -294,15 +294,15 @@ struct DetailedStatisticsView: View {
                         .foregroundColor(currentTheme.accentColor.color)
                     Text("Avg Rolls/Day")
                         .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
                 .frame(maxWidth: .infinity)
             }
             .frame(height: 80)
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -330,9 +330,9 @@ struct DetailedStatisticsView: View {
                 )
             }
         }
-        .padding(20)
+        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -375,7 +375,7 @@ struct MiniStatCard: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                 .fill(Color.white.opacity(0.05))
         )
     }
@@ -470,7 +470,7 @@ struct StreakCard: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                 .fill(Color.white.opacity(0.05))
         )
     }

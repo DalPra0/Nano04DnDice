@@ -2,6 +2,7 @@
 import SwiftUI
 import RealityKit
 import ARKit
+import AVFoundation
 
 struct ARDiceView: View {
     @Environment(\.dismiss) var dismiss
@@ -12,6 +13,8 @@ struct ARDiceView: View {
     @State private var isDragging = false
     @State private var dragOffset: CGSize = .zero
     @State private var showResult = false
+    @State private var cameraPermissionStatus: AVAuthorizationStatus = .notDetermined
+    @State private var showPermissionAlert = false
     
     private var currentTheme: DiceCustomization {
         themeManager.currentTheme
@@ -19,77 +22,100 @@ struct ARDiceView: View {
     
     var body: some View {
         ZStack {
-            ARViewContainer(coordinator: arCoordinator)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 32))
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            // Check camera permission first
+            if cameraPermissionStatus == .authorized {
+                ARViewContainer(coordinator: arCoordinator)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack {
+                    HStack {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+                        }
+                        .accessibilityLabel("Fechar visualização AR")
+                        .accessibilityHint("Volta para a tela principal")
+                        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
+                        
+                        Spacer()
                     }
-                    .accessibilityLabel("Fechar visualização AR")
-                    .accessibilityHint("Volta para a tela principal")
-                    .padding(20)
+                    
+                    if !arCoordinator.surfaceDetected {
+                        Text("Aponte a câmera para uma superfície plana")
+                            .font(.custom("PlayfairDisplay-Regular", size: 16))
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                                    .fill(Color.black.opacity(0.6))
+                            )
+                            .padding(.top, 20)
+                            .accessibilityLabel("Procurando superfície")
+                            .accessibilityHint("Mova o dispositivo lentamente sobre uma superfície plana como mesa ou chão")
+                    }
                     
                     Spacer()
-                }
-                
-                if !arCoordinator.surfaceDetected {
-                    Text("Aponte a câmera para uma superfície plana")
-                        .font(.custom("PlayfairDisplay-Regular", size: 16))
-                        .foregroundColor(.white)
+                    
+                    if showResult, let result = arCoordinator.diceResult {
+                        VStack(spacing: 8) {
+                            Text("RESULTADO")
+                                .font(.custom("PlayfairDisplay-Bold", size: 16))
+                                .foregroundColor(DesignSystem.Colors.textSecondary)
+                                .tracking(3)
+                            
+                            Text("\(result)")
+                                .font(.custom("PlayfairDisplay-Black", size: 72))
+                                .foregroundColor(currentTheme.accentColor.color)
+                                .shadow(color: currentTheme.accentColor.color.opacity(0.5), radius: 20, x: 0, y: 0)
+                        }
                         .padding()
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.black.opacity(0.6))
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                                .fill(DesignSystem.Colors.surfaceOverlay)
                         )
-                        .padding(.top, 20)
-                        .accessibilityLabel("Procurando superfície")
-                        .accessibilityHint("Mova o dispositivo lentamente sobre uma superfície plana como mesa ou chão")
-                }
-                
-                Spacer()
-                
-                if showResult, let result = arCoordinator.diceResult {
-                    VStack(spacing: 8) {
-                        Text("RESULTADO")
-                            .font(.custom("PlayfairDisplay-Bold", size: 16))
-                            .foregroundColor(.white.opacity(0.7))
-                            .tracking(3)
-                        
-                        Text("\(result)")
-                            .font(.custom("PlayfairDisplay-Black", size: 72))
-                            .foregroundColor(currentTheme.accentColor.color)
-                            .shadow(color: currentTheme.accentColor.color.opacity(0.5), radius: 20, x: 0, y: 0)
+                        .padding(.bottom, 200)
+                        .transition(.scale.combined(with: .opacity))
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Resultado: \(result)")
+                        .accessibilityAddTraits(.updatesFrequently)
                     }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.black.opacity(0.7))
-                    )
-                    .padding(.bottom, 200)
-                    .transition(.scale.combined(with: .opacity))
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Resultado: \(result)")
-                    .accessibilityAddTraits(.updatesFrequently)
+                    
+                    Spacer()
+                    
+                    diceThrowArea
+                        .padding(.bottom, 40)
                 }
-                
-                Spacer()
-                
-                diceThrowArea
-                    .padding(.bottom, 40)
+            } else if cameraPermissionStatus == .denied || cameraPermissionStatus == .restricted {
+                cameraPermissionDeniedView
+            } else {
+                // Loading state while checking permission
+                ProgressView("Verificando permissões...")
+                    .foregroundColor(.white)
             }
         }
         .onAppear {
-            arCoordinator.startSession()
+            checkCameraPermission()
         }
         .onDisappear {
-            arCoordinator.stopSession()
+            if cameraPermissionStatus == .authorized {
+                arCoordinator.stopSession()
+            }
+        }
+        .alert("Permissão de Câmera Necessária", isPresented: $showPermissionAlert) {
+            Button("Abrir Configurações") {
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }
+            Button("Cancelar", role: .cancel) {
+                dismiss()
+            }
+        } message: {
+            Text("Para usar AR, permita acesso à câmera nas Configurações do iOS.")
         }
         .onChange(of: arCoordinator.diceResult) { oldValue, newResult in
             if let result = newResult {
@@ -115,6 +141,8 @@ struct ARDiceView: View {
             }
         }
     }
+    
+    // MARK: - Subviews
     
     private var diceThrowArea: some View {
         VStack(spacing: 12) {
@@ -261,7 +289,87 @@ struct ARDiceView: View {
         )
         .padding(.horizontal, 20)
     }
+    
+    // MARK: - Camera Permission Handling
+    
+    private func checkCameraPermission() {
+        cameraPermissionStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        
+        switch cameraPermissionStatus {
+        case .notDetermined:
+            // Request permission
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async {
+                    cameraPermissionStatus = granted ? .authorized : .denied
+                    if granted {
+                        arCoordinator.startSession()
+                    } else {
+                        showPermissionAlert = true
+                    }
+                }
+            }
+        case .authorized:
+            // Already authorized, start session
+            arCoordinator.startSession()
+        case .denied, .restricted:
+            // Show alert
+            showPermissionAlert = true
+        @unknown default:
+            showPermissionAlert = true
+        }
+    }
+    
+    private var cameraPermissionDeniedView: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "camera.fill")
+                .font(.system(size: 72))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
+            
+            Text("Permissão de Câmera Necessária")
+                .font(.custom("PlayfairDisplay-Bold", size: 24))
+                .foregroundColor(.white)
+            
+            Text("Para usar a visualização AR, você precisa permitir acesso à câmera nas Configurações do iOS.")
+                .font(.custom("PlayfairDisplay-Regular", size: 16))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+            
+            Button(action: {
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }) {
+                Text("Abrir Configurações")
+                    .font(.custom("PlayfairDisplay-Bold", size: 18))
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: 280)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
+                            .fill(currentTheme.accentColor.color)
+                    )
+            }
+            
+            Button(action: {
+                dismiss()
+            }) {
+                Text("Voltar")
+                    .font(.custom("PlayfairDisplay-Regular", size: 16))
+                    .foregroundColor(DesignSystem.Colors.textSecondary)
+            }
+            .padding(.top, 8)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+    }
+    
+    #if DEBUG
+    @ObserveInjection var forceRedraw
+    #endif
 }
+
+// MARK: - AR View Container
 
 struct ARViewContainer: UIViewRepresentable {
     let coordinator: ARDiceCoordinator

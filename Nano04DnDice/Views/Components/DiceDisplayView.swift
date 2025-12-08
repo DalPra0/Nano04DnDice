@@ -13,7 +13,7 @@ struct DiceDisplayView: View {
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
                 .stroke(
                     LinearGradient(
                         colors: [
@@ -50,7 +50,7 @@ struct DiceDisplayView: View {
                 onRollComplete: onRollComplete
             )
             .frame(width: diceSize - 8, height: diceSize - 8)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge))
             .shadow(color: accentColor.opacity(glowIntensity), radius: 18)
         }
         .enableInjection()

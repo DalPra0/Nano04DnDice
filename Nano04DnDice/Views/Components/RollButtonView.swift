@@ -58,7 +58,7 @@ struct ActionButton: View {
                 .padding(.horizontal, 32)
                 .padding(.vertical, 16)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .fill(
                             LinearGradient(
                                 colors: disabled ?

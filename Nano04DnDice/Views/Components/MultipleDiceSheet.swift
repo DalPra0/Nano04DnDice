@@ -16,7 +16,7 @@ struct MultipleDiceSheet: View {
                 backgroundColor
                     .ignoresSafeArea()
                 
-                VStack(spacing: 24) {
+                VStack(spacing: DesignSystem.Spacing.lg) {  // 24pt
                     Spacer()
                     
                     if let roll = result {
@@ -33,7 +33,7 @@ struct MultipleDiceSheet: View {
                         rollButton
                     }
                 }
-                .padding(20)
+                .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
             }
             .navigationTitle("Multiple Dice")
             .navigationBarTitleDisplayMode(.inline)
@@ -74,7 +74,7 @@ struct MultipleDiceSheet: View {
                 Text("TOTAL")
                     .font(.custom("PlayfairDisplay-Bold", size: 18))
                     .tracking(6)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(DesignSystem.Colors.textSecondary)
                 
                 Text("\(roll.total)")
                     .font(.custom("PlayfairDisplay-Black", size: 120))
@@ -99,13 +99,13 @@ struct MultipleDiceSheet: View {
                     statItem(label: "AVG", value: String(format: "%.1f", roll.average))
                     Spacer()
                     Divider()
-                        .background(Color.white.opacity(0.2))
+                        .background(DesignSystem.Colors.borderSubtle)
                         .frame(height: 30)
                     Spacer()
                     statItem(label: "MAX", value: "\(roll.results.max() ?? 0)")
                     Spacer()
                     Divider()
-                        .background(Color.white.opacity(0.2))
+                        .background(DesignSystem.Colors.borderSubtle)
                         .frame(height: 30)
                     Spacer()
                     statItem(label: "MIN", value: "\(roll.results.min() ?? 0)")
@@ -128,16 +128,16 @@ struct MultipleDiceSheet: View {
             
             Text("dice \(index)")
                 .font(.custom("PlayfairDisplay-Regular", size: 11))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
                 .textCase(.uppercase)
                 .tracking(1)
         }
         .frame(width: 85, height: 95)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                 .fill(Color.white.opacity(0.03))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .stroke(borderColor.opacity(0.4), lineWidth: 1.5)
                 )
         )
@@ -165,7 +165,7 @@ struct MultipleDiceSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 18)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .fill(accentColor)
                 )
         }
@@ -182,7 +182,7 @@ struct MultipleDiceSheet: View {
             
             Text("Roll multiple dice at once")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
         }
     }
     
@@ -190,7 +190,7 @@ struct MultipleDiceSheet: View {
         VStack(spacing: 12) {
             Text("Quantity")
                 .font(.custom("PlayfairDisplay-Bold", size: 16))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
             
             HStack(spacing: 20) {
                 Button(action: {
@@ -229,7 +229,7 @@ struct MultipleDiceSheet: View {
         VStack(spacing: 12) {
             Text("Dice Type")
                 .font(.custom("PlayfairDisplay-Bold", size: 16))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
@@ -248,10 +248,10 @@ struct MultipleDiceSheet: View {
                 .foregroundColor(diceType == dice ? .black : Color(hex: "#FFD700"))
                 .frame(width: 60, height: 60)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(diceType == dice ? Color(hex: "#FFD700")! : Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                        .fill(diceType == dice ? Color(hex: "#FFD700")! : DesignSystem.Colors.backgroundOverlay)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                                 .stroke(Color(hex: "#FFD700")!, lineWidth: 2)
                         )
                 )
@@ -276,7 +276,7 @@ struct MultipleDiceSheet: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
                                     .fill(Color.white.opacity(0.9))
                             )
                     }
@@ -296,7 +296,7 @@ struct MultipleDiceSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 18)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .fill(accentColor)
                         .shadow(color: accentColor.opacity(0.4), radius: 15, x: 0, y: 5)
                 )

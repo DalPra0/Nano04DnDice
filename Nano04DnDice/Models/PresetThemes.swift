@@ -12,11 +12,7 @@ struct PresetThemes {
         accentColor: Color(hex: "#FFD700") ?? .yellow,
         backgroundType: .preset,
         diceTexture: .standard,
-        fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: false,
-        proficiencyBonus: 0
+        fontName: "PlayfairDisplay-Bold"
     )
     
     static let medieval = DiceCustomization(
@@ -28,11 +24,7 @@ struct PresetThemes {
         accentColor: Color(hex: "#D4AF37") ?? .yellow,
         backgroundType: .preset,
         diceTexture: .wooden,
-        fontName: "PlayfairDisplay-Black",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: false,
-        proficiencyBonus: 0
+        fontName: "PlayfairDisplay-Black"
     )
     
     static let cyberpunk = DiceCustomization(
@@ -45,10 +37,7 @@ struct PresetThemes {
         backgroundType: .gradient,
         diceTexture: .metallic,
         fontName: "PlayfairDisplay-Regular",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: true,
-        proficiencyBonus: 0
+        particlesEnabled: true
     )
     
     static let horror = DiceCustomization(
@@ -61,10 +50,7 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .stone,
         fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: true,
-        proficiencyBonus: 0
+        particlesEnabled: true
     )
     
     static let norse = DiceCustomization(
@@ -76,11 +62,7 @@ struct PresetThemes {
         accentColor: Color(hex: "#5DADE2") ?? .blue,
         backgroundType: .preset,
         diceTexture: .stone,
-        fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: false,
-        proficiencyBonus: 0
+        fontName: "PlayfairDisplay-Bold"
     )
     
     static let arcane = DiceCustomization(
@@ -93,10 +75,7 @@ struct PresetThemes {
         backgroundType: .preset,
         diceTexture: .crystal,
         fontName: "PlayfairDisplay-Regular",
-        glowIntensity: 0.0,
-        shadowEnabled: false,
-        particlesEnabled: true,
-        proficiencyBonus: 0
+        particlesEnabled: true
     )
     
     static let light = DiceCustomization(
@@ -109,10 +88,7 @@ struct PresetThemes {
         backgroundType: .solid,
         diceTexture: .standard,
         fontName: "PlayfairDisplay-Bold",
-        glowIntensity: 0.0,
-        shadowEnabled: true,
-        particlesEnabled: false,
-        proficiencyBonus: 0
+        shadowEnabled: true
     )
     
     static let allThemes: [DiceCustomization] = [

@@ -11,7 +11,7 @@ struct InventoryItemRowView: View {
                 .font(.title3)
                 .foregroundColor(categoryColor)
                 .frame(width: 40, height: 40)
-                .background(categoryColor.opacity(0.2))
+                .background(categoryColor.opacity(0.2))  // Mantém relativo à cor da categoria
                 .cornerRadius(8)
             
             VStack(alignment: .leading, spacing: 4) {

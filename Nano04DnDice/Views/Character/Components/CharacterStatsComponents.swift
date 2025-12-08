@@ -118,7 +118,7 @@ struct SavingThrowRow: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 8)
-        .background(Color(.systemGray6).opacity(0.5))
+        .background(Color(.systemGray6).opacity(0.5))  // Mantém relativo ao systemGray6
     }
     
     private func formatModifier(_ value: Int) -> String {

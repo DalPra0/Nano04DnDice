@@ -71,7 +71,7 @@ struct AudioSettingsView: View {
             
             Text("Customize your dice rolling experience")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
         }
         .padding(.bottom, 20)
     }
@@ -93,7 +93,7 @@ struct AudioSettingsView: View {
                     
                     Text(audioManager.isSFXEnabled ? "Enabled" : "Disabled")
                         .font(.custom("PlayfairDisplay-Regular", size: 14))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
                 
                 Spacer()
@@ -101,9 +101,9 @@ struct AudioSettingsView: View {
                 Toggle("", isOn: $audioManager.isSFXEnabled)
                     .tint(currentTheme.accentColor.color)
             }
-            .padding(16)
+            .padding(DesignSystem.Spacing.md)  // 16pt
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                     .fill(Color.white.opacity(0.05))
             )
             
@@ -123,7 +123,7 @@ struct AudioSettingsView: View {
                 
                 HStack(spacing: 12) {
                     Image(systemName: "speaker.fill")
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                     
                     Slider(value: $audioManager.masterVolume, in: 0...1)
                         .tint(currentTheme.accentColor.color)
@@ -144,14 +144,14 @@ struct AudioSettingsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                             .fill(currentTheme.accentColor.color.opacity(0.15))
                     )
                 }
             }
-            .padding(16)
+            .padding(DesignSystem.Spacing.md)  // 16pt
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                     .fill(Color.white.opacity(0.05))
             )
         }
@@ -213,7 +213,7 @@ struct SoundCustomizationRow: View {
                     Button(action: onReset) {
                         Image(systemName: "arrow.counterclockwise")
                             .foregroundColor(.orange)
-                            .padding(8)
+                            .padding(DesignSystem.Spacing.xs)  // 8pt
                             .background(
                                 Circle()
                                     .fill(Color.orange.opacity(0.15))
@@ -233,7 +233,7 @@ struct SoundCustomizationRow: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                             .fill(accentColor.opacity(0.15))
                     )
                 }
@@ -248,15 +248,15 @@ struct SoundCustomizationRow: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                             .stroke(Color.white.opacity(0.3), lineWidth: 1)
                     )
                 }
             }
         }
-        .padding(16)
+        .padding(DesignSystem.Spacing.md)  // 16pt
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                 .fill(Color.white.opacity(0.05))
         )
     }

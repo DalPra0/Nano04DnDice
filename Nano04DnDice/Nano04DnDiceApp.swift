@@ -1,15 +1,11 @@
 
 import SwiftUI
-import CoreData
 
 @main
 struct Nano04DnDiceApp: App {
-    let persistenceController = PersistenceController.shared
-
     var body: some Scene {
         WindowGroup {
             DiceRollerView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

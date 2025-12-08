@@ -16,11 +16,11 @@ struct MultipleDiceResultView: View {
                             .foregroundColor(diceColor(for: value))
                             .frame(width: 90, height: 110)
                             .background(
-                                RoundedRectangle(cornerRadius: 16)
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                                     .fill(Color.white.opacity(0.05))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 16)
-                                            .stroke(diceColor(for: value).opacity(0.6), lineWidth: 3)
+                                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
+                                            .stroke(diceColor(for: value).opacity(0.6), lineWidth: 3)  // Mantém relativo à cor do dado
                                     )
                             )
                     }
@@ -60,7 +60,7 @@ struct MultipleDiceResultView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 18)
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                             .fill(accentColor)
                     )
             }

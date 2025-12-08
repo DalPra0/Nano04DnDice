@@ -20,7 +20,8 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         // Get last roll from UserDefaults (shared with main app)
-        let sharedDefaults = UserDefaults(suiteName: "group.com.yourcompany.Nano04DnDice")
+        // NOTE: Update bundle identifier in App Group entitlements to match
+        let sharedDefaults = UserDefaults(suiteName: "group.com.dalpra.Nano04DnDice")
         let lastResult = sharedDefaults?.integer(forKey: "lastDiceResult") ?? 20
         let lastDiceType = sharedDefaults?.string(forKey: "lastDiceType") ?? "D20"
         let lastRollDate = sharedDefaults?.object(forKey: "lastRollDate") as? Date ?? Date()
@@ -85,12 +86,12 @@ struct SmallWidgetView: View {
             VStack(spacing: 8) {
                 Text(entry.diceType)
                     .font(.custom("PlayfairDisplay-Bold", size: 14))
-                    .foregroundColor(Color(hex: "#FFD700").opacity(0.8))
+                    .foregroundColor(Color(hex: "#FFD700").opacity(0.8))  // Mantém relativo ao dourado
                 
                 Text("\(entry.result)")
                     .font(.custom("PlayfairDisplay-Black", size: 52))
                     .foregroundColor(entry.isCritical ? .green : Color(hex: "#FFD700"))
-                    .shadow(color: entry.isCritical ? .green.opacity(0.5) : Color(hex: "#FFD700").opacity(0.3), radius: 10)
+                    .shadow(color: entry.isCritical ? .green.opacity(0.5) : Color(hex: "#FFD700").opacity(0.3), radius: 10)  // Mantém relativo às cores
                 
                 if entry.isCritical {
                     Text("CRITICAL!")

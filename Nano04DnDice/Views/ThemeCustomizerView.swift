@@ -46,7 +46,7 @@ struct ThemeCustomizerView: View {
                         
                         buttonsSection
                     }
-                    .padding(20)
+                    .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
                 }
             }
             .navigationTitle("Customize")
@@ -88,7 +88,7 @@ struct ThemeCustomizerView: View {
             
             Text("Customize colors, textures and effects")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
         }
         .padding(.bottom, 10)
     }
@@ -103,11 +103,11 @@ struct ThemeCustomizerView: View {
                 .foregroundColor(.white)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                        .fill(DesignSystem.Colors.backgroundOverlay)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                                .stroke(DesignSystem.Colors.borderSubtle, lineWidth: 1)
                         )
                 )
         }
@@ -199,12 +199,12 @@ struct ThemeCustomizerView: View {
             }
             .frame(width: 80, height: 80)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.1))
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                    .fill(DesignSystem.Colors.backgroundOverlay)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                             .stroke(
-                                customTheme.diceTexture == texture ? customTheme.accentColor.color : Color.white.opacity(0.3),
+                                customTheme.diceTexture == texture ? customTheme.accentColor.color : DesignSystem.Colors.borderSubtle,
                                 lineWidth: customTheme.diceTexture == texture ? 2 : 1
                             )
                     )
@@ -265,18 +265,18 @@ struct ThemeCustomizerView: View {
                 
                 Text(fontDisplayName(font))
                     .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(DesignSystem.Colors.textSecondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
             }
             .frame(width: 90, height: 90)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.1))
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                    .fill(DesignSystem.Colors.backgroundOverlay)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                             .stroke(
-                                isSelected ? customTheme.accentColor.color : Color.white.opacity(0.3),
+                                isSelected ? customTheme.accentColor.color : DesignSystem.Colors.borderSubtle,
                                 lineWidth: isSelected ? 2 : 1
                             )
                     )
@@ -317,10 +317,10 @@ struct ThemeCustomizerView: View {
             }
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                     .fill(Color.white.opacity(0.1))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                             .stroke(Color.white.opacity(0.3), lineWidth: 1)
                     )
             )
@@ -349,10 +349,10 @@ struct ThemeCustomizerView: View {
             }
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                     .fill(Color.white.opacity(0.1))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                             .stroke(Color.white.opacity(0.3), lineWidth: 1)
                     )
             )
@@ -368,7 +368,7 @@ struct ThemeCustomizerView: View {
                 customTheme.backgroundColor.color
                 
                 VStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -391,7 +391,7 @@ struct ThemeCustomizerView: View {
                 .padding(40)
             }
             .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge))
         }
     }
     
@@ -408,7 +408,7 @@ struct ThemeCustomizerView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                             .fill(customTheme.accentColor.color)
                     )
             }
@@ -422,7 +422,7 @@ struct ThemeCustomizerView: View {
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                             .fill(Color.green)
                     )
             }
@@ -447,11 +447,11 @@ struct ThemeCustomizerView: View {
                 
                 Spacer()
                 
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                     .fill(color)
                     .frame(width: 40, height: 40)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                             .stroke(Color.white.opacity(0.3), lineWidth: 1)
                     )
             }
@@ -556,7 +556,7 @@ struct ColorPickerSheet: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                                 .fill(Color(hex: "#FFD700")!)
                         )
                 }

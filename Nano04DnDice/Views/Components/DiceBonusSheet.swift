@@ -103,10 +103,10 @@ struct DiceBonusSheet: View {
                             .foregroundColor(proficiencyBonus == bonus ? .black : Color(hex: "#FFD700"))
                             .frame(width: 60, height: 40)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(proficiencyBonus == bonus ? Color(hex: "#FFD700")! : Color.white.opacity(0.1))
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                                    .fill(proficiencyBonus == bonus ? Color(hex: "#FFD700")! : DesignSystem.Colors.backgroundOverlay)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
                                             .stroke(Color(hex: "#FFD700")!, lineWidth: 1.5)
                                     )
                             )
@@ -128,7 +128,7 @@ struct DiceBonusSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 18)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .fill(Color(hex: "#FFD700")!)
                         .shadow(color: Color(hex: "#FFD700")!.opacity(0.5), radius: 10)
                 )

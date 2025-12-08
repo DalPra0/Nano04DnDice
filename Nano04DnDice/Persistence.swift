@@ -1,7 +1,16 @@
 
+// MARK: - CoreData Persistence (Currently Unused)
+// This file is kept for potential future use but is not currently integrated.
+// The app uses UserDefaults/AppStorage for data persistence instead.
+// To enable CoreData:
+// 1. Uncomment this file
+// 2. Add persistenceController to Nano04DnDiceApp.swift
+// 3. Update data models to use CoreData entities
+
+/*
 import CoreData
 
-struct PersistenceController {
+class PersistenceController {
     static let shared = PersistenceController()
 
     @MainActor
@@ -15,33 +24,54 @@ struct PersistenceController {
         do {
             try viewContext.save()
         } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            // Log error instead of crashing preview
+            print("⚠️ Preview data save failed: \(error.localizedDescription)")
         }
         return result
     }()
 
-    let container: NSPersistentCloudKitContainer
+    let container: NSPersistentContainer
+    private(set) var loadError: Error?
 
     init(inMemory: Bool = false) {
-        container = NSPersistentCloudKitContainer(name: "Nano04DnDice")
+        // Use regular NSPersistentContainer to avoid CloudKit requirements
+        // Can be upgraded to NSPersistentCloudKitContainer when properly configured
+        container = NSPersistentContainer(name: "Nano04DnDice")
+        
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        
+        container.loadPersistentStores { [weak self] storeDescription, error in
             if let error = error as NSError? {
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                // Log error instead of crashing
+                print("❌ Core Data error: \(error.localizedDescription)")
+                print("   Store: \(storeDescription)")
+                print("   User Info: \(error.userInfo)")
+                
+                // Store error for potential UI handling
+                self?.loadError = error
+                
+                // Attempt recovery by removing corrupted store
+                if let storeURL = storeDescription.url {
+                    print("⚠️ Attempting to remove corrupted store...")
+                    try? FileManager.default.removeItem(at: storeURL)
+                    
+                    // Try loading again
+                    self?.container.loadPersistentStores { _, recoveryError in
+                        if let recoveryError = recoveryError {
+                            print("❌ Recovery failed: \(recoveryError.localizedDescription)")
+                        } else {
+                            print("✅ Store recovered successfully")
+                            self?.loadError = nil
+                        }
+                    }
+                }
             }
-        })
+        }
+        
         container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
 }
+*/

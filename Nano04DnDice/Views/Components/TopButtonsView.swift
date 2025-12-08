@@ -45,10 +45,10 @@ struct TopButtonsView: View {
                             Image(systemName: "line.3.horizontal")
                                 .font(.system(size: 24, weight: .medium))
                                 .foregroundColor(accentColor)
-                                .padding(12)
+                                .frame(width: DesignSystem.ButtonSize.medium.height, height: DesignSystem.ButtonSize.medium.height)
                                 .background(
                                     Circle()
-                                        .fill(Color.white.opacity(0.1))
+                                        .fill(DesignSystem.Colors.backgroundOverlay)
                                 )
                         }
                         .accessibilityLabel(isMenuOpen ? "Fechar menu" : "Abrir menu")
@@ -224,7 +224,7 @@ struct MenuButton: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                     .fill(accentColor)
             )
         }

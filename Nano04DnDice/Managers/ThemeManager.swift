@@ -11,11 +11,11 @@ class ThemeManager: ObservableObject {
     @Published var iCloudSyncEnabled: Bool {
         didSet {
             UserDefaults.standard.set(iCloudSyncEnabled, forKey: "iCloudSyncEnabled")
-            // Temporarily disabled - CloudKit requires proper entitlements configuration
-            // if iCloudSyncEnabled {
-            //     setupiCloudSync()
-            //     uploadLocalThemesToiCloud()
-            // }
+            // Note: iCloud sync implementation requires:
+            // 1. Valid iCloud container identifier in entitlements
+            // 2. CloudKit database setup in Xcode
+            // 3. User authentication check
+            // Current implementation disabled until prerequisites are met
         }
     }
     @Published var syncStatus: SyncStatus = .idle
@@ -39,10 +39,7 @@ class ThemeManager: ObservableObject {
         
         loadSavedThemes()
         
-        // Temporarily disabled - CloudKit requires proper entitlements configuration
-        // if iCloudSyncEnabled {
-        //     setupiCloudSync()
-        // }
+        // Note: iCloud sync disabled - requires CloudKit configuration
     }
     
     

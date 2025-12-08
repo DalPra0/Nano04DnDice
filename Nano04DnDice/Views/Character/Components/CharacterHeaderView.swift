@@ -34,7 +34,7 @@ struct CharacterHeaderView: View {
                 VStack(spacing: 4) {
                     ZStack {
                         Circle()
-                            .fill(Color.accentColor.opacity(0.2))
+                            .fill(Color.accentColor.opacity(0.2))  // Mantém relativo à cor de acento
                             .frame(width: 60, height: 60)
                         
                         Text("\(character.level)")
@@ -63,7 +63,7 @@ struct CharacterHeaderView: View {
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         Rectangle()
-                            .fill(Color.gray.opacity(0.2))
+                            .fill(Color.gray.opacity(0.2))  // Mantém relativo ao gray
                         
                         Rectangle()
                             .fill(
@@ -108,6 +108,6 @@ struct EmptyCharacterView: View {
                     .cornerRadius(12)
             }
         }
-        .padding(40)
+        .padding(DesignSystem.Spacing.xl + 8)  // 40pt
     }
 }

@@ -7,10 +7,10 @@ struct DiceHeaderView: View {
     let backgroundColor: Color
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignSystem.Spacing.xs) {
             OrnamentalDivider(color: accentColor)
             
-            HStack(spacing: 6) {
+            HStack(spacing: DesignSystem.Spacing.xxs + 2) {
                 Text("ROLLING")
                     .font(.custom("PlayfairDisplay-Bold", size: 20))
                     .foregroundColor(backgroundColor.contrastTextSecondary)
@@ -42,7 +42,7 @@ struct OrnamentalDivider: View {
     var body: some View {
         HStack {
             Rectangle()
-                .fill(color.opacity(0.6))
+                .fill(color.opacity(0.6))  // Mantém relativo à cor do tema
                 .frame(height: 1.5)
             
             Circle()
@@ -50,7 +50,7 @@ struct OrnamentalDivider: View {
                 .frame(width: 6, height: 6)
             
             Rectangle()
-                .fill(color.opacity(0.6))
+                .fill(color.opacity(0.6))  // Mantém relativo à cor do tema
                 .frame(height: 1.5)
         }
         .frame(width: 120)

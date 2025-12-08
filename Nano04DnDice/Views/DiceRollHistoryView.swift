@@ -99,12 +99,12 @@ struct DiceRollHistoryView: View {
         }
         .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.black.opacity(0.6))
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                .fill(DesignSystem.Colors.backgroundTertiary)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                .stroke(Color.yellow.opacity(0.3), lineWidth: 1)  // Mantém relativo ao amarelo
         )
         .padding(.horizontal, 20)
     }
@@ -142,7 +142,7 @@ struct HistoryEntryCard: View {
                 
                 Text(timeAgo)
                     .font(.custom("PlayfairDisplay-Regular", size: 12))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(DesignSystem.Colors.textTertiary)
             }
             
             Spacer()
@@ -151,7 +151,7 @@ struct HistoryEntryCard: View {
                 if let second = entry.secondResult {
                     Text("[\(second)]")
                         .font(.custom("PlayfairDisplay-Regular", size: 16))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(DesignSystem.Colors.textDisabled)
                         .strikethrough()
                 }
                 
@@ -170,11 +170,11 @@ struct HistoryEntryCard: View {
         }
         .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.5))
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                .fill(DesignSystem.Colors.backgroundSecondary)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
+                        .stroke(DesignSystem.Colors.borderSubtle, lineWidth: 1)
                 )
         )
     }
@@ -193,13 +193,13 @@ struct StatItem: View {
             
             Text(label)
                 .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
         }
         .frame(maxWidth: .infinity)
         .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.black.opacity(0.3))
+            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                .fill(DesignSystem.Colors.backgroundOverlay)
         )
     }
 }

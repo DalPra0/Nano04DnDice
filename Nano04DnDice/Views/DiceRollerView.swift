@@ -139,7 +139,7 @@ struct DiceRollerView: View {
     private func topSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
         let diceSize = min(screenWidth * 0.92, screenHeight * 0.42)
         
-        return VStack(spacing: 20) {
+        return VStack(spacing: DesignSystem.Spacing.lg) {  // 24pt
             Spacer(minLength: 0)
             
             DiceHeaderView(
@@ -161,18 +161,18 @@ struct DiceRollerView: View {
                     viewModel.handleRollComplete(viewModel.currentRoll)
                 }
             )
-            .padding(.vertical, 16)
+            .padding(.vertical, DesignSystem.Spacing.md)  // 16pt
             .zIndex(1)
             
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 24)
+        .padding(.horizontal, DesignSystem.Spacing.xs)  // 8pt
+        .padding(.bottom, DesignSystem.Spacing.lg)  // 24pt
     }
     
     
     private func bottomSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignSystem.Spacing.sm) {  // 12pt
             DiceSelectorView(
                 selectedDiceType: viewModel.selectedDiceType,
                 accentColor: currentTheme.accentColor.color,

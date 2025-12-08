@@ -1,3 +1,6 @@
+//
+//  RollModeSelectorView.swift
+//
 
 import SwiftUI
 
@@ -39,10 +42,10 @@ struct RollModeSelectorView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.black.opacity(0.5))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                        .fill(DesignSystem.Colors.backgroundSecondary)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
                                 .stroke(accentColor.opacity(0.5), lineWidth: 1.5)
                         )
                 )
@@ -60,8 +63,8 @@ struct RollModeSelectorView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.black.opacity(0.3))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall + 2)
+                        .fill(DesignSystem.Colors.backgroundOverlay)
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .top)))
             }
@@ -100,7 +103,7 @@ struct RollModeSelectorView: View {
             .frame(height: 44)
             .padding(.horizontal, 10)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
                     .fill(selectedMode == mode ? accentColor : Color.clear)
             )
         }

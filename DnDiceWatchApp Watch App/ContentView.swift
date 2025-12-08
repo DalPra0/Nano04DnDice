@@ -80,7 +80,7 @@ struct DiceTypePickerView: View {
                         )
                         .overlay(
                             Capsule()
-                                .strokeBorder(Color.gray.opacity(0.3), lineWidth: 1)
+                                .strokeBorder(Color.gray.opacity(0.3), lineWidth: 1)  // Mantém relativo ao gray
                         )
                 }
                 .buttonStyle(.plain)
@@ -114,7 +114,7 @@ struct DiceResultView: View {
         VStack(spacing: 8) {
             ZStack {
                 Circle()
-                    .fill(resultColor.opacity(0.2))
+                    .fill(resultColor.opacity(0.2))  // Mantém relativo à cor do resultado
                     .frame(width: 100, height: 100)
                 
                 Circle()
@@ -151,7 +151,7 @@ struct PlaceholderView: View {
         VStack(spacing: 8) {
             ZStack {
                 Circle()
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color.gray.opacity(0.2))  // Mantém relativo ao gray
                     .frame(width: 100, height: 100)
                 
                 Image(systemName: "dice.fill")

@@ -135,6 +135,11 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
+        
+        // Initialize scene on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            init({{DICE_SIDES}});
+        });
     </script>
 </body>
 </html>

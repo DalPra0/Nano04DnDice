@@ -54,7 +54,7 @@ struct CustomDiceSheet: View {
     
     
     private var headerView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: DesignSystem.Spacing.md) {  // 16pt
             Image(systemName: "dice.fill")
                 .font(.system(size: 80))
             
@@ -64,12 +64,12 @@ struct CustomDiceSheet: View {
             
             Text("Enter number of sides (2-100)")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
         }
     }
     
     private var inputView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignSystem.Spacing.sm) {  // 12pt
             TextField("20", text: $diceSides)
                 .keyboardType(.numberPad)
                 .font(.custom("PlayfairDisplay-Bold", size: 60))
@@ -78,10 +78,10 @@ struct CustomDiceSheet: View {
                 .focused($isTextFieldFocused)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.white.opacity(0.1))
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
+                        .fill(DesignSystem.Colors.backgroundOverlay)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 20)
+                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
                                 .stroke(Color(hex: "#FFD700")!, lineWidth: 2)
                         )
                 )
@@ -101,7 +101,7 @@ struct CustomDiceSheet: View {
         VStack(spacing: 8) {
             Text("Proficiency Bonus")
                 .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(DesignSystem.Colors.textTertiary)
             
             HStack(spacing: 16) {
                 Button(action: {
@@ -141,7 +141,7 @@ struct CustomDiceSheet: View {
         VStack(spacing: 12) {
             Text("Quick Shortcuts")
                 .font(.custom("PlayfairDisplay-Bold", size: 14))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(DesignSystem.Colors.textSecondary)
             
             LazyVGrid(columns: [GridItem(), GridItem(), GridItem()], spacing: 12) {
                 ForEach([30, 50, 100], id: \.self) { sides in
@@ -154,7 +154,7 @@ struct CustomDiceSheet: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
                                     .fill(Color(hex: "#FFD700")!)
                             )
                     }
@@ -172,9 +172,9 @@ struct CustomDiceSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
                         .fill(Color(hex: "#FFD700")!)
-                        .shadow(color: Color(hex: "#FFD700")!.opacity(0.5), radius: 10)
+                        .shadow(color: Color(hex: "#FFD700")!.opacity(0.5), radius: 10)  // Mantém relativo ao dourado
                 )
         }
         .disabled(!isValidInput)

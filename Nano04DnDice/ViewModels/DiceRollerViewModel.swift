@@ -83,6 +83,7 @@ class DiceRollerViewModel: ObservableObject {
             return
         }
         
+        // Lock state immediately to prevent race conditions
         rolling = true
         result = nil
         secondResult = nil
@@ -90,37 +91,53 @@ class DiceRollerViewModel: ObservableObject {
         let haptic = UIImpactFeedbackGenerator(style: .medium)
         haptic.impactOccurred()
         
+        // Generate roll values
         let firstRoll = Int.random(in: 1...selectedDiceType.sides)
         var finalRoll = firstRoll
+        var secondRollValue: Int? = nil
         
+        // Handle advantage/disadvantage
         if rollMode != .normal {
             let secondRoll = Int.random(in: 1...selectedDiceType.sides)
-            secondResult = secondRoll
+            secondRollValue = secondRoll
             
             if rollMode == .blessed {
                 finalRoll = max(firstRoll, secondRoll)
-            } else {
+            } else { // cursed
                 finalRoll = min(firstRoll, secondRoll)
             }
         }
         
+        // Store values for WebView animation
         currentRoll = finalRoll
+        secondResult = secondRollValue
         
+        // Play sound
         audioManager.playDiceRoll()
         
+        // Animate glow
         withAnimation(.easeInOut(duration: 0.3)) {
             glowIntensity = 1.0
         }
-        
     }
     
     func handleRollComplete(_ finalResult: Int) {
-        result = finalResult + proficiencyBonus
+        // Validate result is within dice range
+        guard finalResult >= 1 && finalResult <= selectedDiceType.sides else {
+            print("⚠️ Invalid roll result \(finalResult) for d\(selectedDiceType.sides)")
+            rolling = false
+            return
+        }
+        
+        // Calculate final result with proficiency bonus
+        let totalResult = finalResult + proficiencyBonus
+        result = totalResult
         rolling = false
         
+        // Save to history
         let entry = DiceRollEntry(
             diceType: selectedDiceType,
-            result: finalResult + proficiencyBonus,
+            result: totalResult,
             secondResult: secondResult,
             rollMode: rollMode,
             proficiencyBonus: proficiencyBonus

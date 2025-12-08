@@ -111,16 +111,18 @@ struct AddCharacterView: View {
     }
     
     private func calculateHP() -> Int {
+        // D&D 5e Rules: Level 1 characters get MAX hit die value + CON modifier
+        // This is correct - they don't roll for first level HP
         let hitDice: Int
         switch characterClass {
         case "Barbarian": hitDice = 12
         case "Fighter", "Paladin", "Ranger": hitDice = 10
         case "Bard", "Cleric", "Druid", "Monk", "Rogue", "Warlock": hitDice = 8
-        default: hitDice = 6
+        default: hitDice = 6  // Sorcerer, Wizard
         }
         
         let conModifier = (constitution - 10) / 2
-        return hitDice + conModifier
+        return max(1, hitDice + conModifier)  // Minimum 1 HP even with negative CON
     }
 }
 

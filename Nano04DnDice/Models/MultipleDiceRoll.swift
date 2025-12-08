@@ -11,7 +11,8 @@ struct MultipleDiceRoll: Identifiable, Equatable {
     }
     
     var average: Double {
-        Double(total) / Double(results.count)
+        guard !results.isEmpty else { return 0.0 }
+        return Double(total) / Double(results.count)
     }
     
     var displayName: String {

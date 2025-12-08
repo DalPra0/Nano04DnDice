@@ -15,6 +15,17 @@ struct TopButtonsView: View {
     @State private var isMenuOpen = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
     
+    // Helper to close menu with proper animation
+    private func closeMenu() {
+        if reduceMotion {
+            isMenuOpen = false
+        } else {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                isMenuOpen = false
+            }
+        }
+    }
+    
     var body: some View {
         ZStack {
             if isMenuOpen {
@@ -62,13 +73,7 @@ struct TopButtonsView: View {
                                     title: "CHARACTER",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowCharacterSheet()
                                     }
                                 )
@@ -78,13 +83,7 @@ struct TopButtonsView: View {
                                     title: "CAMPAIGN",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowCampaignManager()
                                     }
                                 )
@@ -94,13 +93,7 @@ struct TopButtonsView: View {
                                     title: "AUDIO",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowAudioSettings()
                                     }
                                 )
@@ -110,13 +103,7 @@ struct TopButtonsView: View {
                                     title: "STATS",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowDetailedStats()
                                     }
                                 )
@@ -126,13 +113,7 @@ struct TopButtonsView: View {
                                     title: "HISTORY",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowHistory()
                                     }
                                 )
@@ -142,13 +123,7 @@ struct TopButtonsView: View {
                                     title: "AR DICE",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowAR()
                                     }
                                 )
@@ -158,13 +133,7 @@ struct TopButtonsView: View {
                                     title: "THEMES",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowThemes()
                                     }
                                 )
@@ -174,13 +143,7 @@ struct TopButtonsView: View {
                                     title: "CUSTOMIZE",
                                     accentColor: accentColor,
                                     action: {
-                                        if reduceMotion {
-                                            isMenuOpen = false
-                                        } else {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                isMenuOpen = false
-                                            }
-                                        }
+                                        closeMenu()
                                         onShowCustomizer()
                                     }
                                 )

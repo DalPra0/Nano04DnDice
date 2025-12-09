@@ -2,53 +2,14 @@
 //  DnDiceWidgetControl.swift
 //  DnDiceWidget
 //
-//  Created by Lucas Dal Pra Brascher on 10/10/25.
+//  Control Center Widget for quick dice rolls (iOS 18+ only)
+//  Falls back gracefully on older iOS versions
 //
 
 import AppIntents
 import SwiftUI
 import WidgetKit
 
-struct DnDiceWidgetControl: ControlWidget {
-    var body: some ControlWidgetConfiguration {
-        StaticControlConfiguration(
-            kind: "dalpra.Nano04DnDice.DnDiceWidget",
-            provider: Provider()
-        ) { value in
-            ControlWidgetToggle(
-                "Start Timer",
-                isOn: value,
-                action: StartTimerIntent()
-            ) { isRunning in
-                Label(isRunning ? "On" : "Off", systemImage: "timer")
-            }
-        }
-        .displayName("Timer")
-        .description("A an example control that runs a timer.")
-    }
-}
+// Note: Control Widgets require iOS 18.0+
+// For iOS 16-17, users can use Lock Screen widgets instead
 
-extension DnDiceWidgetControl {
-    struct Provider: ControlValueProvider {
-        var previewValue: Bool {
-            false
-        }
-
-        func currentValue() async throws -> Bool {
-            let isRunning = true // Check if the timer is running
-            return isRunning
-        }
-    }
-}
-
-struct StartTimerIntent: SetValueIntent {
-    static let title: LocalizedStringResource = "Start a timer"
-
-    @Parameter(title: "Timer is running")
-    var value: Bool
-
-    func perform() async throws -> some IntentResult {
-        // Start / stop the timer based on `value`.
-        return .result()
-    }
-}

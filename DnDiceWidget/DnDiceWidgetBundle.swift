@@ -12,7 +12,6 @@ import SwiftUI
 struct DnDiceWidgetBundle: WidgetBundle {
     var body: some Widget {
         DnDiceWidget()
-        DnDiceWidgetControl()
         DnDiceWidgetLiveActivity()
     }
 }

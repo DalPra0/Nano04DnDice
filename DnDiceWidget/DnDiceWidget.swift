@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 // MARK: - Timeline Provider
 struct Provider: TimelineProvider {
@@ -217,90 +218,82 @@ struct MediumWidgetView: View {
     }
 }
 
+// MARK: - Large Widget (Interactive with Multiple Buttons)
 struct LargeWidgetView: View {
     let entry: DiceEntry
+    let colorScheme: ColorScheme
+    
+    var resultColor: Color {
+        if entry.isCritical { return WidgetDesignSystem.Colors.critical }
+        if entry.isFumble { return WidgetDesignSystem.Colors.fumble }
+        return WidgetDesignSystem.Colors.brandGold
+    }
     
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(hex: "#1a1a2e"),
-                    Color(hex: "#16213e")
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            WidgetDesignSystem.Colors.adaptiveGradient(colorScheme: colorScheme)
             
-            VStack(spacing: 20) {
-                // Header
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("D&D DICE ROLLER")
-                            .font(.custom("PlayfairDisplay-Bold", size: 16))
-                            .foregroundColor(Color(hex: "#FFD700"))
-                            .tracking(3)
-                        
-                        Text("Last Roll Result")
-                            .font(.custom("PlayfairDisplay-Regular", size: 12))
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "dice.fill")
-                        .font(.system(size: 40))
-                        .foregroundColor(Color(hex: "#FFD700").opacity(0.3))
-                }
-                
-                // Main result
-                VStack(spacing: 12) {
+            VStack(spacing: WidgetDesignSystem.Spacing.lg) {
+                // Result display
+                VStack(spacing: WidgetDesignSystem.Spacing.sm) {
                     Text(entry.diceType)
-                        .font(.custom("PlayfairDisplay-Bold", size: 24))
-                        .foregroundColor(Color(hex: "#FFD700").opacity(0.8))
+                        .font(WidgetDesignSystem.Typography.title)
+                        .foregroundColor(WidgetDesignSystem.Colors.brandGold)
                     
                     Text("\(entry.result)")
-                        .font(.custom("PlayfairDisplay-Black", size: 120))
-                        .foregroundColor(entry.isCritical ? .green : Color(hex: "#FFD700"))
-                        .shadow(color: entry.isCritical ? .green.opacity(0.5) : Color(hex: "#FFD700").opacity(0.3), radius: 20)
+                        .font(WidgetDesignSystem.Typography.resultLarge)
+                        .foregroundColor(resultColor)
+                        .shadow(color: resultColor.opacity(0.3), radius: 12)
                     
                     if entry.isCritical {
                         HStack(spacing: 8) {
                             Image(systemName: "star.fill")
-                                .foregroundColor(.green)
                             Text("CRITICAL HIT!")
-                                .font(.custom("PlayfairDisplay-Bold", size: 18))
-                                .foregroundColor(.green)
-                                .tracking(3)
+                                .font(WidgetDesignSystem.Typography.subtitle)
                             Image(systemName: "star.fill")
-                                .foregroundColor(.green)
                         }
+                        .foregroundColor(WidgetDesignSystem.Colors.critical)
+                    } else if entry.isFumble {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                            Text("FUMBLE!")
+                                .font(WidgetDesignSystem.Typography.subtitle)
+                        }
+                        .foregroundColor(WidgetDesignSystem.Colors.fumble)
                     }
                 }
                 
                 Spacer()
                 
-                // Footer
-                HStack {
+                // Interactive buttons (iOS 17+)
+                if #available(iOS 17.0, *) {
+                    VStack(spacing: WidgetDesignSystem.Spacing.md) {
+                        Text("Quick Roll")
+                            .font(WidgetDesignSystem.Typography.caption)
+                            .foregroundColor(WidgetDesignSystem.Colors.textSecondary)
+                        
+                        HStack(spacing: WidgetDesignSystem.Spacing.sm) {
+                            DiceButton(diceType: .d4)
+                            DiceButton(diceType: .d6)
+                            DiceButton(diceType: .d8)
+                            DiceButton(diceType: .d12)
+                            DiceButton(diceType: .d20)
+                        }
+                    }
+                } else {
                     Text(timeAgoString(from: entry.date))
-                        .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
-                    
-                    Spacer()
-                    
-                    Text("Tap to roll again")
-                        .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(Color(hex: "#FFD700").opacity(0.6))
+                        .font(WidgetDesignSystem.Typography.caption)
+                        .foregroundColor(WidgetDesignSystem.Colors.textSecondary)
                 }
             }
-            .padding()
+            .padding(WidgetDesignSystem.Spacing.lg)
         }
     }
     
     private func timeAgoString(from date: Date) -> String {
         let minutes = Int(Date().timeIntervalSince(date) / 60)
         if minutes < 1 { return "Just now" }
-        if minutes < 60 { return "\(minutes) minutes ago" }
+        if minutes < 60 { return "\(minutes) min ago" }
         let hours = minutes / 60
         if hours < 24 { return "\(hours) hours ago" }
         let days = hours / 24
@@ -308,28 +301,106 @@ struct LargeWidgetView: View {
     }
 }
 
-struct StatBadge: View {
-    let icon: String
-    let label: String
-    let color: Color
+// MARK: - Dice Button Component (iOS 17+)
+@available(iOS 17.0, *)
+struct DiceButton: View {
+    let diceType: DiceTypeEntity
     
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 12))
-            Text(label)
-                .font(.custom("PlayfairDisplay-Regular", size: 12))
+        Button(intent: RollDiceIntent(diceType: diceType)) {
+            Text(diceType.rawValue)
+                .font(WidgetDesignSystem.Typography.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+                .background(WidgetDesignSystem.Colors.brandGold)
+                .cornerRadius(8)
         }
-        .foregroundColor(color)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(color.opacity(0.15))
-        )
+        .buttonStyle(.plain)
     }
 }
 
+// MARK: - Lock Screen Widgets (iOS 16+)
+
+// Circular Accessory (Lock Screen circular complication)
+struct CircularAccessoryView: View {
+    let entry: DiceEntry
+    
+    var resultColor: Color {
+        if entry.isCritical { return .green }
+        if entry.isFumble { return .red }
+        return .white
+    }
+    
+    var body: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            
+            VStack(spacing: 2) {
+                Text("\(entry.result)")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundColor(resultColor)
+                
+                Text(entry.diceType)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
+// Rectangular Accessory (Lock Screen rectangular complication)
+struct RectangularAccessoryView: View {
+    let entry: DiceEntry
+    
+    var resultColor: Color {
+        if entry.isCritical { return .green }
+        if entry.isFumble { return .red }
+        return .white
+    }
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            // Icon
+            Image(systemName: entry.isCritical ? "star.fill" : entry.isFumble ? "exclamationmark.triangle.fill" : "dice.fill")
+                .font(.title3)
+                .foregroundColor(resultColor)
+            
+            // Content
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(entry.result)")
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundColor(resultColor)
+                
+                Text(entry.diceType)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 8)
+    }
+}
+
+// Inline Accessory (Lock Screen inline text)
+struct InlineAccessoryView: View {
+    let entry: DiceEntry
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "dice.fill")
+            Text("\(entry.diceType): \(entry.result)")
+                .font(.system(.caption, design: .rounded))
+            if entry.isCritical {
+                Image(systemName: "star.fill")
+            }
+        }
+    }
+}
+
+// MARK: - Widget Configuration
 struct DnDiceWidget: Widget {
     let kind: String = "DnDiceWidget"
 
@@ -346,42 +417,35 @@ struct DnDiceWidget: Widget {
         }
         .configurationDisplayName("D&D Dice")
         .description("Show your last dice roll result")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .systemLarge,
+            .accessoryCircular,
+            .accessoryRectangular,
+            .accessoryInline
+        ])
     }
 }
 
-// Helper extension for hex colors
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
-    }
-}
-
-#Preview(as: .systemSmall) {
+// MARK: - Previews
+#Preview("Small", as: .systemSmall) {
     DnDiceWidget()
 } timeline: {
-    DiceEntry(date: .now, result: 20, diceType: "D20", isCritical: true)
-    DiceEntry(date: .now, result: 15, diceType: "D20", isCritical: false)
+    DiceEntry(date: .now, result: 20, diceType: "D20", isCritical: true, isFumble: false)
+    DiceEntry(date: .now, result: 1, diceType: "D20", isCritical: false, isFumble: true)
+    DiceEntry(date: .now, result: 15, diceType: "D20", isCritical: false, isFumble: false)
+}
+
+#Preview("Medium", as: .systemMedium) {
+    DnDiceWidget()
+} timeline: {
+    DiceEntry(date: .now, result: 20, diceType: "D20", isCritical: true, isFumble: false)
+}
+
+#Preview("Circular", as: .accessoryCircular) {
+    DnDiceWidget()
+} timeline: {
+    DiceEntry(date: .now, result: 20, diceType: "D20", isCritical: true, isFumble: false)
 }
 

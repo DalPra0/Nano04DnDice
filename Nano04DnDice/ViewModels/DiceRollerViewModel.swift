@@ -2,6 +2,7 @@
 import SwiftUI
 import Combine
 
+@MainActor
 class DiceRollerViewModel: ObservableObject {
     @Published var rolling = false
     @Published var result: Int?
@@ -145,7 +146,7 @@ class DiceRollerViewModel: ObservableObject {
         historyManager.addRoll(entry)
         
         // Save to shared UserDefaults for widget
-        if let sharedDefaults = UserDefaults(suiteName: "group.com.yourcompany.Nano04DnDice") {
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.DalPra.DiceAndDragons") {
             sharedDefaults.set(finalResult + proficiencyBonus, forKey: "lastDiceResult")
             sharedDefaults.set(selectedDiceType.name, forKey: "lastDiceType")
             sharedDefaults.set(Date(), forKey: "lastRollDate")

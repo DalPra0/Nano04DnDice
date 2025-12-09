@@ -68,6 +68,8 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     deinit {
+        // Cancel all timers before cleanup to prevent memory leaks
+        cancellables.removeAll()
         cleanup()
     }
     

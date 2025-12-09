@@ -20,8 +20,7 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         // Get last roll from UserDefaults (shared with main app)
-        // NOTE: Update bundle identifier in App Group entitlements to match
-        let sharedDefaults = UserDefaults(suiteName: "group.com.dalpra.Nano04DnDice")
+        let sharedDefaults = UserDefaults(suiteName: "group.com.DalPra.DiceAndDragons")
         let lastResult = sharedDefaults?.integer(forKey: "lastDiceResult") ?? 20
         let lastDiceType = sharedDefaults?.string(forKey: "lastDiceType") ?? "D20"
         let lastRollDate = sharedDefaults?.object(forKey: "lastRollDate") as? Date ?? Date()

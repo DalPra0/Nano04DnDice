@@ -7,7 +7,6 @@ struct ThemesListView: View {
     
     @State private var showDeleteAlert = false
     @State private var themeToDelete: DiceCustomization?
-    @State private var showSyncSettings = false
     
     var body: some View {
         NavigationView {
@@ -70,18 +69,6 @@ struct ThemesListView: View {
                     }
                     .foregroundColor(Color(hex: "#FFD700"))
                 }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showSyncSettings = true
-                    }) {
-                        Image(systemName: themeManager.iCloudSyncEnabled ? "icloud.fill" : "icloud.slash")
-                            .foregroundColor(themeManager.syncStatus == .syncing ? .blue : Color(hex: "#FFD700"))
-                    }
-                }
-            }
-            .sheet(isPresented: $showSyncSettings) {
-                iCloudSyncSettingsView
             }
             .alert("Delete Theme", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) {}
@@ -164,67 +151,6 @@ struct ThemesListView: View {
         .padding(.horizontal, DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
     }
     
-    private var iCloudSyncSettingsView: some View {
-        NavigationView {
-            Form {
-                Section {
-                    Toggle("Enable iCloud Sync", isOn: $themeManager.iCloudSyncEnabled)
-                } header: {
-                    Text("iCloud Sync")
-                } footer: {
-                    Text("Sync your custom themes across all your devices using iCloud")
-                }
-                
-                if themeManager.iCloudSyncEnabled {
-                    Section("Sync Status") {
-                        HStack {
-                            Text(themeManager.syncStatus.description)
-                            Spacer()
-                            if themeManager.syncStatus == .syncing {
-                                ProgressView()
-                            } else if themeManager.syncStatus == .success {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                            } else if case .failed = themeManager.syncStatus {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.red)
-                            }
-                        }
-                        
-                        Button("Sync Now") {
-                            Task {
-                                themeManager.syncStatus = .syncing
-                                await MainActor.run {
-                                    themeManager.applyTheme(themeManager.currentTheme)
-                                }
-                            }
-                        }
-                    }
-                    
-                    Section {
-                        Text("⚠️ iCloud sync requires a configured iCloud container")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text("Make sure you're signed into iCloud on this device")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    } header: {
-                        Text("Note")
-                    }
-                }
-            }
-            .navigationTitle("iCloud Sync")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        showSyncSettings = false
-                    }
-                }
-            }
-        }
-    }
 }
 
 

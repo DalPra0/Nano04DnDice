@@ -1,35 +1,20 @@
 
 import SwiftUI
 import Combine
-import CloudKit
 
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     
     @Published var currentTheme: DiceCustomization
     @Published var savedThemes: [DiceCustomization] = []
-    @Published var iCloudSyncEnabled: Bool {
-        didSet {
-            UserDefaults.standard.set(iCloudSyncEnabled, forKey: "iCloudSyncEnabled")
-            // Note: iCloud sync implementation requires:
-            // 1. Valid iCloud container identifier in entitlements
-            // 2. CloudKit database setup in Xcode
-            // 3. User authentication check
-            // Current implementation disabled until prerequisites are met
-        }
-    }
-    @Published var syncStatus: SyncStatus = .idle
+    
+    // NOTE: iCloud sync removed - was non-functional placeholder
+    // To re-enable: configure CloudKit container in entitlements and implement proper sync
     
     private let userDefaultsKey = "savedThemes"
     private let currentThemeKey = "currentTheme"
-    private let cloudContainer = CKContainer(identifier: "iCloud.com.yourcompany.Nano04DnDice")
-    private let recordType = "DiceTheme"
-    private var syncTimer: Timer?
     
     init() {
-        // Load iCloud sync preference
-        self.iCloudSyncEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
-        
         if let data = UserDefaults.standard.data(forKey: currentThemeKey),
            let theme = try? JSONDecoder().decode(DiceCustomization.self, from: data) {
             self.currentTheme = theme
@@ -38,8 +23,6 @@ class ThemeManager: ObservableObject {
         }
         
         loadSavedThemes()
-        
-        // Note: iCloud sync disabled - requires CloudKit configuration
     }
     
     
@@ -80,10 +63,6 @@ class ThemeManager: ObservableObject {
         if let encoded = try? JSONEncoder().encode(savedThemes) {
             UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
-        
-        if iCloudSyncEnabled {
-            syncThemesToiCloud()
-        }
     }
     
     private func loadSavedThemes() {
@@ -106,8 +85,17 @@ class ThemeManager: ObservableObject {
         }
         saveToDisk()
     }
-    
-    // MARK: - iCloud Sync
+}
+
+// MARK: - Supporting Types
+
+extension DiceCustomization {
+    var isPreset: Bool {
+        // Preset themes have specific names
+        let presetNames = PresetThemes.allThemes.map { $0.name }
+        return presetNames.contains(name)
+    }
+}
     
     private func setupiCloudSync() {
         // Listen for iCloud changes

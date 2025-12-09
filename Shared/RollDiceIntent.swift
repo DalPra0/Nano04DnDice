@@ -12,8 +12,14 @@ import WidgetKit
 struct RollDiceIntent: AppIntent {
     static var title: LocalizedStringResource = "Roll Dice"
     static var description = IntentDescription("Roll a random dice")
+    static var openAppWhenRun: Bool = true  // Open app when Siri runs this
     
-    @Parameter(title: "Dice Type")
+    // Siri suggestions for easy discovery
+    static var parameterSummary: some ParameterSummary {
+        Summary("Roll a \(\.$diceType)")
+    }
+    
+    @Parameter(title: "Dice Type", default: .d20)
     var diceType: DiceTypeEntity
     
     init() {
@@ -89,6 +95,12 @@ enum DiceTypeEntity: String, AppEnum {
 struct QuickRollD20Intent: AppIntent {
     static var title: LocalizedStringResource = "Quick Roll D20"
     static var description = IntentDescription("Quickly roll a D20")
+    static var openAppWhenRun: Bool = true  // Open app when Siri runs this
+    
+    // Siri suggestion
+    static var parameterSummary: some ParameterSummary {
+        Summary("Roll a D20")
+    }
     
     func perform() async throws -> some IntentResult {
         let result = Int.random(in: 1...20)

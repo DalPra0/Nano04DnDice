@@ -3,6 +3,8 @@ import AVFoundation
 import SwiftUI
 import Combine
 
+// MARK: - Sound Types
+/// Enumeration of all available sound effects in the app
 enum SoundType: String, CaseIterable, Codable {
     case diceRoll = "dice_roll"
     case critical = "critical"
@@ -39,9 +41,14 @@ struct CustomSound: Codable, Identifiable {
     }
 }
 
+// MARK: - AudioManager
+/// Singleton manager for all audio playback in the app
+/// Handles sound preloading, custom sounds, and volume control
+/// Uses AVAudioSession for background audio support
 class AudioManager: ObservableObject {
     static let shared = AudioManager()
     
+    /// Dictionary of preloaded AVAudioPlayer instances for instant playback
     private var audioPlayers: [String: AVAudioPlayer] = [:]
     
     @Published var isSFXEnabled: Bool {
@@ -75,16 +82,20 @@ class AudioManager: ObservableObject {
     }
     
     private func setupAudioSession() {
+        #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("⚠️ Erro ao configurar sessão de áudio: \(error)")
         }
+        #endif
     }
     
+    /// Preload all sound files into memory for instant playback
+    /// Called on init and when custom sounds change
     private func preloadSounds() {
-        // Clear existing players
+        // Clear existing players to free memory
         audioPlayers.removeAll()
         
         for type in SoundType.allCases {

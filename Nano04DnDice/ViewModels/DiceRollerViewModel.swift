@@ -2,34 +2,41 @@
 import SwiftUI
 import Combine
 
+// MARK: - DiceRollerViewModel
+/// Core ViewModel for dice rolling functionality
+/// Thread-safe with @MainActor to prevent race conditions
+/// Single responsibility: Manages dice state and roll logic (navigation extracted to NavigationState)
 @MainActor
 class DiceRollerViewModel: ObservableObject {
+    // MARK: - Dice State
+    /// Current rolling animation state
     @Published var rolling = false
+    /// Primary dice roll result (or selected result in advantage/disadvantage)
     @Published var result: Int?
+    /// Secondary result for advantage/disadvantage rolls
     @Published var secondResult: Int?
+    /// Display value for WebView animation
     @Published var currentRoll = 1
+    /// Ambient glow animation intensity
     @Published var glowIntensity: Double = 0.3
+    /// Currently selected dice type (d4-d100 or custom)
     @Published var selectedDiceType: DiceType = .d20
+    /// Roll modifier: normal, blessed (advantage), or cursed (disadvantage)
     @Published var rollMode: RollMode = .normal
     
-    @Published var showThemesList = false
-    @Published var showCustomizer = false
-    @Published var showCustomDice = false
-    @Published var showARDice = false
+    // MARK: - Dice Configuration
     @Published var customDiceSides: String = "20"
     @Published var proficiencyBonus: Int = 0
     
-    @Published var showMultipleDice = false
+    // MARK: - Multiple Dice
     @Published var multipleDiceQuantity: Int = 2
     @Published var multipleDiceType: DiceType = .d6
     @Published var multipleDiceResult: MultipleDiceRoll?
     
-    @Published var showHistory = false
-    @Published var showDetailedStats = false
-    @Published var showAudioSettings = false
-    @Published var showCampaignManager = false
-    @Published var showCharacterSheet = false
+    // MARK: - Navigation (Extracted to separate state)
+    @Published var navigation = NavigationState()
     
+    // MARK: - Dependencies
     private let audioManager = AudioManager.shared
     private let historyManager = DiceRollHistoryManager.shared
     
@@ -74,10 +81,13 @@ class DiceRollerViewModel: ObservableObject {
     func confirmCustomDice() {
         if let sides = Int(customDiceSides), sides >= 2, sides <= 100 {
             selectedDiceType = .custom(sides: sides)
-            showCustomDice = false
+            navigation.showCustomDice = false
         }
     }
     
+    /// Trigger a dice roll with animation and audio
+    /// Handles advantage/disadvantage rolls by generating 2 results
+    /// Thread-safe: @MainActor ensures UI updates on main thread
     func rollDice() {
         guard !rolling else {
             print("[Dice] Already rolling, ignoring tap")
@@ -146,10 +156,10 @@ class DiceRollerViewModel: ObservableObject {
         historyManager.addRoll(entry)
         
         // Save to shared UserDefaults for widget
-        if let sharedDefaults = UserDefaults(suiteName: "group.com.DalPra.DiceAndDragons") {
-            sharedDefaults.set(finalResult + proficiencyBonus, forKey: "lastDiceResult")
-            sharedDefaults.set(selectedDiceType.name, forKey: "lastDiceType")
-            sharedDefaults.set(Date(), forKey: "lastRollDate")
+        if let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup) {
+            sharedDefaults.set(finalResult + proficiencyBonus, forKey: AppConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set(selectedDiceType.name, forKey: AppConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: AppConstants.UserDefaultsKeys.lastRollDate)
         }
         
         withAnimation(.easeInOut(duration: 0.5)) {

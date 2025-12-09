@@ -139,24 +139,25 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     private func applyPhysicsAndThrow(to dice: ModelEntity, force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
-        dice.scale = [0.1, 0.1, 0.1]
+        dice.scale = [AppConstants.DiceDimensions.scale3D, AppConstants.DiceDimensions.scale3D, AppConstants.DiceDimensions.scale3D]
         
         let physicsMaterial = PhysicsMaterialResource.generate(
-            staticFriction: 1.0,
-            dynamicFriction: 0.8,
-            restitution: 0.2
+            staticFriction: AppConstants.DicePhysics.staticFriction,
+            dynamicFriction: AppConstants.DicePhysics.dynamicFriction,
+            restitution: AppConstants.DicePhysics.restitution
         )
         
         dice.generateCollisionShapes(recursive: true)
         
         dice.components.set(PhysicsBodyComponent(
-            massProperties: .init(mass: 0.05),
+            massProperties: .init(mass: AppConstants.DicePhysics.mass),
             material: physicsMaterial,
             mode: .dynamic
         ))
         
         if dice.collision == nil {
-            let collisionShape = ShapeResource.generateBox(width: 0.1, height: 0.1, depth: 0.1)
+            let boxSize = AppConstants.DiceDimensions.collisionBoxSize
+            let collisionShape = ShapeResource.generateBox(width: boxSize, height: boxSize, depth: boxSize)
             dice.components.set(CollisionComponent(
                 shapes: [collisionShape],
                 mode: .default,
@@ -183,12 +184,12 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             arView.session.add(anchor: arAnchor)
             let spawnAnchor = AnchorEntity(anchor: arAnchor)
             
-            dice.position = [0, 0.3, 0]
+            dice.position = [0, AppConstants.DicePhysics.spawnHeight, 0]
             spawnAnchor.addChild(dice)
             arView.scene.addAnchor(spawnAnchor)
             diceEntity = dice
         } else {
-            dice.position = [0, 0.3, -0.3]
+            dice.position = [0, AppConstants.DicePhysics.spawnHeight, -0.3]
             plane.addChild(dice)
             diceEntity = dice
         }
@@ -213,7 +214,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     
     private func throwFallbackDice(force: Float, direction: SIMD3<Float>, plane: AnchorEntity, screenPoint: CGPoint?) {
         
-        let mesh = MeshResource.generateSphere(radius: 0.05)
+        let mesh = MeshResource.generateSphere(radius: AppConstants.DiceDimensions.fallbackSphereRadius)
         var material = SimpleMaterial()
         material.color = .init(tint: .systemYellow)
         material.metallic = .float(0.8)
@@ -222,21 +223,21 @@ class ARDiceCoordinator: NSObject, ObservableObject {
         let fallbackDice = ModelEntity(mesh: mesh, materials: [material])
         
         let physicsMaterial = PhysicsMaterialResource.generate(
-            staticFriction: 1.0,
-            dynamicFriction: 0.8,
-            restitution: 0.2
+            staticFriction: AppConstants.DicePhysics.staticFriction,
+            dynamicFriction: AppConstants.DicePhysics.dynamicFriction,
+            restitution: AppConstants.DicePhysics.restitution
         )
         
         fallbackDice.generateCollisionShapes(recursive: false)
         
         fallbackDice.components.set(PhysicsBodyComponent(
-            massProperties: .init(mass: 0.05),
+            massProperties: .init(mass: AppConstants.DicePhysics.mass),
             material: physicsMaterial,
             mode: .dynamic
         ))
         
         if fallbackDice.collision == nil {
-            let collisionShape = ShapeResource.generateSphere(radius: 0.05)
+            let collisionShape = ShapeResource.generateSphere(radius: AppConstants.DiceDimensions.fallbackSphereRadius)
             fallbackDice.components.set(CollisionComponent(
                 shapes: [collisionShape],
                 mode: .default,
@@ -274,12 +275,12 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             let arAnchor = ARAnchor(transform: worldTransform)
             arView.session.add(anchor: arAnchor)
             let spawnAnchor = AnchorEntity(anchor: arAnchor)
-            fallbackDice.position = [0, 0.3, 0]
+            fallbackDice.position = [0, AppConstants.DicePhysics.spawnHeight, 0]
             spawnAnchor.addChild(fallbackDice)
             arView.scene.addAnchor(spawnAnchor)
             diceEntity = fallbackDice
         } else {
-            fallbackDice.position = [0, 0.3, -0.3]
+            fallbackDice.position = [0, AppConstants.DicePhysics.spawnHeight, -0.3]
             plane.addChild(fallbackDice)
             diceEntity = fallbackDice
         }
@@ -292,7 +293,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
     }
     
     private func startResultDetection() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppConstants.AnimationDuration.diceRoll) { [weak self] in
             self?.detectDiceResult()
         }
     }
@@ -310,7 +311,7 @@ class ARDiceCoordinator: NSObject, ObservableObject {
             self.diceResult = result
             self.isDiceThrown = false
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + AppConstants.AnimationDuration.resultDisplay) {
                 dice.removeFromParent()
                 self.diceEntity = nil
             }
@@ -404,16 +405,15 @@ extension ARDiceCoordinator: ARSessionDelegate {
         let visualPlane = ModelEntity(mesh: mesh, materials: [material])
         visualPlane.position = [0, 0, 0]
         
-        let GIANT_SIZE: Float = 10.0
         let planeShape = ShapeResource.generateBox(
-            width: GIANT_SIZE,
-            height: 0.05,
-            depth: GIANT_SIZE
+            width: AppConstants.DiceDimensions.planeSize,
+            height: AppConstants.DiceDimensions.planeHeight,
+            depth: AppConstants.DiceDimensions.planeSize
         )
         
         let physicsMaterial = PhysicsMaterialResource.generate(
-            staticFriction: 1.0,
-            dynamicFriction: 0.8,
+            staticFriction: AppConstants.DicePhysics.staticFriction,
+            dynamicFriction: AppConstants.DicePhysics.dynamicFriction,
             restitution: 0.1
         )
         

@@ -16,14 +16,14 @@ struct DiceRollHistoryView: View {
                     emptyStateView
                 } else {
                     ScrollView {
-                        VStack(spacing: 20) {
+                        LazyVStack(spacing: 20, pinnedViews: []) {
                             statisticsCard
                             
                             Divider()
-                                .background(Color.white.opacity(0.3))
+                                .background(DesignSystem.Colors.borderSubtle)
                                 .padding(.vertical, 10)
                             
-                            VStack(spacing: 12) {
+                            LazyVStack(spacing: 12) {
                                 ForEach(historyManager.history) { entry in
                                     HistoryEntryCard(entry: entry)
                                 }
@@ -42,7 +42,7 @@ struct DiceRollHistoryView: View {
                     Button("Close") {
                         dismiss()
                     }
-                    .foregroundColor(Color(hex: "#FFD700"))
+                    .foregroundColor(DesignSystem.Colors.brandGold)
                 }
                 
                 if !historyManager.history.isEmpty {
@@ -94,8 +94,8 @@ struct DiceRollHistoryView: View {
             }
             
             Text("Most Used: \(stats.mostUsedDice)")
-                .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(Color(hex: "#FFD700"))
+                .font(DesignSystem.Typography.bodySmall)
+                .foregroundColor(DesignSystem.Colors.brandGold)
         }
         .padding(20)
         .background(
@@ -124,8 +124,8 @@ struct HistoryEntryCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(entry.diceType.name)
-                        .font(.custom("PlayfairDisplay-Bold", size: 18))
-                        .foregroundColor(.white)
+                        .font(DesignSystem.Typography.bodyLarge)
+                        .foregroundColor(DesignSystem.Colors.textPrimary)
                     
                     if entry.rollMode != .normal {
                         Text(entry.rollMode.displayName.uppercased())
@@ -157,14 +157,14 @@ struct HistoryEntryCard: View {
                 
                 Text("\(entry.result)")
                     .font(.custom("PlayfairDisplay-Black", size: 32))
-                    .foregroundColor(entry.isCritical ? .green : entry.isFumble ? .red : Color(hex: "#FFD700"))
+                    .foregroundColor(entry.isCritical ? DesignSystem.Colors.success : entry.isFumble ? DesignSystem.Colors.error : DesignSystem.Colors.brandGold)
                 
                 if entry.isCritical {
                     Image(systemName: "star.fill")
-                        .foregroundColor(.green)
+                        .foregroundColor(DesignSystem.Colors.success)
                 } else if entry.isFumble {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.red)
+                        .foregroundColor(DesignSystem.Colors.error)
                 }
             }
         }

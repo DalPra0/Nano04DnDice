@@ -61,7 +61,7 @@ final class DiceRollerViewModelTests: XCTestCase {
         viewModel.confirmCustomDice()
         
         XCTAssertEqual(viewModel.selectedDiceType.sides, 30)
-        XCTAssertFalse(viewModel.showCustomDice)
+        XCTAssertFalse(viewModel.navigation.showCustomDice)
     }
     
     func testConfirmCustomDiceInvalidSides() {

@@ -5,6 +5,8 @@ struct DiceRollerView: View {
     @StateObject private var viewModel = DiceRollerViewModel()
     @StateObject private var themeManager = ThemeManager.shared
     @State private var orientation = UIDevice.current.orientation
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     
     private var currentTheme: DiceCustomization {
         themeManager.currentTheme
@@ -12,6 +14,11 @@ struct DiceRollerView: View {
     
     private var isLandscape: Bool {
         orientation.isLandscape
+    }
+    
+    /// Check if device is iPad (regular width in portrait)
+    private var isIPad: Bool {
+        horizontalSizeClass == .regular && verticalSizeClass == .regular
     }
     
     var body: some View {
@@ -41,48 +48,48 @@ struct DiceRollerView: View {
                     
                     TopButtonsView(
                         accentColor: currentTheme.accentColor.color,
-                        onShowThemes: { viewModel.showThemesList = true },
-                        onShowCustomizer: { viewModel.showCustomizer = true },
-                        onShowAR: { viewModel.showARDice = true },
-                        onShowHistory: { viewModel.showHistory = true },
-                        onShowDetailedStats: { viewModel.showDetailedStats = true },
-                        onShowAudioSettings: { viewModel.showAudioSettings = true },
-                        onShowCampaignManager: { viewModel.showCampaignManager = true },
-                        onShowCharacterSheet: { viewModel.showCharacterSheet = true }
+                        onShowThemes: { viewModel.navigation.showThemesList = true },
+                        onShowCustomizer: { viewModel.navigation.showCustomizer = true },
+                        onShowAR: { viewModel.navigation.showARDice = true },
+                        onShowHistory: { viewModel.navigation.showHistory = true },
+                        onShowDetailedStats: { viewModel.navigation.showDetailedStats = true },
+                        onShowAudioSettings: { viewModel.navigation.showAudioSettings = true },
+                        onShowCampaignManager: { viewModel.navigation.showCampaignManager = true },
+                        onShowCharacterSheet: { viewModel.navigation.showCharacterSheet = true }
                     )
                     .zIndex(1000)
                 }
             }
             .navigationBarHidden(true)
-            .sheet(isPresented: $viewModel.showHistory) {
+            .sheet(isPresented: $viewModel.navigation.showHistory) {
                 DiceRollHistoryView()
             }
-            .sheet(isPresented: $viewModel.showDetailedStats) {
+            .sheet(isPresented: $viewModel.navigation.showDetailedStats) {
                 DetailedStatisticsView(themeManager: themeManager)
             }
-            .sheet(isPresented: $viewModel.showAudioSettings) {
+            .sheet(isPresented: $viewModel.navigation.showAudioSettings) {
                 AudioSettingsView(themeManager: themeManager)
             }
-            .sheet(isPresented: $viewModel.showCampaignManager) {
+            .sheet(isPresented: $viewModel.navigation.showCampaignManager) {
                 CampaignManagerView()
             }
-            .sheet(isPresented: $viewModel.showCharacterSheet) {
+            .sheet(isPresented: $viewModel.navigation.showCharacterSheet) {
                 CharacterSheetView()
             }
-            .sheet(isPresented: $viewModel.showThemesList) {
+            .sheet(isPresented: $viewModel.navigation.showThemesList) {
                 ThemesListView()
             }
-            .sheet(isPresented: $viewModel.showCustomizer) {
+            .sheet(isPresented: $viewModel.navigation.showCustomizer) {
                 ThemeCustomizerView()
             }
-            .sheet(isPresented: $viewModel.showCustomDice) {
+            .sheet(isPresented: $viewModel.navigation.showCustomDice) {
                 CustomDiceSheet(
                     diceSides: $viewModel.customDiceSides,
                     proficiencyBonus: $viewModel.proficiencyBonus,
                     onConfirm: viewModel.confirmCustomDice
                 )
             }
-            .sheet(isPresented: $viewModel.showMultipleDice, onDismiss: {
+            .sheet(isPresented: $viewModel.navigation.showMultipleDice, onDismiss: {
                 viewModel.multipleDiceResult = nil
             }) {
                 MultipleDiceSheet(
@@ -95,7 +102,7 @@ struct DiceRollerView: View {
                     borderColor: currentTheme.diceBorderColor.color
                 )
             }
-            .fullScreenCover(isPresented: $viewModel.showARDice) {
+            .fullScreenCover(isPresented: $viewModel.navigation.showARDice) {
                 ARDiceView(themeManager: themeManager)
             }
         }
@@ -123,21 +130,28 @@ struct DiceRollerView: View {
         let screenWidth = geometry.size.width
         let screenHeight = geometry.size.height
         
-        return VStack(spacing: 0) {
+        // iPad optimization: increase spacing and size for larger screens
+        let verticalSpacing: CGFloat = isIPad ? DesignSystem.Spacing.xl : 0
+        let topRatio: CGFloat = isIPad ? 0.55 : 0.50
+        let bottomRatio: CGFloat = isIPad ? 0.45 : 0.50
+        
+        return VStack(spacing: verticalSpacing) {
             Spacer()
-                .frame(height: 50)
+                .frame(height: isIPad ? 80 : 50)
             
             topSection(screenWidth: screenWidth, screenHeight: screenHeight)
-                .frame(height: screenHeight * 0.50)
+                .frame(height: screenHeight * topRatio)
             
             bottomSection(screenWidth: screenWidth, screenHeight: screenHeight)
-                .frame(height: screenHeight * 0.50)
+                .frame(height: screenHeight * bottomRatio)
         }
     }
     
     
     private func topSection(screenWidth: CGFloat, screenHeight: CGFloat) -> some View {
-        let diceSize = min(screenWidth * 0.92, screenHeight * 0.42)
+        // iPad optimization: larger dice size for bigger screens
+        let diceMultiplier: CGFloat = isIPad ? 0.65 : 0.92
+        let diceSize = min(screenWidth * diceMultiplier, screenHeight * 0.42)
         
         return VStack(spacing: DesignSystem.Spacing.lg) {  // 24pt
             Spacer(minLength: 0)
@@ -177,8 +191,8 @@ struct DiceRollerView: View {
                 selectedDiceType: viewModel.selectedDiceType,
                 accentColor: currentTheme.accentColor.color,
                 onSelectDice: viewModel.selectDiceType,
-                onShowCustomDice: { viewModel.showCustomDice = true },
-                onShowMultipleDice: { viewModel.showMultipleDice = true }
+                onShowCustomDice: { viewModel.navigation.showCustomDice = true },
+                onShowMultipleDice: { viewModel.navigation.showMultipleDice = true }
             )
             .padding(.top, 8)
             

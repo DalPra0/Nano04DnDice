@@ -11,26 +11,35 @@ import Combine
 
 struct HistoryView: View {
     @StateObject private var viewModel = WatchDiceViewModel.shared
+    @Environment(\.isLuminanceReduced) var isLuminanceReduced
     
     var body: some View {
         List {
             if viewModel.rollHistory.isEmpty {
-                Text("No rolls yet")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
+                VStack(spacing: 12) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary)
+                    
+                    Text("No rolls yet")
+                        .font(.body) // 17pt (was caption 12pt)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
             } else {
                 ForEach(viewModel.rollHistory.prefix(20)) { record in
-                    HistoryRowView(record: record)
+                    HistoryRowView(record: record, isAOD: isLuminanceReduced)
                 }
             }
         }
         .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 struct HistoryRowView: View {
     let record: WatchRollRecord
+    let isAOD: Bool
     
     var isCritical: Bool {
         record.result == record.dice.sides
@@ -41,39 +50,47 @@ struct HistoryRowView: View {
     }
     
     var resultColor: Color {
+        if isAOD { return .white }
         if isCritical { return .green }
         if isFumble { return .red }
         return .primary
     }
     
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // Dice type
             Text(record.dice.name)
-                .font(.caption)
+                .font(.footnote) // 13pt (was caption 12pt)
                 .foregroundColor(.secondary)
-                .frame(width: 30, alignment: .leading)
+                .frame(width: 35, alignment: .leading)
             
+            // Result (larger, bold)
             Text("\(record.result)")
-                .font(.headline)
+                .font(.title3) // 20pt (was headline 17pt)
                 .fontWeight(.bold)
                 .foregroundColor(resultColor)
             
             Spacer()
             
-            if isCritical {
-                Image(systemName: "star.fill")
-                    .font(.caption2)
-                    .foregroundColor(.green)
-            } else if isFumble {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.caption2)
-                    .foregroundColor(.red)
+            // Critical/Fumble indicator
+            if !isAOD {
+                if isCritical {
+                    Image(systemName: "star.fill")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                } else if isFumble {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
             }
             
+            // Time ago
             Text(timeAgo(from: record.date))
-                .font(.caption2)
+                .font(.caption) // 12pt
                 .foregroundColor(.secondary)
         }
+        .padding(.vertical, 4)
     }
     
     private func timeAgo(from date: Date) -> String {

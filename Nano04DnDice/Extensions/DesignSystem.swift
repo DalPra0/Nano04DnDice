@@ -75,6 +75,10 @@ enum DesignSystem {
         static let warning = Color.orange
         static let error = Color.red
         static let info = Color.blue
+        
+        // Brand colors (consistent gold accent)
+        static let brandGold = Color(hex: "#FFD700") ?? .yellow
+        static let brandGoldDark = Color(hex: "#D4AF37") ?? .yellow
     }
     
     // MARK: - Button Sizes (Touch Targets - minimum 44x44pt)

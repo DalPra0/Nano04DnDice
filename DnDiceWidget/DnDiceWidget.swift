@@ -8,162 +8,201 @@
 import WidgetKit
 import SwiftUI
 
+// MARK: - Timeline Provider
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> DiceEntry {
         DiceEntry(date: Date(), result: 20, diceType: "D20", isCritical: true)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (DiceEntry) -> ()) {
-        let entry = DiceEntry(date: Date(), result: 20, diceType: "D20", isCritical: true)
+        let entry = getCurrentEntry()
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // Get last roll from UserDefaults (shared with main app)
-        let sharedDefaults = UserDefaults(suiteName: "group.com.DalPra.DiceAndDragons")
-        let lastResult = sharedDefaults?.integer(forKey: "lastDiceResult") ?? 20
-        let lastDiceType = sharedDefaults?.string(forKey: "lastDiceType") ?? "D20"
-        let lastRollDate = sharedDefaults?.object(forKey: "lastRollDate") as? Date ?? Date()
+        let entry = getCurrentEntry()
+        
+        // Update when app rolls (not time-based)
+        let timeline = Timeline(entries: [entry], policy: .atEnd)
+        completion(timeline)
+    }
+    
+    private func getCurrentEntry() -> DiceEntry {
+        let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup)
+        let lastResult = sharedDefaults?.integer(forKey: AppConstants.UserDefaultsKeys.lastDiceResult) ?? 20
+        let lastDiceType = sharedDefaults?.string(forKey: AppConstants.UserDefaultsKeys.lastDiceType) ?? "D20"
+        let lastRollDate = sharedDefaults?.object(forKey: AppConstants.UserDefaultsKeys.lastRollDate) as? Date ?? Date()
         
         let maxSides = Int(lastDiceType.dropFirst()) ?? 20
         let isCritical = lastResult == maxSides
+        let isFumble = lastResult == 1
         
-        let entry = DiceEntry(
+        return DiceEntry(
             date: lastRollDate,
             result: lastResult,
             diceType: lastDiceType,
-            isCritical: isCritical
+            isCritical: isCritical,
+            isFumble: isFumble
         )
-        
-        // Update every hour
-        let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
     }
 }
 
+// MARK: - Timeline Entry
 struct DiceEntry: TimelineEntry {
     let date: Date
     let result: Int
     let diceType: String
     let isCritical: Bool
+    var isFumble: Bool = false
 }
 
-struct DnDiceWidgetEntryView : View {
+// MARK: - Widget Entry View (Router)
+struct DnDiceWidgetEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         switch family {
         case .systemSmall:
-            SmallWidgetView(entry: entry)
+            SmallWidgetView(entry: entry, colorScheme: colorScheme)
         case .systemMedium:
-            MediumWidgetView(entry: entry)
+            MediumWidgetView(entry: entry, colorScheme: colorScheme)
         case .systemLarge:
-            LargeWidgetView(entry: entry)
+            LargeWidgetView(entry: entry, colorScheme: colorScheme)
+        case .accessoryCircular:
+            CircularAccessoryView(entry: entry)
+        case .accessoryRectangular:
+            RectangularAccessoryView(entry: entry)
+        case .accessoryInline:
+            InlineAccessoryView(entry: entry)
         default:
-            SmallWidgetView(entry: entry)
+            SmallWidgetView(entry: entry, colorScheme: colorScheme)
         }
     }
 }
 
+// MARK: - Small Widget (Clean & Minimal)
 struct SmallWidgetView: View {
     let entry: DiceEntry
+    let colorScheme: ColorScheme
+    
+    var resultColor: Color {
+        if entry.isCritical { return WidgetDesignSystem.Colors.critical }
+        if entry.isFumble { return WidgetDesignSystem.Colors.fumble }
+        return WidgetDesignSystem.Colors.brandGold
+    }
     
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(hex: "#1a1a2e"),
-                    Color(hex: "#16213e")
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            WidgetDesignSystem.Colors.adaptiveGradient(colorScheme: colorScheme)
             
-            VStack(spacing: 8) {
+            VStack(spacing: WidgetDesignSystem.Spacing.sm) {
+                // Dice type
                 Text(entry.diceType)
-                    .font(.custom("PlayfairDisplay-Bold", size: 14))
-                    .foregroundColor(Color(hex: "#FFD700").opacity(0.8))  // Mantém relativo ao dourado
+                    .font(WidgetDesignSystem.Typography.diceType)
+                    .foregroundColor(WidgetDesignSystem.Colors.brandGold.opacity(0.8))
                 
+                // Result (responsive to widget size)
                 Text("\(entry.result)")
-                    .font(.custom("PlayfairDisplay-Black", size: 52))
-                    .foregroundColor(entry.isCritical ? .green : Color(hex: "#FFD700"))
-                    .shadow(color: entry.isCritical ? .green.opacity(0.5) : Color(hex: "#FFD700").opacity(0.3), radius: 10)  // Mantém relativo às cores
+                    .font(WidgetDesignSystem.Typography.resultSmall)
+                    .foregroundColor(resultColor)
+                    .shadow(color: resultColor.opacity(0.3), radius: 8)
                 
+                // Critical/Fumble indicator
                 if entry.isCritical {
-                    Text("CRITICAL!")
-                        .font(.custom("PlayfairDisplay-Bold", size: 10))
-                        .foregroundColor(.green)
-                        .tracking(2)
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 10))
+                        Text("CRIT")
+                            .font(WidgetDesignSystem.Typography.critical)
+                    }
+                    .foregroundColor(WidgetDesignSystem.Colors.critical)
+                } else if entry.isFumble {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 10))
+                        Text("FUMBLE")
+                            .font(WidgetDesignSystem.Typography.critical)
+                    }
+                    .foregroundColor(WidgetDesignSystem.Colors.fumble)
                 }
             }
-            .padding()
+            .padding(WidgetDesignSystem.Spacing.md)
         }
     }
 }
 
+// MARK: - Medium Widget (Interactive with Button)
 struct MediumWidgetView: View {
     let entry: DiceEntry
+    let colorScheme: ColorScheme
+    
+    var resultColor: Color {
+        if entry.isCritical { return WidgetDesignSystem.Colors.critical }
+        if entry.isFumble { return WidgetDesignSystem.Colors.fumble }
+        return WidgetDesignSystem.Colors.brandGold
+    }
     
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(hex: "#1a1a2e"),
-                    Color(hex: "#16213e")
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            WidgetDesignSystem.Colors.adaptiveGradient(colorScheme: colorScheme)
             
-            HStack(spacing: 20) {
-                // Left side - Dice result
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("LAST ROLL")
-                        .font(.custom("PlayfairDisplay-Bold", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
-                        .tracking(2)
-                    
+            HStack(spacing: WidgetDesignSystem.Spacing.lg) {
+                // Left: Result display
+                VStack(alignment: .leading, spacing: WidgetDesignSystem.Spacing.sm) {
                     Text(entry.diceType)
-                        .font(.custom("PlayfairDisplay-Bold", size: 18))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        .font(WidgetDesignSystem.Typography.title)
+                        .foregroundColor(WidgetDesignSystem.Colors.brandGold)
                     
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text("\(entry.result)")
-                            .font(.custom("PlayfairDisplay-Black", size: 72))
-                            .foregroundColor(entry.isCritical ? .green : Color(hex: "#FFD700"))
+                            .font(WidgetDesignSystem.Typography.resultMedium)
+                            .foregroundColor(resultColor)
                         
                         if entry.isCritical {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Image(systemName: "star.fill")
-                                    .foregroundColor(.green)
-                                Text("CRIT")
-                                    .font(.custom("PlayfairDisplay-Bold", size: 10))
-                                    .foregroundColor(.green)
-                            }
+                            Image(systemName: "star.fill")
+                                .font(.title3)
+                                .foregroundColor(WidgetDesignSystem.Colors.critical)
+                        } else if entry.isFumble {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.title3)
+                                .foregroundColor(WidgetDesignSystem.Colors.fumble)
                         }
                     }
+                    
+                    Text(timeAgoString(from: entry.date))
+                        .font(WidgetDesignSystem.Typography.caption)
+                        .foregroundColor(WidgetDesignSystem.Colors.textSecondary)
                 }
                 
                 Spacer()
                 
-                // Right side - Quick stats
-                VStack(alignment: .trailing, spacing: 12) {
-                    StatBadge(
-                        icon: "clock.arrow.circlepath",
-                        label: "Recent",
-                        color: Color(hex: "#FFD700")
-                    )
-                    
-                    Text(timeAgoString(from: entry.date))
-                        .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(.white.opacity(0.6))
+                // Right: Interactive button (iOS 17+)
+                if #available(iOS 17.0, *) {
+                    VStack(spacing: WidgetDesignSystem.Spacing.sm) {
+                        Button(intent: RollDiceIntent(diceType: .d20)) {
+                            VStack(spacing: 4) {
+                                Image(systemName: "dice.fill")
+                                    .font(.title2)
+                                Text("Roll\nD20")
+                                    .font(WidgetDesignSystem.Typography.caption)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .foregroundColor(.white)
+                            .frame(width: 60, height: 60)
+                            .background(WidgetDesignSystem.Colors.brandGold)
+                            .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } else {
+                    Image(systemName: "dice.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(WidgetDesignSystem.Colors.brandGold.opacity(0.3))
                 }
             }
-            .padding()
+            .padding(WidgetDesignSystem.Spacing.lg)
         }
     }
     

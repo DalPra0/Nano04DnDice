@@ -1,5 +1,6 @@
 
 import SwiftUI
+import AppIntents
 
 @main
 struct Nano04DnDiceApp: App {

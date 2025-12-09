@@ -9,7 +9,7 @@ import AppIntents
 
 struct DnDiceAppShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
-        // Suggested shortcuts for Siri discovery
+        // Quick Roll D20
         AppShortcut(
             intent: QuickRollD20Intent(),
             phrases: [
@@ -20,6 +20,7 @@ struct DnDiceAppShortcuts: AppShortcutsProvider {
             systemImageName: "dice"
         )
         
+        // Roll any dice type
         AppShortcut(
             intent: RollDiceIntent(diceType: .d20),
             phrases: [
@@ -29,6 +30,7 @@ struct DnDiceAppShortcuts: AppShortcutsProvider {
             systemImageName: "dice.fill"
         )
         
+        // Roll D10
         AppShortcut(
             intent: RollDiceIntent(diceType: .d10),
             phrases: [
@@ -38,6 +40,7 @@ struct DnDiceAppShortcuts: AppShortcutsProvider {
             systemImageName: "dice"
         )
         
+        // Roll D6
         AppShortcut(
             intent: RollDiceIntent(diceType: .d6),
             phrases: [

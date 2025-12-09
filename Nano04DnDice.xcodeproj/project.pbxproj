@@ -10,12 +10,10 @@
 		1531CBDE2E995784002E0D8B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDD2E995784002E0D8B /* WidgetKit.framework */; };
 		1531CBE02E995784002E0D8B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1531CBDF2E995784002E0D8B /* SwiftUI.framework */; };
 		1531CBEF2E995785002E0D8B /* DnDiceWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1531CBDB2E995784002E0D8B /* DnDiceWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		153B969B2EE892920020DBB9 /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B969A2EE892920020DBB9 /* RollDiceIntent.swift */; };
-		153B969D2EE892920020DBB9 /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B969A2EE892920020DBB9 /* RollDiceIntent.swift */; };
-		153B969F2EE892920020DBB9 /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B969A2EE892920020DBB9 /* RollDiceIntent.swift */; };
-		153B96A22EE893160020DBB9 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96A12EE893160020DBB9 /* AppConstants.swift */; };
-		153B96A32EE893160020DBB9 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96A12EE893160020DBB9 /* AppConstants.swift */; };
-		153B96A42EE893160020DBB9 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96A12EE893160020DBB9 /* AppConstants.swift */; };
+		153B96B02EE8A0200020DBB9 /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96AF2EE8A0200020DBB9 /* RollDiceIntent.swift */; };
+		153B96B12EE8A0200020DBB9 /* AppConstants 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96AE2EE8A0200020DBB9 /* AppConstants 2.swift */; };
+		153B96B22EE8A0200020DBB9 /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96AF2EE8A0200020DBB9 /* RollDiceIntent.swift */; };
+		153B96B32EE8A0200020DBB9 /* AppConstants 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153B96AE2EE8A0200020DBB9 /* AppConstants 2.swift */; };
 		155F48EC2EE213620076A7A7 /* DnDiceWatchApp Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		15DDEF2C2E96E31B00360F5E /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = 15DDEF2B2E96E31B00360F5E /* Inject */; };
 /* End PBXBuildFile section */
@@ -67,8 +65,8 @@
 		1531CBDD2E995784002E0D8B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		1531CBDF2E995784002E0D8B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		153B96802EE79FAE0020DBB9 /* DnDiceWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DnDiceWidgetExtension.entitlements; sourceTree = "<group>"; };
-		153B969A2EE892920020DBB9 /* RollDiceIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollDiceIntent.swift; sourceTree = "<group>"; };
-		153B96A12EE893160020DBB9 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		153B96AE2EE8A0200020DBB9 /* AppConstants 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppConstants 2.swift"; sourceTree = "<group>"; };
+		153B96AF2EE8A0200020DBB9 /* RollDiceIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollDiceIntent.swift; sourceTree = "<group>"; };
 		155F48E22EE213600076A7A7 /* DnDiceWatchApp Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DnDiceWatchApp Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DDEF142E96E2D600360F5E /* Nano04DnDice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nano04DnDice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -154,8 +152,8 @@
 		15DDEF0B2E96E2D600360F5E = {
 			isa = PBXGroup;
 			children = (
-				153B96A12EE893160020DBB9 /* AppConstants.swift */,
-				153B969A2EE892920020DBB9 /* RollDiceIntent.swift */,
+				153B96AE2EE8A0200020DBB9 /* AppConstants 2.swift */,
+				153B96AF2EE8A0200020DBB9 /* RollDiceIntent.swift */,
 				153B96802EE79FAE0020DBB9 /* DnDiceWidgetExtension.entitlements */,
 				15DDEF162E96E2D600360F5E /* Nano04DnDice */,
 				1531CBE12E995784002E0D8B /* DnDiceWidget */,
@@ -323,8 +321,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				153B96A42EE893160020DBB9 /* AppConstants.swift in Sources */,
-				153B969F2EE892920020DBB9 /* RollDiceIntent.swift in Sources */,
+				153B96B22EE8A0200020DBB9 /* RollDiceIntent.swift in Sources */,
+				153B96B32EE8A0200020DBB9 /* AppConstants 2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,8 +330,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				153B96A22EE893160020DBB9 /* AppConstants.swift in Sources */,
-				153B969B2EE892920020DBB9 /* RollDiceIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,8 +337,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				153B96A32EE893160020DBB9 /* AppConstants.swift in Sources */,
-				153B969D2EE892920020DBB9 /* RollDiceIntent.swift in Sources */,
+				153B96B02EE8A0200020DBB9 /* RollDiceIntent.swift in Sources */,
+				153B96B12EE8A0200020DBB9 /* AppConstants 2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

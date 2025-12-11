@@ -9,6 +9,16 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
+private enum WidgetConstants {
+    static let appGroup = "group.com.DalPra.DiceAndDragons"
+    
+    enum UserDefaultsKeys {
+        static let lastDiceResult = "lastDiceResult"
+        static let lastDiceType = "lastDiceType"
+        static let lastRollDate = "lastRollDate"
+    }
+}
+
 // MARK: - Timeline Provider
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> DiceEntry {
@@ -23,16 +33,16 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         let entry = getCurrentEntry()
         
-        // Update when app rolls (not time-based)
-        let timeline = Timeline(entries: [entry], policy: .atEnd)
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
+        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
     
     private func getCurrentEntry() -> DiceEntry {
-        let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup)
-        let lastResult = sharedDefaults?.integer(forKey: AppConstants.UserDefaultsKeys.lastDiceResult) ?? 20
-        let lastDiceType = sharedDefaults?.string(forKey: AppConstants.UserDefaultsKeys.lastDiceType) ?? "D20"
-        let lastRollDate = sharedDefaults?.object(forKey: AppConstants.UserDefaultsKeys.lastRollDate) as? Date ?? Date()
+        let sharedDefaults = UserDefaults(suiteName: WidgetConstants.appGroup)
+        let lastResult = sharedDefaults?.integer(forKey: WidgetConstants.UserDefaultsKeys.lastDiceResult) ?? 20
+        let lastDiceType = sharedDefaults?.string(forKey: WidgetConstants.UserDefaultsKeys.lastDiceType) ?? "D20"
+        let lastRollDate = sharedDefaults?.object(forKey: WidgetConstants.UserDefaultsKeys.lastRollDate) as? Date ?? Date()
         
         let maxSides = Int(lastDiceType.dropFirst()) ?? 20
         let isCritical = lastResult == maxSides

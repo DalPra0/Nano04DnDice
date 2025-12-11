@@ -29,9 +29,9 @@ struct AddNPCView: View {
                     Stepper("Level: \(level)", value: $level, in: 1...20)
                     
                     Stepper("Max HP: \(maxHitPoints)", value: $maxHitPoints, in: 1...999)
-                        .onChange(of: maxHitPoints) { newValue in
-                            if hitPoints > newValue {
-                                hitPoints = newValue
+                        .onChange(of: maxHitPoints) {
+                            if hitPoints > maxHitPoints {
+                                hitPoints = maxHitPoints
                             }
                         }
                     

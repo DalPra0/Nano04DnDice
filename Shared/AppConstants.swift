@@ -1,26 +1,14 @@
-
 import Foundation
 
-/// Centralized constants to avoid hardcoded values and magic strings
-/// Note: Not @MainActor to allow access from App Intents (background threads)
 enum AppConstants {
-    // MARK: - App Groups & Containers
-    
-    /// App Group identifier for sharing data between app and extensions (Widget, Watch)
     nonisolated static let appGroup = "group.com.DalPra.DiceAndDragons"
-    
-    /// iCloud container identifier (currently not in use - see ThemeManager)
     static let iCloudContainer = "iCloud.dalpra.Nano04DnDice"
-    
-    // MARK: - UserDefaults Keys
     
     enum UserDefaultsKeys {
         nonisolated static let lastDiceResult = "lastDiceResult"
         nonisolated static let lastDiceType = "lastDiceType"
         nonisolated static let lastRollDate = "lastRollDate"
     }
-    
-    // MARK: - Dice Physics (AR)
     
     enum DicePhysics {
         static let mass: Float = 0.05
@@ -30,15 +18,11 @@ enum AppConstants {
         static let spawnHeight: Float = 0.3
     }
     
-    // MARK: - Animation Durations
-    
     enum AnimationDuration {
         static let diceRoll: TimeInterval = 3.0
         static let resultDisplay: TimeInterval = 4.0
         static let glowFade: TimeInterval = 0.5
     }
-    
-    // MARK: - Dice Dimensions
     
     enum DiceDimensions {
         static let scale3D: Float = 0.1

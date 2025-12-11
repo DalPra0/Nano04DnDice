@@ -1,20 +1,22 @@
-//
-//  RollDiceIntent.swift
-//  DnDiceWidget
-//
-//  App Intents for interactive widgets (iOS 17+)
-//
-
+import Foundation
 import AppIntents
 import WidgetKit
 
-// MARK: - Roll Dice Intent (Interactive Widget)
+private enum IntentConstants {
+    static let appGroup = "group.com.DalPra.DiceAndDragons"
+    
+    enum UserDefaultsKeys {
+        static let lastDiceResult = "lastDiceResult"
+        static let lastDiceType = "lastDiceType"
+        static let lastRollDate = "lastRollDate"
+    }
+}
+
 struct RollDiceIntent: AppIntent {
     static var title: LocalizedStringResource = "Roll Dice"
     static var description = IntentDescription("Roll a random dice")
-    static var openAppWhenRun: Bool = false  // Don't open app, just show result
+    static var openAppWhenRun: Bool = false
     
-    // Siri suggestions for easy discovery
     static var parameterSummary: some ParameterSummary {
         Summary("Roll a \(\.$diceType)")
     }
@@ -31,25 +33,20 @@ struct RollDiceIntent: AppIntent {
     }
     
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        // Roll the dice
         let result = Int.random(in: 1...diceType.sides)
         
-        // Save to App Group (shared with main app and Watch)
-        if let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup) {
-            sharedDefaults.set(result, forKey: AppConstants.UserDefaultsKeys.lastDiceResult)
-            sharedDefaults.set(diceType.displayName, forKey: AppConstants.UserDefaultsKeys.lastDiceType)
-            sharedDefaults.set(Date(), forKey: AppConstants.UserDefaultsKeys.lastRollDate)
+        if let sharedDefaults = UserDefaults(suiteName: IntentConstants.appGroup) {
+            sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set(diceType.displayName, forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
         }
         
-        // Reload all widgets
         WidgetCenter.shared.reloadAllTimelines()
         
-        // Return result with dialog for Siri to speak
         return .result(dialog: "You rolled a \(diceType.displayName) and got \(result)")
     }
 }
 
-// MARK: - Dice Type Entity (for App Intents)
 enum DiceTypeEntity: String, AppEnum {
     case d4 = "D4"
     case d6 = "D6"
@@ -92,13 +89,11 @@ enum DiceTypeEntity: String, AppEnum {
     }
 }
 
-// MARK: - Quick Roll Intent (for Widget Control)
 struct QuickRollD20Intent: AppIntent {
     static var title: LocalizedStringResource = "Quick Roll D20"
     static var description = IntentDescription("Quickly roll a D20")
-    static var openAppWhenRun: Bool = false  // Don't open app
+    static var openAppWhenRun: Bool = false
     
-    // Siri suggestion
     static var parameterSummary: some ParameterSummary {
         Summary("Roll a D20")
     }
@@ -106,15 +101,14 @@ struct QuickRollD20Intent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let result = Int.random(in: 1...20)
         
-        if let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup) {
-            sharedDefaults.set(result, forKey: AppConstants.UserDefaultsKeys.lastDiceResult)
-            sharedDefaults.set("D20", forKey: AppConstants.UserDefaultsKeys.lastDiceType)
-            sharedDefaults.set(Date(), forKey: AppConstants.UserDefaultsKeys.lastRollDate)
+        if let sharedDefaults = UserDefaults(suiteName: IntentConstants.appGroup) {
+            sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set("D20", forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
         }
         
         WidgetCenter.shared.reloadAllTimelines()
         
-        // Return result with dialog for Siri to speak
         return .result(dialog: "You rolled a D20 and got \(result)")
     }
 }

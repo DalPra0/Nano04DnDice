@@ -26,6 +26,13 @@ struct TopButtonsView: View {
         }
     }
     
+    private func performAction(_ action: @escaping () -> Void) {
+        closeMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            action()
+        }
+    }
+    
     var body: some View {
         ZStack {
             if isMenuOpen {
@@ -45,6 +52,7 @@ struct TopButtonsView: View {
                     
                     VStack(alignment: .trailing, spacing: 0) {
                         Button(action: {
+                            print("🔘 Menu button tapped - current state: \(isMenuOpen)")
                             if reduceMotion {
                                 isMenuOpen.toggle()
                             } else {
@@ -52,6 +60,7 @@ struct TopButtonsView: View {
                                     isMenuOpen.toggle()
                                 }
                             }
+                            print("🔘 Menu button - new state: \(isMenuOpen)")
                         }) {
                             Image(systemName: "line.3.horizontal")
                                 .font(.system(size: 24, weight: .medium))
@@ -73,8 +82,11 @@ struct TopButtonsView: View {
                                     title: "CHARACTER",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowCharacterSheet()
+                                        print("🎭 CHARACTER button tapped")
+                                        performAction {
+                                            onShowCharacterSheet()
+                                            print("🎭 CHARACTER - callback executed")
+                                        }
                                     }
                                 )
                                 
@@ -83,8 +95,9 @@ struct TopButtonsView: View {
                                     title: "CAMPAIGN",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowCampaignManager()
+                                        performAction {
+                                            onShowCampaignManager()
+                                        }
                                     }
                                 )
                                 
@@ -93,8 +106,9 @@ struct TopButtonsView: View {
                                     title: "AUDIO",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowAudioSettings()
+                                        performAction {
+                                            onShowAudioSettings()
+                                        }
                                     }
                                 )
                                 
@@ -103,8 +117,9 @@ struct TopButtonsView: View {
                                     title: "STATS",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowDetailedStats()
+                                        performAction {
+                                            onShowDetailedStats()
+                                        }
                                     }
                                 )
                                 
@@ -113,8 +128,9 @@ struct TopButtonsView: View {
                                     title: "HISTORY",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowHistory()
+                                        performAction {
+                                            onShowHistory()
+                                        }
                                     }
                                 )
                                 
@@ -123,8 +139,9 @@ struct TopButtonsView: View {
                                     title: "AR DICE",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowAR()
+                                        performAction {
+                                            onShowAR()
+                                        }
                                     }
                                 )
                                 
@@ -133,8 +150,9 @@ struct TopButtonsView: View {
                                     title: "THEMES",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowThemes()
+                                        performAction {
+                                            onShowThemes()
+                                        }
                                     }
                                 )
                                 
@@ -143,8 +161,9 @@ struct TopButtonsView: View {
                                     title: "CUSTOMIZE",
                                     accentColor: accentColor,
                                     action: {
-                                        closeMenu()
-                                        onShowCustomizer()
+                                        performAction {
+                                            onShowCustomizer()
+                                        }
                                     }
                                 )
                             }

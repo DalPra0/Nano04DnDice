@@ -2,10 +2,16 @@
 import SwiftUI
 import Combine
 
-// MARK: - DiceRollerViewModel
-/// Core ViewModel for dice rolling functionality
-/// Thread-safe with @MainActor to prevent race conditions
-/// Single responsibility: Manages dice state and roll logic (navigation extracted to NavigationState)
+private enum ViewModelConstants {
+    static let appGroup = "group.com.DalPra.DiceAndDragons"
+    
+    enum UserDefaultsKeys {
+        static let lastDiceResult = "lastDiceResult"
+        static let lastDiceType = "lastDiceType"
+        static let lastRollDate = "lastRollDate"
+    }
+}
+
 @MainActor
 class DiceRollerViewModel: ObservableObject {
     // MARK: - Dice State
@@ -155,11 +161,10 @@ class DiceRollerViewModel: ObservableObject {
         )
         historyManager.addRoll(entry)
         
-        // Save to shared UserDefaults for widget
-        if let sharedDefaults = UserDefaults(suiteName: AppConstants.appGroup) {
-            sharedDefaults.set(finalResult + proficiencyBonus, forKey: AppConstants.UserDefaultsKeys.lastDiceResult)
-            sharedDefaults.set(selectedDiceType.name, forKey: AppConstants.UserDefaultsKeys.lastDiceType)
-            sharedDefaults.set(Date(), forKey: AppConstants.UserDefaultsKeys.lastRollDate)
+        if let sharedDefaults = UserDefaults(suiteName: ViewModelConstants.appGroup) {
+            sharedDefaults.set(finalResult + proficiencyBonus, forKey: ViewModelConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set(selectedDiceType.name, forKey: ViewModelConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: ViewModelConstants.UserDefaultsKeys.lastRollDate)
         }
         
         withAnimation(.easeInOut(duration: 0.5)) {

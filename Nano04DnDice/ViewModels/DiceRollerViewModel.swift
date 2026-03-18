@@ -45,6 +45,7 @@ class DiceRollerViewModel: ObservableObject {
     // MARK: - Dependencies
     private let audioManager = AudioManager.shared
     private let historyManager = DiceRollHistoryManager.shared
+    private let subscriptionManager = SubscriptionManager.shared
     
     var hasResult: Bool {
         result != nil
@@ -132,9 +133,10 @@ class DiceRollerViewModel: ObservableObject {
         // Play sound
         audioManager.playDiceRoll()
         
-        // Animate glow
+        // Animate glow - Pro users get epic glow on high rolls
+        let maxGlowValue = (subscriptionManager.isPro && finalRoll == selectedDiceType.sides) ? 1.5 : 1.0
         withAnimation(.easeInOut(duration: 0.3)) {
-            glowIntensity = 1.0
+            glowIntensity = maxGlowValue
         }
     }
     

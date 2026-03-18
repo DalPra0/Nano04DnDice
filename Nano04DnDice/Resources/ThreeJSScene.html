@@ -53,6 +53,41 @@
             window.addEventListener('resize', onWindowResize);
         }
         
+        function updateDiceTheme(theme) {
+            if (!dice) return;
+            
+            // Basic Color
+            dice.material.color.set(theme.faceColor || 0x4169E1);
+            dice.material.opacity = theme.opacity || 0.95;
+            
+            // Material properties based on texture
+            switch(theme.texture) {
+                case "metallic":
+                    dice.material.metalness = 0.9;
+                    dice.material.roughness = 0.2;
+                    break;
+                case "wooden":
+                    dice.material.metalness = 0.0;
+                    dice.material.roughness = 0.8;
+                    break;
+                case "stone":
+                    dice.material.metalness = 0.0;
+                    dice.material.roughness = 0.95;
+                    break;
+                case "crystal":
+                    dice.material.metalness = 0.2;
+                    dice.material.roughness = 0.1;
+                    dice.material.opacity = 0.6;
+                    break;
+                default: // standard
+                    dice.material.metalness = 0.1;
+                    dice.material.roughness = 0.5;
+                    break;
+            }
+            
+            dice.material.needsUpdate = true;
+        }
+        
         function createDice(sides) {
             if (dice) scene.remove(dice);
             

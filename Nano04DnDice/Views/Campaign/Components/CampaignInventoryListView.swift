@@ -1,18 +1,17 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct CampaignInventoryListView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
+    let campaign: Campaign
     @State private var selectedCategory: ItemCategory?
     @State private var showingEditItem: InventoryItem?
     
     var filteredItems: [InventoryItem] {
-        guard let campaignId = manager.activeCampaign?.id else { return [] }
-        let items = manager.items(for: campaignId)
         if let category = selectedCategory {
-            return items.filter { $0.category == category }
+            return campaign.inventory.filter { $0.category == category }
         }
-        return items
+        return campaign.inventory.sorted(by: { $0.name < $1.name })
     }
     
     var body: some View {
@@ -50,7 +49,7 @@ struct CampaignInventoryListView: View {
                     .onDelete { indexSet in
                         indexSet.forEach { index in
                             let item = filteredItems[index]
-                            manager.deleteItem(item)
+                            modelContext.delete(item)
                         }
                     }
                 }
@@ -71,10 +70,9 @@ struct CampaignInventoryListView: View {
             }
         }
         .sheet(item: $showingEditItem) { item in
-            if let campaignId = manager.activeCampaign?.id {
-                EditInventoryItemView(campaignId: campaignId, item: item)
-            }
+            EditInventoryItemView(item: item)
         }
+        .enableInjection()
     }
 }
 

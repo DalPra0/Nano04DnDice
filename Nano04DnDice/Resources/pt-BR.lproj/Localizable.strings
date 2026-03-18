@@ -1,0 +1,50 @@
+/* 
+  Localizable.strings
+  Nano04DnDice
+*/
+
+// MARK: - Main Screen
+"main_roll_dice" = "Rolar Dado";
+"main_tap_to_roll" = "Toque para rolar";
+"main_rolling" = "Rolando...";
+"main_last_result" = "Último Resultado";
+
+// MARK: - Menu
+"menu_themes" = "Temas";
+"menu_customize" = "Customizar";
+"menu_ar_dice" = "Dados em RA";
+"menu_history" = "Histórico";
+"menu_stats" = "Estatísticas";
+"menu_audio" = "Config. de Áudio";
+"menu_campaign" = "Gerenciador de Campanhas";
+"menu_character" = "Ficha de Personagem";
+
+// MARK: - Customizer
+"cust_title" = "Customizar";
+"cust_create_theme" = "Crie seu Tema";
+"cust_subtitle" = "Customize cores, texturas e efeitos";
+"cust_theme_name" = "NOME DO TEMA";
+"cust_dice_colors" = "CORES DO DADO";
+"cust_app_colors" = "CORES DO APP";
+"cust_texture" = "TEXTURA DO DADO";
+"cust_font" = "FONTE";
+"cust_effects" = "EFEITOS";
+"cust_preview" = "PRÉVIA AO VIVO";
+"cust_apply" = "APLICAR";
+"cust_save" = "SALVAR";
+
+// MARK: - Textures
+"tex_standard" = "Padrão";
+"tex_metallic" = "Metálico";
+"tex_wooden" = "Madeira";
+"tex_stone" = "Pedra";
+"tex_crystal" = "Cristal";
+
+// MARK: - Dice Types
+"dice_d4" = "D4";
+"dice_d6" = "D6";
+"dice_d8" = "D8";
+"dice_d10" = "D10";
+"dice_d12" = "D12";
+"dice_d20" = "D20";
+"dice_custom" = "Custom";

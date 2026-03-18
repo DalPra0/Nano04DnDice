@@ -13,11 +13,10 @@ struct CampaignHeaderView: View {
                         .fontWeight(.bold)
                     
                     if !campaign.description.isEmpty {
-                        Text(campaign.description)
+                        Text(campaign.campaignDescription)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                            .lineLimit(2)
-                    }
+                            .lineLimit(2)                    }
                 }
                 
                 Spacer()

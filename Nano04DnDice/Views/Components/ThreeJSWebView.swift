@@ -5,11 +5,12 @@ import WebKit
 struct ThreeJSWebView: UIViewRepresentable {
     let currentNumber: Int
     let isRolling: Bool
-    let diceSides: Int  // Número de lados do dado
+    let diceSides: Int
+    let theme: DiceCustomization
     let onRollComplete: (Int) -> Void
     
     func makeUIView(context: Context) -> WKWebView {
-        print("🎲 ThreeJSWebView: makeUIView called with diceSides=\(diceSides)")
+        print("🎲 ThreeJSWebView: makeUIView - sides=\(diceSides), texture=\(theme.diceTexture.rawValue)")
         let configuration = WKWebViewConfiguration()
         let contentController = configuration.userContentController
         contentController.add(context.coordinator, name: "diceRollComplete")
@@ -25,41 +26,50 @@ struct ThreeJSWebView: UIViewRepresentable {
     }
     
     func updateUIView(_ webView: WKWebView, context: Context) {
-        print("🎲 ThreeJSWebView: updateUIView - diceSides=\(diceSides), isRolling=\(isRolling), currentNumber=\(currentNumber)")
-        
+        // 1. Check if dice type changed
         if context.coordinator.currentDiceSides != diceSides {
-            print("🎲 Dice type changed from d\(context.coordinator.currentDiceSides) to d\(diceSides) - reloading scene")
             context.coordinator.currentDiceSides = diceSides
             context.coordinator.isSceneLoaded = false
             loadThreeJSScene(webView: webView, coordinator: context.coordinator)
             return
         }
         
+        // 2. Wait for scene to be ready
         guard context.coordinator.isSceneLoaded else {
-            print("⚠️ Scene not loaded yet - queueing action")
             context.coordinator.pendingAction = isRolling ? .roll(currentNumber) : .show(currentNumber)
             return
         }
         
+        // 3. Update Theme (Colors/Textures)
+        updateThemeInJS(webView: webView)
+        
+        // 4. Handle Rolling/Showing
         if isRolling {
-            print("🎲 Executing roll to \(currentNumber)")
-            webView.evaluateJavaScript("if (typeof startDiceRoll === 'function') { startDiceRoll(\(currentNumber)); }") { result, error in
-                if let error = error {
-                    print("❌ Error rolling dice: \(error.localizedDescription)")
-                } else {
-                    print("✅ Roll command sent successfully")
-                }
-            }
+            webView.evaluateJavaScript("if (typeof startDiceRoll === 'function') { startDiceRoll(\(currentNumber)); }")
         } else {
-            print("🎲 Showing number \(currentNumber)")
-            webView.evaluateJavaScript("if (typeof showNumber === 'function') { showNumber(\(currentNumber)); }") { result, error in
-                if let error = error {
-                    print("❌ Error showing number: \(error.localizedDescription)")
-                } else {
-                    print("✅ Show number command sent successfully")
-                }
-            }
+            webView.evaluateJavaScript("if (typeof showNumber === 'function') { showNumber(\(currentNumber)); }")
         }
+    }
+    
+    private func updateThemeInJS(webView: WKWebView) {
+        let hexColor = colorToHex(theme.diceFaceColor.color)
+        let themeData: [String: Any] = [
+            "faceColor": hexColor,
+            "texture": theme.diceTexture.rawValue,
+            "opacity": theme.diceFaceColor.opacity
+        ]
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: themeData, options: []),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            webView.evaluateJavaScript("if (typeof updateDiceTheme === 'function') { updateDiceTheme(\(jsonString)); }")
+        }
+    }
+    
+    private func colorToHex(_ color: Color) -> String {
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return String(format: "#%02X%02X%02X", Int(r * 255), Int(g * 255), Int(b * 255))
     }
     
     func makeCoordinator() -> Coordinator {

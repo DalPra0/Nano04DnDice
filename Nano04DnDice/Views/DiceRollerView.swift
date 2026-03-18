@@ -171,6 +171,7 @@ struct DiceRollerView: View {
                 diceBorderColor: currentTheme.diceBorderColor.color,
                 accentColor: currentTheme.accentColor.color,
                 diceSides: viewModel.selectedDiceType.sides,
+                theme: currentTheme, // Injetando o tema
                 onRollComplete: { _ in 
                     viewModel.handleRollComplete(viewModel.currentRoll)
                 }

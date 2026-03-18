@@ -1,28 +1,38 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct CampaignsListView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Campaign.createdDate, order: .reverse) private var campaigns: [Campaign]
     @State private var showingEditCampaign: Campaign?
     
     var body: some View {
         Group {
-            if !manager.campaigns.isEmpty {
+            if !campaigns.isEmpty {
                 List {
-                    ForEach(manager.campaigns) { campaign in
+                    ForEach(campaigns) { campaign in
                         CampaignRowView(campaign: campaign)
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                if campaign.id != manager.activeCampaign?.id {
-                                    showingEditCampaign = campaign
+                                // Set active campaign logic
+                                for c in campaigns {
+                                    c.isActive = (c.id == campaign.id)
                                 }
                             }
-                    }
-                    .onDelete { indexSet in
-                        indexSet.forEach { index in
-                            let campaign = manager.campaigns[index]
-                            manager.deleteCampaign(campaign)
-                        }
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    modelContext.delete(campaign)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                                
+                                Button {
+                                    showingEditCampaign = campaign
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
+                                }
+                                .tint(.blue)
+                            }
                     }
                 }
                 .listStyle(.plain)
@@ -44,5 +54,6 @@ struct CampaignsListView: View {
         .sheet(item: $showingEditCampaign) { campaign in
             EditCampaignView(campaign: campaign)
         }
+        .enableInjection()
     }
 }

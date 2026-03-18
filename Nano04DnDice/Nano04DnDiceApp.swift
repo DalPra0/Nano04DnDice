@@ -1,12 +1,40 @@
 
 import SwiftUI
 import AppIntents
+import SwiftData
+import RevenueCat
+import RevenueCatUI
 
 @main
 struct Nano04DnDiceApp: App {
+    let container: ModelContainer
+    @StateObject private var subscriptionManager = SubscriptionManager.shared
+    
+    init() {
+        // 1. Configure RevenueCat
+        Purchases.logLevel = .debug
+        Purchases.configure(withAPIKey: "test_DLkGxJMYVbkxYuZFsFpkMvdRFgu")
+        
+        // 2. Configure SwiftData
+        do {
+            let schema = Schema([
+                Campaign.self,
+                NPC.self,
+                InventoryItem.self,
+                PlayerCharacter.self
+            ])
+            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            container = try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Could not configure SwiftData container: \(error.localizedDescription)")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             DiceRollerView()
+                .modelContainer(container)
+                .environmentObject(subscriptionManager)
         }
     }
 }

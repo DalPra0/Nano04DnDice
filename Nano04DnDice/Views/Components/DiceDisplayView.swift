@@ -8,7 +8,8 @@ struct DiceDisplayView: View {
     let glowIntensity: Double
     let diceBorderColor: Color
     let accentColor: Color
-    let diceSides: Int  // Número de lados do dado
+    let diceSides: Int
+    let theme: DiceCustomization // Adicionado
     let onRollComplete: (Int) -> Void
     
     var body: some View {
@@ -47,6 +48,7 @@ struct DiceDisplayView: View {
                 currentNumber: currentNumber,
                 isRolling: isRolling,
                 diceSides: diceSides,
+                theme: theme, // Passando o tema
                 onRollComplete: onRollComplete
             )
             .frame(width: diceSize - 8, height: diceSize - 8)

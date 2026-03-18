@@ -1,20 +1,16 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct CampaignNPCsListView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
+    let campaign: Campaign
     @State private var showingEditNPC: NPC?
-    
-    var npcs: [NPC] {
-        guard let campaignId = manager.activeCampaign?.id else { return [] }
-        return manager.npcs(for: campaignId)
-    }
     
     var body: some View {
         Group {
-            if manager.activeCampaign != nil && !npcs.isEmpty {
+            if !campaign.npcs.isEmpty {
                 List {
-                    ForEach(npcs) { npc in
+                    ForEach(campaign.npcs.sorted(by: { $0.name < $1.name })) { npc in
                         NPCRowView(npc: npc)
                             .contentShape(Rectangle())
                             .onTapGesture {
@@ -23,8 +19,8 @@ struct CampaignNPCsListView: View {
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { index in
-                            let npc = npcs[index]
-                            manager.deleteNPC(npc)
+                            let npc = campaign.npcs.sorted(by: { $0.name < $1.name })[index]
+                            modelContext.delete(npc)
                         }
                     }
                 }
@@ -45,9 +41,8 @@ struct CampaignNPCsListView: View {
             }
         }
         .sheet(item: $showingEditNPC) { npc in
-            if let campaignId = manager.activeCampaign?.id {
-                EditNPCView(campaignId: campaignId, npc: npc)
-            }
+            EditNPCView(npc: npc)
         }
+        .enableInjection()
     }
 }

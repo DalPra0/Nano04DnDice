@@ -1,17 +1,25 @@
 
 import SwiftUI
+import SwiftData
 
 struct CharacterSheetView: View {
-    @StateObject private var manager = CharacterManager.shared
+    @EnvironmentObject private var subManager: SubscriptionManager
+    @Environment(\.modelContext) private var modelContext
+    @Query private var characters: [PlayerCharacter]
     @StateObject private var themeManager = ThemeManager.shared
     @State private var selectedTab = 0
     @State private var showingAddCharacter = false
     @State private var showingCharacterSelector = false
     @State private var showingShareSheet = false
+    @State private var pdfURL: URL?
+    
+    private var activeCharacter: PlayerCharacter? {
+        characters.first { $0.isActive } ?? characters.first
+    }
     
     var body: some View {
         NavigationView {
-            if let character = manager.activeCharacter {
+            if let character = activeCharacter {
                 VStack(spacing: 0) {
                     CharacterHeaderView(character: character)
                         .padding()
@@ -56,8 +64,25 @@ struct CharacterSheetView: View {
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
                         HStack(spacing: 16) {
-                            Button(action: { showingShareSheet = true }) {
-                                Image(systemName: "arrow.down.doc")
+                            Button(action: { 
+                                if subManager.isPro {
+                                    pdfURL = PDFManager.shared.generateCharacterPDF(character: character)
+                                    if pdfURL != nil {
+                                        showingShareSheet = true
+                                    }
+                                } else {
+                                    subManager.showPaywall = true
+                                }
+                            }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "arrow.down.doc")
+                                    if !subManager.isPro {
+                                        Image(systemName: "crown.fill")
+                                            .font(.system(size: 8))
+                                            .foregroundColor(.yellow)
+                                            .offset(x: 4, y: -4)
+                                    }
+                                }
                             }
                             
                             NavigationLink(destination: EditCharacterView(character: character)) {
@@ -70,15 +95,27 @@ struct CharacterSheetView: View {
                     CharacterSelectorSheet()
                 }
                 .sheet(isPresented: $showingShareSheet) {
-                    PDFShareSheet()
+                    if let url = pdfURL {
+                        ShareSheet(activityItems: [url])
+                    }
                 }
             } else {
-                EmptyCharacterView(onCreateCharacter: { showingAddCharacter = true })
+                EmptyCharacterView(onCreateCharacter: { 
+                    if subManager.canAddItem(currentCount: characters.count) {
+                        showingAddCharacter = true
+                    } else {
+                        subManager.showPaywall = true
+                    }
+                })
             }
         }
         .sheet(isPresented: $showingAddCharacter) {
             AddCharacterView()
         }
+        .sheet(isPresented: $subManager.showPaywall) {
+            PaywallView(displayCloseButton: true)
+        }
+        .enableInjection()
     }
 }
 

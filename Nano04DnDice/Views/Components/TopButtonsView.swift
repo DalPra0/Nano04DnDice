@@ -1,7 +1,10 @@
 
 import SwiftUI
+import RevenueCat
+import RevenueCatUI
 
 struct TopButtonsView: View {
+    @EnvironmentObject private var subManager: SubscriptionManager
     let accentColor: Color
     let onShowThemes: () -> Void
     let onShowCustomizer: () -> Void
@@ -13,6 +16,7 @@ struct TopButtonsView: View {
     let onShowCharacterSheet: () -> Void
     
     @State private var isMenuOpen = false
+    @State private var showingCustomerCenter = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     // Helper to close menu with proper animation
@@ -36,23 +40,57 @@ struct TopButtonsView: View {
     var body: some View {
         ZStack {
             if isMenuOpen {
-                Color.black.opacity(0.75)
+                Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            isMenuOpen = false
-                        }
+                        closeMenu()
                     }
                     .zIndex(998)
             }
             
             VStack {
-                HStack {
+                HStack(spacing: 16) {
+                    // Quick Action: Themes
+                    Button(action: onShowThemes) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(accentColor)
+                            .frame(width: 44, height: 44)
+                            .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
+                    }
+                    
+                    // Quick Action: AR (PRO Protected)
+                    Button(action: {
+                        if subManager.isPro {
+                            onShowAR()
+                        } else {
+                            subManager.showPaywall = true
+                        }
+                    }) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "arkit")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(accentColor)
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
+                            
+                            if !subManager.isPro {
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.yellow)
+                                    .offset(x: 4, y: -4)
+                            }
+                        }
+                    }
+                    
                     Spacer()
                     
+                    // Main Menu Button
                     VStack(alignment: .trailing, spacing: 0) {
                         Button(action: {
-                            print("🔘 Menu button tapped - current state: \(isMenuOpen)")
+                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                            generator.impactOccurred()
+                            
                             if reduceMotion {
                                 isMenuOpen.toggle()
                             } else {
@@ -60,124 +98,54 @@ struct TopButtonsView: View {
                                     isMenuOpen.toggle()
                                 }
                             }
-                            print("🔘 Menu button - new state: \(isMenuOpen)")
                         }) {
-                            Image(systemName: "line.3.horizontal")
-                                .font(.system(size: 24, weight: .medium))
+                            Image(systemName: isMenuOpen ? "xmark" : "line.3.horizontal")
+                                .font(.system(size: 22, weight: .medium))
                                 .foregroundColor(accentColor)
-                                .frame(width: DesignSystem.ButtonSize.medium.height, height: DesignSystem.ButtonSize.medium.height)
-                                .background(
-                                    Circle()
-                                        .fill(DesignSystem.Colors.backgroundOverlay)
-                                )
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
                         }
-                        .accessibilityLabel(isMenuOpen ? "Fechar menu" : "Abrir menu")
-                        .accessibilityHint("Menu com opções de AR, temas e customização")
-                        .accessibilityAddTraits(.isButton)
                         
                         if isMenuOpen {
-                            VStack(alignment: .trailing, spacing: 12) {
-                                MenuButton(
-                                    icon: "person.text.rectangle.fill",
-                                    title: "CHARACTER",
-                                    accentColor: accentColor,
-                                    action: {
-                                        print("🎭 CHARACTER button tapped")
-                                        performAction {
-                                            onShowCharacterSheet()
-                                            print("🎭 CHARACTER - callback executed")
-                                        }
-                                    }
-                                )
+                            VStack(alignment: .trailing, spacing: 10) {
+                                MenuButton(icon: "person.text.rectangle.fill", title: "menu_character", accentColor: accentColor) { performAction(onShowCharacterSheet) }
+                                MenuButton(icon: "book.fill", title: "menu_campaign", accentColor: accentColor) { performAction(onShowCampaignManager) }
+                                MenuButton(icon: "chart.bar.fill", title: "menu_stats", accentColor: accentColor) { performAction(onShowDetailedStats) }
+                                MenuButton(icon: "clock.arrow.circlepath", title: "menu_history", accentColor: accentColor) { performAction(onShowHistory) }
+                                MenuButton(icon: "speaker.wave.3.fill", title: "menu_audio", accentColor: accentColor) { performAction(onShowAudioSettings) }
+                                MenuButton(icon: "pencil.and.outline", title: "menu_customize", accentColor: accentColor) { performAction(onShowCustomizer) }
                                 
-                                MenuButton(
-                                    icon: "book.fill",
-                                    title: "CAMPAIGN",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowCampaignManager()
-                                        }
-                                    }
-                                )
+                                Divider()
+                                    .background(accentColor.opacity(0.3))
+                                    .frame(width: 150)
                                 
-                                MenuButton(
-                                    icon: "speaker.wave.3.fill",
-                                    title: "AUDIO",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowAudioSettings()
+                                MenuButton(icon: "person.crop.circle.fill", title: subManager.isPro ? "Manage Pro" : "Go Pro", accentColor: .yellow) {
+                                    performAction {
+                                        if subManager.isPro {
+                                            showingCustomerCenter = true
+                                        } else {
+                                            subManager.showPaywall = true
                                         }
                                     }
-                                )
-                                
-                                MenuButton(
-                                    icon: "chart.bar.fill",
-                                    title: "STATS",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowDetailedStats()
-                                        }
-                                    }
-                                )
-                                
-                                MenuButton(
-                                    icon: "clock.arrow.circlepath",
-                                    title: "HISTORY",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowHistory()
-                                        }
-                                    }
-                                )
-                                
-                                MenuButton(
-                                    icon: "arkit",
-                                    title: "AR DICE",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowAR()
-                                        }
-                                    }
-                                )
-                                
-                                MenuButton(
-                                    icon: "rectangle.stack.fill",
-                                    title: "THEMES",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowThemes()
-                                        }
-                                    }
-                                )
-                                
-                                MenuButton(
-                                    icon: "paintpalette.fill",
-                                    title: "CUSTOMIZE",
-                                    accentColor: accentColor,
-                                    action: {
-                                        performAction {
-                                            onShowCustomizer()
-                                        }
-                                    }
-                                )
+                                }
                             }
-                            .padding(.top, 8)
+                            .padding(.top, 10)
                             .transition(.move(edge: .top).combined(with: .opacity))
                         }
                     }
-                    .padding(.trailing, 16)
-                    .padding(.top, 8)
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
                 
                 Spacer()
             }
             .zIndex(1001)
+        }
+        .sheet(isPresented: $subManager.showPaywall) {
+            PaywallView(displayCloseButton: true)
+        }
+        .sheet(isPresented: $showingCustomerCenter) {
+            CustomerCenterView()
         }
         .enableInjection()
     }
@@ -199,7 +167,7 @@ struct MenuButton: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.custom("PlayfairDisplay-Bold", size: 16))
             }
             .foregroundColor(.black)
@@ -210,40 +178,7 @@ struct MenuButton: View {
                     .fill(accentColor)
             )
         }
-        .accessibilityLabel(accessibilityLabelText)
-        .accessibilityHint(accessibilityHintText)
+        .accessibilityLabel(LocalizedStringKey(title))
         .enableInjection()
     }
-    
-    private var accessibilityLabelText: String {
-        switch title {
-        case "CHARACTER": return "Ficha de personagem"
-        case "CAMPAIGN": return "Gerenciador de campanha"
-        case "HISTORY": return "Histórico de rolagens"
-        case "AR DICE": return "Dado em realidade aumentada"
-        case "THEMES": return "Temas"
-        case "CUSTOMIZE": return "Customizar tema"
-        case "AUDIO": return "Configurações de áudio"
-        case "STATS": return "Estatísticas detalhadas"
-        default: return title
-        }
-    }
-    
-    private var accessibilityHintText: String {
-        switch title {
-        case "CHARACTER": return "Visualiza e edita ficha do personagem"
-        case "CAMPAIGN": return "Gerencia NPCs, inventário e campanhas"
-        case "HISTORY": return "Visualiza estatísticas e histórico de rolagens anteriores"
-        case "AR DICE": return "Abre visualização AR para jogar dado em 3D"
-        case "THEMES": return "Escolhe um tema pré-definido"
-        case "CUSTOMIZE": return "Cria seu próprio tema personalizado"
-        case "AUDIO": return "Personaliza efeitos sonoros"
-        case "STATS": return "Visualiza estatísticas avançadas e análises"
-        default: return ""
-        }
-    }
-
-    #if DEBUG
-    @ObserveInjection var forceRedraw
-    #endif
 }

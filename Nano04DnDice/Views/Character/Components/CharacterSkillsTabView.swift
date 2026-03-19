@@ -1,5 +1,5 @@
-
 import SwiftUI
+import SwiftData
 
 struct CharacterSkillsTabView: View {
     let character: PlayerCharacter
@@ -7,45 +7,48 @@ struct CharacterSkillsTabView: View {
     var body: some View {
         List {
             ForEach(Skill.allCases, id: \.self) { skill in
-                SkillRow(skill: skill, character: character)
+                HStack {
+                    Image(systemName: isProficient(skill) ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(isProficient(skill) ? .blue : .secondary)
+                    
+                    VStack(alignment: .leading) {
+                        Text(skill.rawValue)
+                            .font(.body)
+                        Text(skill.abilityScore.fullName)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Text(formatModifier(calculateModifier(for: skill)))
+                        .font(.body.monospacedDigit())
+                        .fontWeight(.semibold)
+                }
+                .padding(.vertical, 4)
             }
         }
         .listStyle(.plain)
     }
-}
-
-struct SkillRow: View {
-    let skill: Skill
-    let character: PlayerCharacter
     
-    var isProficient: Bool {
-        character.proficientSkills.contains(skill)
+    private func isProficient(_ skill: Skill) -> Bool {
+        character.proficientSkillsStrings.contains(skill.rawValue)
     }
     
-    var modifier: Int {
-        character.skillModifier(for: skill)
-    }
-    
-    var body: some View {
-        HStack {
-            Image(systemName: isProficient ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(isProficient ? .green : .gray)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(skill.rawValue)
-                    .font(.body)
-                Text(skill.abilityScore.rawValue)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-            
-            Text(formatModifier(modifier))
-                .font(.headline)
-                .foregroundColor(.accentColor)
+    private func calculateModifier(for skill: Skill) -> Int {
+        let baseScore: Int
+        switch skill.abilityScore {
+        case .strength: baseScore = character.strength
+        case .dexterity: baseScore = character.dexterity
+        case .constitution: baseScore = character.constitution
+        case .intelligence: baseScore = character.intelligence
+        case .wisdom: baseScore = character.wisdom
+        case .charisma: baseScore = character.charisma
         }
-        .padding(.vertical, 4)
+        
+        let baseMod = (baseScore - 10) / 2
+        let bonus = isProficient(skill) ? character.proficiencyBonus : 0
+        return baseMod + bonus
     }
     
     private func formatModifier(_ value: Int) -> String {

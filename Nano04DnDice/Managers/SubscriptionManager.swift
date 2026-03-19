@@ -70,16 +70,18 @@ final class SubscriptionManager: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
-        /// Verifica se o usuário pode adicionar um novo item baseado no limite da conta free
-        func canAddItem(currentCount: Int, limit: Int = 1) -> Bool {
-            if isPro { return true }
-            return currentCount < limit
-        }
-        
-        /// Mensagem de erro padrão para recursos bloqueados
-        var proRequirementMessage: String {
-            "This feature requires Dice and Dragons Pro. Upgrade to unlock unlimited access!"
-        }
+        isPurchasing = false
+    }
+    
+    /// Verifica se o usuário pode adicionar um novo item baseado no limite da conta free
+    func canAddItem(currentCount: Int, limit: Int = 1) -> Bool {
+        if isPro { return true }
+        return currentCount < limit
+    }
+    
+    /// Mensagem de erro padrão para recursos bloqueados
+    var proRequirementMessage: String {
+        "This feature requires Dice and Dragons Pro. Upgrade to unlock unlimited access!"
     }
     
     /// Helper para delegar callbacks globais do RevenueCat

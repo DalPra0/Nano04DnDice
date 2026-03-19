@@ -74,6 +74,13 @@ final class NPC {
         guard maxHitPoints > 0 else { return 0 }
         return Double(hitPoints) / Double(maxHitPoints)
     }
+    
+    var healthColor: Color {
+        let percentage = healthPercentage
+        if percentage > 0.7 { return .green }
+        if percentage > 0.3 { return .orange }
+        return .red
+    }
 }
 
 @Model

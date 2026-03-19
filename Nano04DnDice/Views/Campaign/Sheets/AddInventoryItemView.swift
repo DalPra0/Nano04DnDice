@@ -1,85 +1,74 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct AddInventoryItemView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let campaignId: UUID
+    let campaign: Campaign
     
     @State private var name = ""
-    @State private var category: ItemCategory = .misc
-    @State private var quantity = 1
-    @State private var value = 0
-    @State private var weight: Double = 0.0
     @State private var description = ""
-    @State private var isEquipped = false
+    @State private var quantity = 1
+    @State private var category: ItemCategory = .misc
+    @State private var value = 0
+    @State private var weight = 0.0
     
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Item Info")) {
                     TextField("Item Name", text: $name)
-                    
+                    TextField("Description", text: $description, axis: .vertical)
+                        .lineLimit(3...5)
                     Picker("Category", selection: $category) {
                         ForEach(ItemCategory.allCases, id: \.self) { category in
-                            Text(category.rawValue.capitalized).tag(category)
+                            Text(category.rawValue).tag(category)
                         }
                     }
-                    
-                    Stepper("Quantity: \(quantity)", value: $quantity, in: 1...999)
                 }
                 
-                Section(header: Text("Properties")) {
-                    Stepper("Value: \(value) gp", value: $value, in: 0...999999)
-                    
+                Section(header: Text("Stats")) {
+                    Stepper("Quantity: \(quantity)", value: $quantity, in: 1...999)
                     HStack {
-                        Text("Weight:")
+                        Text("Value (gp)")
                         Spacer()
-                        TextField("0.0", value: $weight, format: .number)
+                        TextField("Value", value: $value, format: .number)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Weight (lb)")
+                        Spacer()
+                        TextField("Weight", value: $weight, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
-                        Text("lb")
-                            .foregroundColor(.secondary)
                     }
-                    
-                    Toggle("Equipped", isOn: $isEquipped)
-                }
-                
-                Section(header: Text("Description")) {
-                    TextField("Description (optional)", text: $description, axis: .vertical)
-                        .lineLimit(3...6)
                 }
             }
             .navigationTitle("New Item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
-                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Add") {
-                        addItem()
+                        let item = InventoryItem(
+                            name: name,
+                            itemDescription: description,
+                            quantity: quantity,
+                            category: category,
+                            value: value,
+                            weight: weight
+                        )
+                        item.campaign = campaign
+                        modelContext.insert(item)
+                        dismiss()
                     }
                     .disabled(name.isEmpty)
                 }
             }
         }
-    }
-    
-    private func addItem() {
-        let item = InventoryItem(
-            campaignId: campaignId,
-            name: name,
-            description: description, quantity: quantity, category: category,
-            value: value,
-            weight: weight,
-            isEquipped: isEquipped
-        )
-        manager.addItem(item)
-        dismiss()
     }
 }

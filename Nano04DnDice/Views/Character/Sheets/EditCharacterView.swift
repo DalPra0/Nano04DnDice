@@ -1,38 +1,11 @@
 
 import SwiftUI
+import SwiftData
 
 struct EditCharacterView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    @StateObject private var manager = CharacterManager.shared
-    
-    let character: PlayerCharacter
-    
-    @State private var name = ""
-    @State private var characterClass = ""
-    @State private var race = ""
-    @State private var level = 1
-    @State private var experiencePoints = 0
-    
-    @State private var strength = 10
-    @State private var dexterity = 10
-    @State private var constitution = 10
-    @State private var intelligence = 10
-    @State private var wisdom = 10
-    @State private var charisma = 10
-    
-    @State private var armorClass = 10
-    @State private var hitPoints = 10
-    @State private var maxHitPoints = 10
-    @State private var speed = 30
-    @State private var proficiencyBonus = 2
-    
-    @State private var equippedWeapon = ""
-    @State private var equippedArmor = ""
-    @State private var notes = ""
-    @State private var backstory = ""
-    
-    @State private var selectedSkills: Set<Skill> = []
-    @State private var selectedSavingThrows: Set<AbilityScore> = []
+    @Bindable var character: PlayerCharacter
     
     @State private var showDeleteAlert = false
     
@@ -41,49 +14,60 @@ struct EditCharacterView: View {
     
     var body: some View {
         Form {
-            EditCharacterBasicSection(
-                name: $name,
-                characterClass: $characterClass,
-                race: $race,
-                level: $level,
-                experiencePoints: $experiencePoints,
-                classes: classes,
-                races: races
-            )
+            Section("Basic Info") {
+                TextField("Name", text: $character.name)
+                
+                Picker("Class", selection: $character.characterClass) {
+                    ForEach(classes, id: \.self) { classType in
+                        Text(classType).tag(classType)
+                    }
+                }
+                
+                Picker("Race", selection: $character.race) {
+                    ForEach(races, id: \.self) { raceType in
+                        Text(raceType).tag(raceType)
+                    }
+                }
+                
+                Stepper("Level: \(character.level)", value: $character.level, in: 1...20)
+                HStack {
+                    Text("Experience")
+                    Spacer()
+                    TextField("XP", value: $character.experiencePoints, format: .number)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                }
+            }
             
-            EditCharacterAbilitySection(
-                strength: $strength,
-                dexterity: $dexterity,
-                constitution: $constitution,
-                intelligence: $intelligence,
-                wisdom: $wisdom,
-                charisma: $charisma
-            )
+            Section("Ability Scores") {
+                Stepper("Strength: \(character.strength)", value: $character.strength, in: 3...30)
+                Stepper("Dexterity: \(character.dexterity)", value: $character.dexterity, in: 3...30)
+                Stepper("Constitution: \(character.constitution)", value: $character.constitution, in: 3...30)
+                Stepper("Intelligence: \(character.intelligence)", value: $character.intelligence, in: 3...30)
+                Stepper("Wisdom: \(character.wisdom)", value: $character.wisdom, in: 3...30)
+                Stepper("Charisma: \(character.charisma)", value: $character.charisma, in: 3...30)
+            }
             
-            EditCharacterCombatSection(
-                armorClass: $armorClass,
-                hitPoints: $hitPoints,
-                maxHitPoints: $maxHitPoints,
-                speed: $speed,
-                proficiencyBonus: $proficiencyBonus
-            )
-            
-            EditCharacterSkillsSection(selectedSkills: $selectedSkills)
-            
-            EditCharacterSavingThrowsSection(selectedSavingThrows: $selectedSavingThrows)
+            Section("Combat Stats") {
+                Stepper("Armor Class: \(character.armorClass)", value: $character.armorClass, in: 1...40)
+                Stepper("Current HP: \(character.hitPoints)", value: $character.hitPoints, in: 0...character.maxHitPoints)
+                Stepper("Max HP: \(character.maxHitPoints)", value: $character.maxHitPoints, in: 1...999)
+                Stepper("Speed: \(character.speed)", value: $character.speed, in: 0...100)
+                Stepper("Proficiency Bonus: \(character.proficiencyBonus)", value: $character.proficiencyBonus, in: 1...10)
+            }
             
             Section("Equipment") {
-                TextField("Weapon", text: $equippedWeapon)
-                TextField("Armor", text: $equippedArmor)
+                TextField("Weapon", text: $character.equippedWeapon)
+                TextField("Armor", text: $character.equippedArmor)
             }
             
             Section("Backstory") {
-                TextEditor(text: $backstory)
+                TextEditor(text: $character.backstory)
                     .frame(height: 100)
             }
             
             Section("Notes") {
-                TextEditor(text: $notes)
+                TextEditor(text: $character.notes)
                     .frame(height: 100)
             }
             
@@ -97,91 +81,19 @@ struct EditCharacterView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
-                    saveCharacter()
+                Button("Done") {
+                    dismiss()
                 }
-                .disabled(name.isEmpty)
             }
         }
         .alert("Delete Character?", isPresented: $showDeleteAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
-                manager.deleteCharacter(character)
+                modelContext.delete(character)
                 dismiss()
             }
         } message: {
             Text("This action cannot be undone.")
         }
-        .onAppear {
-            loadCharacterData()
-        }
-    }
-    
-    private func loadCharacterData() {
-        name = character.name
-        characterClass = character.characterClass
-        race = character.race
-        level = character.level
-        experiencePoints = character.experiencePoints
-        
-        strength = character.strength
-        dexterity = character.dexterity
-        constitution = character.constitution
-        intelligence = character.intelligence
-        wisdom = character.wisdom
-        charisma = character.charisma
-        
-        armorClass = character.armorClass
-        hitPoints = character.hitPoints
-        maxHitPoints = character.maxHitPoints
-        speed = character.speed
-        proficiencyBonus = character.proficiencyBonus
-        
-        equippedWeapon = character.equippedWeapon
-        equippedArmor = character.equippedArmor
-        notes = character.notes
-        backstory = character.backstory
-        
-        selectedSkills = Set(character.proficientSkills)
-        selectedSavingThrows = Set(character.proficientSavingThrows)
-    }
-    
-    private func saveCharacter() {
-        var updated = character
-        updated.name = name
-        updated.characterClass = characterClass
-        updated.race = race
-        updated.level = level
-        updated.experiencePoints = experiencePoints
-        
-        updated.strength = strength
-        updated.dexterity = dexterity
-        updated.constitution = constitution
-        updated.intelligence = intelligence
-        updated.wisdom = wisdom
-        updated.charisma = charisma
-        
-        updated.armorClass = armorClass
-        updated.hitPoints = hitPoints
-        updated.maxHitPoints = maxHitPoints
-        updated.speed = speed
-        updated.proficiencyBonus = proficiencyBonus
-        
-        updated.equippedWeapon = equippedWeapon
-        updated.equippedArmor = equippedArmor
-        updated.notes = notes
-        updated.backstory = backstory
-        
-        updated.proficientSkills = Array(selectedSkills)
-        updated.proficientSavingThrows = Array(selectedSavingThrows)
-        
-        manager.updateCharacter(updated)
-        dismiss()
-    }
-}
-
-#Preview {
-    NavigationView {
-        EditCharacterView(character: PlayerCharacter(name: "Test"))
     }
 }

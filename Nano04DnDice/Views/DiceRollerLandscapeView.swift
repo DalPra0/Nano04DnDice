@@ -48,6 +48,7 @@ struct DiceRollerLandscapeView: View {
                                     currentNumber: viewModel.result ?? 1,
                                     isRolling: viewModel.rolling,
                                     diceSides: viewModel.selectedDiceType.sides,
+                                    theme: currentTheme,
                                     onRollComplete: { _ in }
                                 )
                                 .aspectRatio(1, contentMode: .fit)

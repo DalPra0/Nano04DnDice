@@ -2,13 +2,13 @@ import Foundation
 import AppIntents
 import WidgetKit
 
-private enum IntentConstants {
-    static let appGroup = "group.com.DalPra.DiceAndDragons"
+nonisolated private enum IntentConstants {
+    nonisolated static let appGroup = "group.com.DalPra.DiceAndDragons"
     
-    enum UserDefaultsKeys {
-        static let lastDiceResult = "lastDiceResult"
-        static let lastDiceType = "lastDiceType"
-        static let lastRollDate = "lastRollDate"
+    nonisolated enum UserDefaultsKeys {
+        nonisolated static let lastDiceResult = "lastDiceResult"
+        nonisolated static let lastDiceType = "lastDiceType"
+        nonisolated static let lastRollDate = "lastRollDate"
     }
 }
 

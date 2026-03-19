@@ -2,13 +2,13 @@ import Foundation
 import AppIntents
 import WidgetKit
 
-private enum IntentConstants {
-    static let appGroup = "group.com.DalPra.DiceAndDragons"
+nonisolated private enum IntentConstants {
+    nonisolated static let appGroup = "group.com.DalPra.DiceAndDragons"
     
-    enum UserDefaultsKeys {
-        static let lastDiceResult = "lastDiceResult"
-        static let lastDiceType = "lastDiceType"
-        static let lastRollDate = "lastRollDate"
+    nonisolated enum UserDefaultsKeys {
+        nonisolated static let lastDiceResult = "lastDiceResult"
+        nonisolated static let lastDiceType = "lastDiceType"
+        nonisolated static let lastRollDate = "lastRollDate"
     }
 }
 
@@ -35,10 +35,10 @@ struct RollDiceIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let result = Int.random(in: 1...diceType.sides)
         
-        if let sharedDefaults = await UserDefaults(suiteName: IntentConstants.appGroup) {
-            await sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
-            await sharedDefaults.set(diceType.displayName, forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
-            await sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
+        if let sharedDefaults = UserDefaults(suiteName: IntentConstants.appGroup) {
+            sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set(diceType.displayName, forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
         }
         
         WidgetCenter.shared.reloadAllTimelines()
@@ -101,10 +101,10 @@ struct QuickRollD20Intent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let result = Int.random(in: 1...20)
         
-        if let sharedDefaults = await UserDefaults(suiteName: IntentConstants.appGroup) {
-            await sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
-            await sharedDefaults.set("D20", forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
-            await await sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
+        if let sharedDefaults = UserDefaults(suiteName: IntentConstants.appGroup) {
+            sharedDefaults.set(result, forKey: IntentConstants.UserDefaultsKeys.lastDiceResult)
+            sharedDefaults.set("D20", forKey: IntentConstants.UserDefaultsKeys.lastDiceType)
+            sharedDefaults.set(Date(), forKey: IntentConstants.UserDefaultsKeys.lastRollDate)
         }
         
         WidgetCenter.shared.reloadAllTimelines()

@@ -1,6 +1,7 @@
 
 import SwiftUI
 import SwiftData
+import RevenueCatUI
 
 struct CharacterSheetView: View {
     @EnvironmentObject private var subManager: SubscriptionManager

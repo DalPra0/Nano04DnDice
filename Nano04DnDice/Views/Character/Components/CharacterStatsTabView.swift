@@ -1,9 +1,8 @@
-
 import SwiftUI
+import SwiftData
 
 struct CharacterStatsTabView: View {
     let character: PlayerCharacter
-    @StateObject private var manager = CharacterManager.shared
     
     var body: some View {
         ScrollView {

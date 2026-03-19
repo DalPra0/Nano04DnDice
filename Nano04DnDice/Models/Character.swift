@@ -113,6 +113,33 @@ final class PlayerCharacter {
         guard maxHitPoints > 0 else { return 0 }
         return Double(hitPoints) / Double(maxHitPoints)
     }
+
+    var proficientSkills: [Skill] {
+        get { proficientSkillsStrings.compactMap { Skill(rawValue: $0) } }
+        set { proficientSkillsStrings = newValue.map { $0.rawValue } }
+    }
+    
+    var proficientSavingThrows: [AbilityScore] {
+        get { proficientSavingThrowsStrings.compactMap { AbilityScore(rawValue: $0) } }
+        set { proficientSavingThrowsStrings = newValue.map { $0.rawValue } }
+    }
+    
+    func savingThrowModifier(for score: AbilityScore) -> Int {
+        let baseModifier: Int
+        switch score {
+        case .strength: baseModifier = strModifier
+        case .dexterity: baseModifier = dexModifier
+        case .constitution: baseModifier = conModifier
+        case .intelligence: baseModifier = intModifier
+        case .wisdom: baseModifier = wisModifier
+        case .charisma: baseModifier = chaModifier
+        }
+        
+        if proficientSavingThrows.contains(score) {
+            return baseModifier + proficiencyBonus
+        }
+        return baseModifier
+    }
 }
 
 enum AbilityScore: String, Codable, CaseIterable {
@@ -131,6 +158,17 @@ enum AbilityScore: String, Codable, CaseIterable {
         case .intelligence: return "Intelligence"
         case .wisdom: return "Wisdom"
         case .charisma: return "Charisma"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .strength: return "figure.strengthtraining.traditional"
+        case .dexterity: return "figure.run"
+        case .constitution: return "heart.fill"
+        case .intelligence: return "brain.head.profile"
+        case .wisdom: return "eye.fill"
+        case .charisma: return "sparkles"
         }
     }
 }
@@ -154,4 +192,14 @@ enum Skill: String, Codable, CaseIterable {
     case sleightOfHand = "Sleight of Hand"
     case stealth = "Stealth"
     case survival = "Survival"
+    
+    var abilityScore: AbilityScore {
+        switch self {
+        case .athletics: return .strength
+        case .acrobatics, .sleightOfHand, .stealth: return .dexterity
+        case .arcana, .history, .investigation, .nature, .religion: return .intelligence
+        case .animalHandling, .insight, .medicine, .perception, .survival: return .wisdom
+        case .deception, .intimidation, .performance, .persuasion: return .charisma
+        }
+    }
 }

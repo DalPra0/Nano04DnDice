@@ -1,21 +1,17 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct CampaignRowView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
     let campaign: Campaign
-    
-    var isActive: Bool {
-        campaign.id == manager.activeCampaign?.id
-    }
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: isActive ? "star.fill" : "book.closed.fill")
+            Image(systemName: campaign.isActive ? "star.fill" : "book.closed.fill")
                 .font(.title3)
-                .foregroundColor(isActive ? .yellow : .accentColor)
+                .foregroundColor(campaign.isActive ? .yellow : .accentColor)
                 .frame(width: 40, height: 40)
-                .background(isActive ? Color.yellow.opacity(0.2) : Color.accentColor.opacity(0.2))  // Mantém relativo às cores de tema
+                .background(campaign.isActive ? Color.yellow.opacity(0.2) : Color.accentColor.opacity(0.2))
                 .cornerRadius(8)
             
             VStack(alignment: .leading, spacing: 4) {
@@ -23,7 +19,7 @@ struct CampaignRowView: View {
                     Text(campaign.name)
                         .font(.headline)
                     
-                    if isActive {
+                    if campaign.isActive {
                         Text("Active")
                             .font(.caption)
                             .fontWeight(.semibold)
@@ -35,8 +31,8 @@ struct CampaignRowView: View {
                     }
                 }
                 
-                if !campaign.description.isEmpty {
-                    Text(campaign.description)
+                if !campaign.campaignDescription.isEmpty {
+                    Text(campaign.campaignDescription)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(2)
@@ -46,7 +42,7 @@ struct CampaignRowView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "person.3.fill")
                             .font(.caption2)
-                        Text("\(manager.npcs(for: campaign.id).count) NPCs")
+                        Text("\(campaign.npcs.count) NPCs")
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)
@@ -54,7 +50,7 @@ struct CampaignRowView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "bag.fill")
                             .font(.caption2)
-                        Text("\(manager.items(for: campaign.id).count) Items")
+                        Text("\(campaign.inventory.count) Items")
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)
@@ -62,23 +58,8 @@ struct CampaignRowView: View {
             }
             
             Spacer()
-            
-            if !isActive {
-                Button(action: {
-                    manager.setActiveCampaign(campaign)
-                }) {
-                    Text("Activate")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.accentColor)
-                        .cornerRadius(8)
-                }
-                .buttonStyle(.plain)
-            }
         }
         .padding(.vertical, 4)
+        .enableInjection()
     }
 }

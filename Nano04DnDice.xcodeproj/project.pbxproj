@@ -14,7 +14,6 @@
 		158E21E12F6A1D69003D863A /* ReceiptParser in Frameworks */ = {isa = PBXBuildFile; productRef = 158E21E02F6A1D69003D863A /* ReceiptParser */; };
 		158E21E32F6A1D69003D863A /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 158E21E22F6A1D69003D863A /* RevenueCat */; };
 		158E21E52F6A1D69003D863A /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 158E21E42F6A1D69003D863A /* RevenueCatUI */; };
-		158E21E72F6A1D69003D863A /* RevenueCat_CustomEntitlementComputation in Frameworks */ = {isa = PBXBuildFile; productRef = 158E21E62F6A1D69003D863A /* RevenueCat_CustomEntitlementComputation */; };
 		158F75142EEB2FD30034EDED /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158F75122EEB2FD30034EDED /* RollDiceIntent.swift */; };
 		158F75162EEB2FD30034EDED /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158F75122EEB2FD30034EDED /* RollDiceIntent.swift */; };
 		158F75182EEB2FD30034EDED /* RollDiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158F75122EEB2FD30034EDED /* RollDiceIntent.swift */; };
@@ -136,7 +135,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				158E21E52F6A1D69003D863A /* RevenueCatUI in Frameworks */,
-				158E21E72F6A1D69003D863A /* RevenueCat_CustomEntitlementComputation in Frameworks */,
 				158E21E12F6A1D69003D863A /* ReceiptParser in Frameworks */,
 				15DDEF2C2E96E31B00360F5E /* Inject in Frameworks */,
 				158E21E32F6A1D69003D863A /* RevenueCat in Frameworks */,
@@ -250,7 +248,6 @@
 				158E21E02F6A1D69003D863A /* ReceiptParser */,
 				158E21E22F6A1D69003D863A /* RevenueCat */,
 				158E21E42F6A1D69003D863A /* RevenueCatUI */,
-				158E21E62F6A1D69003D863A /* RevenueCat_CustomEntitlementComputation */,
 			);
 			productName = Nano04DnDice;
 			productReference = 15DDEF142E96E2D600360F5E /* Nano04DnDice.app */;
@@ -798,11 +795,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 158E21DF2F6A1D69003D863A /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
-		};
-		158E21E62F6A1D69003D863A /* RevenueCat_CustomEntitlementComputation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 158E21DF2F6A1D69003D863A /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
-			productName = RevenueCat_CustomEntitlementComputation;
 		};
 		15DDEF2B2E96E31B00360F5E /* Inject */ = {
 			isa = XCSwiftPackageProductDependency;

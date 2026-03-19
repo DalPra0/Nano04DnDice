@@ -1,9 +1,10 @@
 
 import SwiftUI
+import SwiftData
 
 struct AddCharacterView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    @StateObject private var manager = CharacterManager.shared
     
     @State private var name = ""
     @State private var characterClass = "Fighter"
@@ -106,60 +107,21 @@ struct AddCharacterView: View {
             hitPoints: calculateHP(),
             maxHitPoints: calculateHP()
         )
-        manager.addCharacter(character)
+        modelContext.insert(character)
         dismiss()
     }
     
     private func calculateHP() -> Int {
-        // D&D 5e Rules: Level 1 characters get MAX hit die value + CON modifier
-        // This is correct - they don't roll for first level HP
         let hitDice: Int
         switch characterClass {
         case "Barbarian": hitDice = 12
         case "Fighter", "Paladin", "Ranger": hitDice = 10
         case "Bard", "Cleric", "Druid", "Monk", "Rogue", "Warlock": hitDice = 8
-        default: hitDice = 6  // Sorcerer, Wizard
+        default: hitDice = 6
         }
         
         let conModifier = (constitution - 10) / 2
-        return max(1, hitDice + conModifier)  // Minimum 1 HP even with negative CON
+        return max(1, hitDice + conModifier)
     }
 }
 
-struct AbilityScoreRow: View {
-    let title: String
-    let icon: String
-    @Binding var value: Int
-    
-    var modifier: Int {
-        (value - 10) / 2
-    }
-    
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.accentColor)
-                .frame(width: 30)
-            
-            Text(title)
-            
-            Spacer()
-            
-            Text(formatModifier(modifier))
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .frame(width: 30)
-            
-            Stepper("\(value)", value: $value, in: 3...20)
-                .labelsHidden()
-        }
-    }
-    
-    private func formatModifier(_ value: Int) -> String {
-        return value >= 0 ? "+\(value)" : "\(value)"
-    }
-}
-
-#Preview {
-    AddCharacterView()
-}

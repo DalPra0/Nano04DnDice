@@ -23,7 +23,13 @@ struct Nano04DnDiceApp: App {
                 InventoryItem.self,
                 PlayerCharacter.self
             ])
-            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            let config = ModelConfiguration(
+                "DnDice",
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                groupContainer: .identifier("group.com.DalPra.DiceAndDragons"),
+                cloudKitDatabase: .none
+            )
             container = try ModelContainer(for: schema, configurations: [config])
         } catch {
             fatalError("Could not configure SwiftData container: \(error.localizedDescription)")

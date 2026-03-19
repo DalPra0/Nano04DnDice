@@ -1,17 +1,19 @@
 
 import SwiftUI
+import SwiftData
 
 struct CharacterSelectorSheet: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    @StateObject private var manager = CharacterManager.shared
+    @Query(sort: \PlayerCharacter.name) private var characters: [PlayerCharacter]
     @State private var showingAddCharacter = false
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(manager.characters) { character in
+                ForEach(characters) { character in
                     Button(action: {
-                        manager.setActiveCharacter(character)
+                        setActiveCharacter(character)
                         dismiss()
                     }) {
                         HStack {
@@ -25,7 +27,7 @@ struct CharacterSelectorSheet: View {
                             
                             Spacer()
                             
-                            if manager.activeCharacterId == character.id {
+                            if character.isActive {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
                             }
@@ -53,9 +55,16 @@ struct CharacterSelectorSheet: View {
         }
     }
     
+    private func setActiveCharacter(_ character: PlayerCharacter) {
+        // Deactivate all other characters
+        for c in characters {
+            c.isActive = (c.id == character.id)
+        }
+    }
+    
     private func deleteCharacters(at offsets: IndexSet) {
         for index in offsets {
-            manager.deleteCharacter(manager.characters[index])
+            modelContext.delete(characters[index])
         }
     }
 }

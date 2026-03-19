@@ -1,11 +1,11 @@
 import SwiftUI
-import Foundation
+import SwiftData
 
 struct AddNPCView: View {
-    @StateObject private var manager = CampaignManager.shared
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let campaignId: UUID
+    let campaign: Campaign
     
     @State private var name = ""
     @State private var race = ""
@@ -27,16 +27,8 @@ struct AddNPCView: View {
                 
                 Section(header: Text("Stats")) {
                     Stepper("Level: \(level)", value: $level, in: 1...20)
-                    
                     Stepper("Max HP: \(maxHitPoints)", value: $maxHitPoints, in: 1...999)
-                        .onChange(of: maxHitPoints) {
-                            if hitPoints > maxHitPoints {
-                                hitPoints = maxHitPoints
-                            }
-                        }
-                    
                     Stepper("Current HP: \(hitPoints)", value: $hitPoints, in: 0...maxHitPoints)
-                    
                     Stepper("AC: \(armorClass)", value: $armorClass, in: 1...30)
                 }
                 
@@ -49,34 +41,27 @@ struct AddNPCView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
-                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Add") {
-                        addNPC()
+                        let npc = NPC(
+                            name: name,
+                            race: race,
+                            characterClass: characterClass,
+                            level: level,
+                            armorClass: armorClass,
+                            hitPoints: hitPoints,
+                            maxHitPoints: maxHitPoints,
+                            notes: notes
+                        )
+                        npc.campaign = campaign
+                        modelContext.insert(npc)
+                        dismiss()
                     }
                     .disabled(name.isEmpty)
                 }
             }
         }
-    }
-    
-    private func addNPC() {
-        let npc = NPC(
-            campaignId: campaignId,
-            name: name,
-            race: race,
-            characterClass: characterClass,
-            level: level,
-            armorClass: armorClass,
-            hitPoints: hitPoints,
-            maxHitPoints: maxHitPoints,
-            notes: notes
-        )
-        manager.addNPC(npc)
-        dismiss()
     }
 }

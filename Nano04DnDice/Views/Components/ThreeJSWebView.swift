@@ -136,9 +136,13 @@ struct ThreeJSWebView: UIViewRepresentable {
     }
     
     func loadThreeJSScene(webView: WKWebView, coordinator: Coordinator) {
-        guard let htmlPath = Bundle.main.path(forResource: "ThreeJSScene", ofType: "html", inDirectory: "Resources") else {
-            print("❌❌❌ CRITICAL ERROR: ThreeJSScene.html not found in Resources folder!")
-            print("📁 Searched path: Resources/ThreeJSScene.html")
+        // Tenta encontrar em "Resources" e depois na raiz do Bundle
+        let htmlPath = Bundle.main.path(forResource: "ThreeJSScene", ofType: "html", inDirectory: "Resources") ?? 
+                      Bundle.main.path(forResource: "ThreeJSScene", ofType: "html")
+        
+        guard let finalPath = htmlPath else {
+            print("❌❌❌ CRITICAL ERROR: ThreeJSScene.html not found!")
+            print("📁 Searched in Bundle.main and Resources subfolder")
             
             let fallbackHTML = """
             <!DOCTYPE html>
@@ -161,7 +165,7 @@ struct ThreeJSWebView: UIViewRepresentable {
         }
         
         do {
-            var htmlContent = try String(contentsOfFile: htmlPath, encoding: .utf8)
+            var htmlContent = try String(contentsOfFile: finalPath, encoding: .utf8)
             
             if !htmlContent.contains("{{DICE_SIDES}}") {
                 print("⚠️ WARNING: {{DICE_SIDES}} placeholder not found in HTML template")

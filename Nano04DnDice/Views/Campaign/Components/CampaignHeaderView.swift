@@ -12,7 +12,7 @@ struct CampaignHeaderView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    if !campaign.description.isEmpty {
+                    if !campaign.campaignDescription.isEmpty {
                         Text(campaign.campaignDescription)
                             .font(.subheadline)
                             .foregroundColor(.secondary)

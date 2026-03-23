@@ -2,8 +2,6 @@
 import SwiftUI
 import AppIntents
 import SwiftData
-import RevenueCat
-import RevenueCatUI
 
 @main
 struct Nano04DnDiceApp: App {
@@ -11,11 +9,7 @@ struct Nano04DnDiceApp: App {
     @StateObject private var subscriptionManager = SubscriptionManager.shared
     
     init() {
-        // 1. Configure RevenueCat
-        Purchases.logLevel = .debug
-        Purchases.configure(withAPIKey: "test_DLkGxJMYVbkxYuZFsFpkMvdRFgu")
-        
-        // 2. Configure SwiftData
+        // 1. Configure SwiftData
         do {
             let schema = Schema([
                 Campaign.self,

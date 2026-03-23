@@ -1,7 +1,6 @@
 
 import SwiftUI
 import SwiftData
-import RevenueCatUI
 
 struct CampaignManagerView: View {
     @EnvironmentObject private var subManager: SubscriptionManager
@@ -46,6 +45,7 @@ struct CampaignManagerView: View {
                             TabButton(title: "NPCS", icon: "person.3.fill", isSelected: selectedTab == 0, accentColor: accentColor) { selectedTab = 0 }
                             TabButton(title: "ITEMS", icon: "bag.fill", isSelected: selectedTab == 1, accentColor: accentColor) { selectedTab = 1 }
                             TabButton(title: "LORE", icon: "book.fill", isSelected: selectedTab == 2, accentColor: accentColor) { selectedTab = 2 }
+                            TabButton(title: "COMBAT", icon: "shield.fill", isSelected: selectedTab == 3, accentColor: accentColor) { selectedTab = 3 }
                         }
                         .padding(.vertical, 12)
                         .background(Color.white.opacity(0.03))
@@ -59,17 +59,16 @@ struct CampaignManagerView: View {
                             
                             CampaignsListView()
                                 .tag(2)
+                            
+                            InitiativeTrackerView(campaign: active)
+                                .tag(3)
                         }
                         .tabViewStyle(.page(indexDisplayMode: .never))
                     }
                 } else {
                     Spacer()
                     EmptyCampaignView(onCreateCampaign: { 
-                        if subManager.canAddItem(currentCount: campaigns.count) {
-                            showingAddCampaign = true 
-                        } else {
-                            subManager.showPaywall = true
-                        }
+                        showingAddCampaign = true 
                     })
                     .padding(40)
                     Spacer()
@@ -89,9 +88,6 @@ struct CampaignManagerView: View {
             if let campaign = activeCampaign {
                 AddInventoryItemView(campaign: campaign)
             }
-        }
-        .sheet(isPresented: $subManager.showPaywall) {
-            PaywallView(displayCloseButton: true)
         }
     }
     
@@ -126,11 +122,7 @@ struct CampaignManagerView: View {
                 
                 Menu {
                     Button(action: { 
-                        if subManager.canAddItem(currentCount: campaigns.count) {
-                            showingAddCampaign = true 
-                        } else {
-                            subManager.showPaywall = true
-                        }
+                        showingAddCampaign = true 
                     }) {
                         Label("New Campaign", systemImage: "plus.circle")
                     }

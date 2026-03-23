@@ -1,7 +1,5 @@
 
 import SwiftUI
-import RevenueCat
-import RevenueCatUI
 
 struct ThemeCustomizerView: View {
     @EnvironmentObject private var subManager: SubscriptionManager
@@ -111,11 +109,7 @@ struct ThemeCustomizerView: View {
                                     HStack(spacing: 12) {
                                         ForEach([DiceCustomization.DiceTexture.standard, .metallic, .wooden, .stone, .crystal], id: \.self) { texture in
                                             TextureSelectionButton(texture: texture, isSelected: customTheme.diceTexture == texture, accentColor: accentColor) {
-                                                if texture != .standard && !subManager.isPro {
-                                                    subManager.showPaywall = true
-                                                } else {
-                                                    customTheme.diceTexture = texture
-                                                }
+                                                customTheme.diceTexture = texture
                                             }
                                         }
                                     }
@@ -173,9 +167,6 @@ struct ThemeCustomizerView: View {
         .navigationBarHidden(true)
         .sheet(item: $showColorPicker) { type in
             ColorPickerSheet(selectedColor: bindingForColorType(type), title: titleForColorType(type), accentColor: accentColor)
-        }
-        .sheet(isPresented: $subManager.showPaywall) {
-            PaywallView(displayCloseButton: true)
         }
         .alert("Save Theme", isPresented: $showSaveAlert) {
             TextField("Theme Name", text: $themeName)

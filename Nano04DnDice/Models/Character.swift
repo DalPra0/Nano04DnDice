@@ -1,4 +1,3 @@
-
 import Foundation
 import SwiftData
 import SwiftUI
@@ -32,10 +31,22 @@ final class PlayerCharacter {
     var proficientSkillsStrings: [String]
     var proficientSavingThrowsStrings: [String]
     
-    // Equipment
-    var equippedWeapon: String
+    // Equipment & Wealth
+    var equippedWeapon: String // Legacy, keeping for backwards compatibility or simple use
     var equippedArmor: String
     var equippedItems: [String]
+    var currency: Currency?
+    
+    // RPG Features
+    var attacks: [CharacterAttack]?
+    var traits: [CharacterTrait]?
+    
+    // Spellcasting
+    var spells: [CharacterSpell]?
+    // spellSlots uses level (1-9) as an index logic, but we store it as an array of 9.
+    // Index 0 represents 1st level spells, Index 8 represents 9th level spells.
+    var spellSlots: [SpellSlotStatus]?
+    var spellcastingAbility: String? // "INT", "WIS", "CHA"
     
     // Notes
     var notes: String
@@ -67,6 +78,12 @@ final class PlayerCharacter {
         equippedWeapon: String = "",
         equippedArmor: String = "",
         equippedItems: [String] = [],
+        currency: Currency? = Currency(),
+        attacks: [CharacterAttack]? = [],
+        traits: [CharacterTrait]? = [],
+        spells: [CharacterSpell]? = [],
+        spellSlots: [SpellSlotStatus]? = Array(repeating: SpellSlotStatus(), count: 9),
+        spellcastingAbility: String? = "INT",
         notes: String = "",
         backstory: String = ""
     ) {
@@ -93,6 +110,12 @@ final class PlayerCharacter {
         self.equippedWeapon = equippedWeapon
         self.equippedArmor = equippedArmor
         self.equippedItems = equippedItems
+        self.currency = currency ?? Currency()
+        self.attacks = attacks ?? []
+        self.traits = traits ?? []
+        self.spells = spells ?? []
+        self.spellSlots = spellSlots ?? Array(repeating: SpellSlotStatus(), count: 9)
+        self.spellcastingAbility = spellcastingAbility ?? "INT"
         self.notes = notes
         self.backstory = backstory
     }
@@ -139,6 +162,19 @@ final class PlayerCharacter {
             return baseModifier + proficiencyBonus
         }
         return baseModifier
+    }
+    
+    // Resting
+    func shortRest(healing: Int) {
+        hitPoints = min(maxHitPoints, hitPoints + healing)
+    }
+    
+    func longRest() {
+        hitPoints = maxHitPoints
+        // Reset spell slots
+        for i in 0..<(spellSlots?.count ?? 0) {
+            spellSlots?[i].used = 0
+        }
     }
 }
 

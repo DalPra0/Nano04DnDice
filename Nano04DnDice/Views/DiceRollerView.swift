@@ -35,6 +35,19 @@ struct DiceRollerView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             orientation = UIDevice.current.orientation
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RollAttack"))) { notification in
+            if let userInfo = notification.userInfo,
+               let attackBonus = userInfo["attackBonus"] as? Int {
+                // Set the d20 as the selected dice
+                viewModel.selectDiceType(.d20)
+                // Temporarily use the proficiency bonus variable as the attack bonus
+                viewModel.proficiencyBonus = attackBonus
+                // Roll the dice
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    viewModel.rollDice()
+                }
+            }
+        }
     }
     
     private var portraitView: some View {

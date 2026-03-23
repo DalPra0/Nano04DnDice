@@ -1,98 +1,51 @@
 
 import SwiftUI
-import RevenueCat
-import RevenueCatUI
 import Combine
 
-/// Cérebro da monetização: gerencia status de assinatura e ofertas
+/// Gerencia status de assinatura - MODIFICADO: Tudo liberado (Removido RevenueCat)
 @MainActor
 final class SubscriptionManager: ObservableObject {
     static let shared = SubscriptionManager()
     
-    /// Entitlement ID configurado no dashboard do RevenueCat
+    /// Entitlement ID (mantido para compatibilidade de nomes, se necessário)
     static let proEntitlement = "Dice and Dragons Pro"
     
-    @Published var isPro: Bool = false
-    @Published var offerings: Offerings?
-    @Published var customerInfo: CustomerInfo?
+    @Published var isPro: Bool = true // Sempre Pro agora
+    @Published var offerings: Any? = nil
+    @Published var customerInfo: Any? = nil
     @Published var isPurchasing: Bool = false
     @Published var errorMessage: String?
     @Published var showPaywall: Bool = false
     
     private init() {
-        // Observa mudanças na informação do usuário (assinatura, compras)
-        Purchases.shared.delegate = PurchasesDelegateProxy.shared
-        
-        // Atualiza o estado inicial
-        Task {
-            await refreshStatus()
-        }
+        // Nada para inicializar do RevenueCat
     }
     
-    /// Atualiza o status da assinatura e ofertas disponíveis
+    /// Atualiza o status da assinatura (Simulado)
     func refreshStatus() async {
-        do {
-            self.customerInfo = try await Purchases.shared.customerInfo()
-            self.isPro = customerInfo?.entitlements[Self.proEntitlement]?.isActive ?? false
-            
-            self.offerings = try await Purchases.shared.offerings()
-            
-            print("💰 Subscription status: \(isPro ? "PRO" : "FREE")")
-        } catch {
-            print("❌ Error fetching RC status: \(error.localizedDescription)")
-        }
+        self.isPro = true
+        print("💰 Subscription status: UNLOCKED (RC Removed)")
     }
     
-    /// Realiza a compra de um pacote (Monthly, Yearly, Lifetime)
-    func purchase(_ package: Package) async {
-        isPurchasing = true
-        errorMessage = nil
-        
-        do {
-            let result = try await Purchases.shared.purchase(package: package)
-            if !result.userCancelled {
-                self.isPro = result.customerInfo.entitlements[Self.proEntitlement]?.isActive ?? false
-                self.showPaywall = false
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        
-        isPurchasing = false
+    /// Realiza a compra (Desativado)
+    func purchase(package: Any) async {
+        // Não faz nada, já é Pro
+        self.isPro = true
+        self.showPaywall = false
     }
     
-    /// Restaura compras anteriores (ex: se o usuário trocou de aparelho)
+    /// Restaura compras (Simulado)
     func restorePurchases() async {
-        isPurchasing = true
-        do {
-            let info = try await Purchases.shared.restorePurchases()
-            self.isPro = info.entitlements[Self.proEntitlement]?.isActive ?? false
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-        isPurchasing = false
+        self.isPro = true
     }
     
-    /// Verifica se o usuário pode adicionar um novo item baseado no limite da conta free
+    /// Verifica se o usuário pode adicionar um novo item (Sempre true agora)
     func canAddItem(currentCount: Int, limit: Int = 1) -> Bool {
-        if isPro { return true }
-        return currentCount < limit
+        return true
     }
     
-    /// Mensagem de erro padrão para recursos bloqueados
+    /// Mensagem de erro padrão
     var proRequirementMessage: String {
-        "This feature requires Dice and Dragons Pro. Upgrade to unlock unlimited access!"
-    }
-    
-    /// Helper para delegar callbacks globais do RevenueCat
-    class PurchasesDelegateProxy: NSObject, PurchasesDelegate {
-        static let shared = PurchasesDelegateProxy()
-        
-        func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
-            Task { @MainActor in
-                SubscriptionManager.shared.customerInfo = customerInfo
-                SubscriptionManager.shared.isPro = customerInfo.entitlements[SubscriptionManager.proEntitlement]?.isActive ?? false
-            }
-        }
+        "Everything is unlocked!"
     }
 }

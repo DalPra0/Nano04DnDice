@@ -54,6 +54,13 @@ struct EditCharacterView: View {
                 Stepper("Max HP: \(character.maxHitPoints)", value: $character.maxHitPoints, in: 1...999)
                 Stepper("Speed: \(character.speed)", value: $character.speed, in: 0...100)
                 Stepper("Proficiency Bonus: \(character.proficiencyBonus)", value: $character.proficiencyBonus, in: 1...10)
+                
+                Picker("Spellcasting Ability", selection: Binding(get: { character.spellcastingAbility ?? "INT" }, set: { character.spellcastingAbility = $0 })) {
+                    Text("Intelligence").tag("INT")
+                    Text("Wisdom").tag("WIS")
+                    Text("Charisma").tag("CHA")
+                    Text("None").tag("NONE")
+                }
             }
             
             Section("Equipment") {

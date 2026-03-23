@@ -1,7 +1,6 @@
 
 import SwiftUI
 import SwiftData
-import RevenueCatUI
 
 struct CharacterSheetView: View {
     @EnvironmentObject private var subManager: SubscriptionManager
@@ -49,7 +48,8 @@ struct CharacterSheetView: View {
                             TabButton(title: "STATS", icon: "bolt.fill", isSelected: selectedTab == 0, accentColor: accentColor) { selectedTab = 0 }
                             TabButton(title: "SKILLS", icon: "star.fill", isSelected: selectedTab == 1, accentColor: accentColor) { selectedTab = 1 }
                             TabButton(title: "COMBAT", icon: "shield.fill", isSelected: selectedTab == 2, accentColor: accentColor) { selectedTab = 2 }
-                            TabButton(title: "INFO", icon: "info.circle.fill", isSelected: selectedTab == 3, accentColor: accentColor) { selectedTab = 3 }
+                            TabButton(title: "SPELLS", icon: "sparkles", isSelected: selectedTab == 3, accentColor: accentColor) { selectedTab = 3 }
+                            TabButton(title: "INFO", icon: "info.circle.fill", isSelected: selectedTab == 4, accentColor: accentColor) { selectedTab = 4 }
                         }
                         .padding(.vertical, 12)
                         .background(Color.white.opacity(0.03))
@@ -64,19 +64,18 @@ struct CharacterSheetView: View {
                             CharacterCombatTabView(character: character)
                                 .tag(2)
                             
-                            CharacterInfoTabView(character: character)
+                            CharacterSpellsTabView(character: character)
                                 .tag(3)
+                            
+                            CharacterInfoTabView(character: character)
+                                .tag(4)
                         }
                         .tabViewStyle(.page(indexDisplayMode: .never))
                     }
                 } else {
                     Spacer()
                     EmptyCharacterView(onCreateCharacter: { 
-                        if subManager.canAddItem(currentCount: characters.count) {
-                            showingAddCharacter = true
-                        } else {
-                            subManager.showPaywall = true
-                        }
+                        showingAddCharacter = true
                     })
                     .padding(40)
                     Spacer()
@@ -94,9 +93,6 @@ struct CharacterSheetView: View {
             if let url = pdfURL {
                 ShareSheet(activityItems: [url])
             }
-        }
-        .sheet(isPresented: $subManager.showPaywall) {
-            PaywallView(displayCloseButton: true)
         }
     }
     
@@ -132,12 +128,8 @@ struct CharacterSheetView: View {
                 HStack(spacing: 4) {
                     if let character = activeCharacter {
                         Button(action: {
-                            if subManager.isPro {
-                                pdfURL = PDFManager.shared.generateCharacterPDF(character: character)
-                                if pdfURL != nil { showingShareSheet = true }
-                            } else {
-                                subManager.showPaywall = true
-                            }
+                            pdfURL = PDFManager.shared.generateCharacterPDF(character: character)
+                            if pdfURL != nil { showingShareSheet = true }
                         }) {
                             Image(systemName: "arrow.down.doc.fill")
                                 .font(.system(size: 18))

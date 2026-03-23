@@ -1,7 +1,5 @@
 
 import SwiftUI
-import RevenueCat
-import RevenueCatUI
 
 struct TopButtonsView: View {
     @EnvironmentObject private var subManager: SubscriptionManager
@@ -16,7 +14,6 @@ struct TopButtonsView: View {
     let onShowCharacterSheet: () -> Void
     
     @State private var isMenuOpen = false
-    @State private var showingCustomerCenter = false
     @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     // Helper to close menu with proper animation
@@ -59,28 +56,15 @@ struct TopButtonsView: View {
                             .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
                     }
                     
-                    // Quick Action: AR (PRO Protected)
+                    // Quick Action: AR (Always Unlocked)
                     Button(action: {
-                        if subManager.isPro {
-                            onShowAR()
-                        } else {
-                            subManager.showPaywall = true
-                        }
+                        onShowAR()
                     }) {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "arkit")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(accentColor)
-                                .frame(width: 44, height: 44)
-                                .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
-                            
-                            if !subManager.isPro {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.yellow)
-                                    .offset(x: 4, y: -4)
-                            }
-                        }
+                        Image(systemName: "arkit")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(accentColor)
+                            .frame(width: 44, height: 44)
+                            .background(Circle().fill(DesignSystem.Colors.backgroundOverlay))
                     }
                     
                     Spacer()
@@ -114,20 +98,6 @@ struct TopButtonsView: View {
                                 MenuButton(icon: "clock.arrow.circlepath", title: "menu_history", accentColor: accentColor) { performAction(onShowHistory) }
                                 MenuButton(icon: "speaker.wave.3.fill", title: "menu_audio", accentColor: accentColor) { performAction(onShowAudioSettings) }
                                 MenuButton(icon: "pencil.and.outline", title: "menu_customize", accentColor: accentColor) { performAction(onShowCustomizer) }
-                                
-                                Divider()
-                                    .background(accentColor.opacity(0.3))
-                                    .frame(width: 150)
-                                
-                                MenuButton(icon: "person.crop.circle.fill", title: subManager.isPro ? "Manage Pro" : "Go Pro", accentColor: .yellow) {
-                                    performAction {
-                                        if subManager.isPro {
-                                            showingCustomerCenter = true
-                                        } else {
-                                            subManager.showPaywall = true
-                                        }
-                                    }
-                                }
                             }
                             .padding(.top, 10)
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -140,12 +110,6 @@ struct TopButtonsView: View {
                 Spacer()
             }
             .zIndex(1001)
-        }
-        .sheet(isPresented: $subManager.showPaywall) {
-            PaywallView(displayCloseButton: true)
-        }
-        .sheet(isPresented: $showingCustomerCenter) {
-            CustomerCenterView()
         }
         .enableInjection()
     }

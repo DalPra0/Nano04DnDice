@@ -19,6 +19,7 @@ struct EditNPCView: View {
                     Stepper("Max HP: \(npc.maxHitPoints)", value: $npc.maxHitPoints, in: 1...999)
                     Stepper("Current HP: \(npc.hitPoints)", value: $npc.hitPoints, in: 0...npc.maxHitPoints)
                     Stepper("AC: \(npc.armorClass)", value: $npc.armorClass, in: 1...30)
+                    Stepper("Initiative: \(npc.initiative ?? 0)", value: Binding(get: { npc.initiative ?? 0 }, set: { npc.initiative = $0 }), in: -10...40)
                 }
                 
                 Section(header: Text("Quick Actions")) {

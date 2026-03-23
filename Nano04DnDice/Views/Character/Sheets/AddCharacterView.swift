@@ -10,6 +10,7 @@ struct AddCharacterView: View {
     @State private var characterClass = "Fighter"
     @State private var race = "Human"
     @State private var level = 1
+    @State private var spellcastingAbility = "INT"
     
     @State private var strength = 10
     @State private var dexterity = 10
@@ -40,6 +41,13 @@ struct AddCharacterView: View {
                     }
                     
                     Stepper("Level: \(level)", value: $level, in: 1...20)
+                    
+                    Picker("Spellcasting Ability", selection: $spellcastingAbility) {
+                        Text("Intelligence").tag("INT")
+                        Text("Wisdom").tag("WIS")
+                        Text("Charisma").tag("CHA")
+                        Text("None").tag("NONE")
+                    }
                 }
                 
                 Section("Ability Scores") {
@@ -105,7 +113,8 @@ struct AddCharacterView: View {
             wisdom: wisdom,
             charisma: charisma,
             hitPoints: calculateHP(),
-            maxHitPoints: calculateHP()
+            maxHitPoints: calculateHP(),
+            spellcastingAbility: spellcastingAbility
         )
         modelContext.insert(character)
         dismiss()

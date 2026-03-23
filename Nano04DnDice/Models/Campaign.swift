@@ -18,13 +18,16 @@ final class Campaign {
     @Relationship(deleteRule: .cascade, inverse: \InventoryItem.campaign) 
     var inventory: [InventoryItem] = []
     
-    init(id: UUID = UUID(), name: String, campaignDescription: String = "", isActive: Bool = false) {
+    var combatTracker: [InitiativeTrackerItem]? = []
+    
+    init(id: UUID = UUID(), name: String, campaignDescription: String = "", isActive: Bool = false, combatTracker: [InitiativeTrackerItem]? = []) {
         self.id = id
         self.name = name
         self.campaignDescription = campaignDescription
         self.createdDate = Date()
         self.lastModified = Date()
         self.isActive = isActive
+        self.combatTracker = combatTracker
     }
 }
 
@@ -38,6 +41,7 @@ final class NPC {
     var armorClass: Int
     var hitPoints: Int
     var maxHitPoints: Int
+    var initiative: Int?
     var notes: String
     var imageData: Data?
     var isAlly: Bool
@@ -53,6 +57,7 @@ final class NPC {
         armorClass: Int = 10,
         hitPoints: Int = 10,
         maxHitPoints: Int = 10,
+        initiative: Int = 0,
         notes: String = "",
         imageData: Data? = nil,
         isAlly: Bool = true
@@ -65,6 +70,7 @@ final class NPC {
         self.armorClass = armorClass
         self.hitPoints = hitPoints
         self.maxHitPoints = maxHitPoints
+        self.initiative = initiative
         self.notes = notes
         self.imageData = imageData
         self.isAlly = isAlly

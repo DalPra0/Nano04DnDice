@@ -8,176 +8,224 @@ struct ThemesListView: View {
     @State private var showDeleteAlert = false
     @State private var themeToDelete: DiceCustomization?
     
+    private var accentColor: Color {
+        themeManager.currentTheme.accentColor.color
+    }
+    
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.black.opacity(0.95)
-                    .ignoresSafeArea()
+        ZStack {
+            // Background
+            Color.black.ignoresSafeArea()
+            
+            RadialGradient(
+                colors: [Color.black.opacity(0.8), Color.black],
+                center: .center,
+                startRadius: 100,
+                endRadius: 500
+            ).ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom Header
+                customHeader
                 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        headerView
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 32) {
+                        mainIconHeader
                         
-                        sectionHeader(title: "PRESET THEMES", icon: "star.fill")
-                        
-                        ForEach(PresetThemes.allThemes) { theme in
-                            ThemeCardView(theme: theme, isCurrentTheme: theme.id == themeManager.currentTheme.id) {
-                                themeManager.applyTheme(theme)
-                                dismiss()
+                        // Preset Themes
+                        VStack(alignment: .leading, spacing: 20) {
+                            sectionLabel("LEGENDARY PRESETS", icon: "crown.fill")
+                            
+                            VStack(spacing: 12) {
+                                ForEach(PresetThemes.allThemes) { theme in
+                                    ThemeGalleryCard(
+                                        theme: theme, 
+                                        isCurrent: theme.id == themeManager.currentTheme.id,
+                                        onSelect: {
+                                            themeManager.applyTheme(theme)
+                                            dismiss()
+                                        }
+                                    )
+                                }
                             }
                         }
                         
-                        Divider()
-                            .background(Color.white.opacity(0.3))
-                            .padding(.vertical, 10)
-                        
-                        sectionHeader(title: "MY THEMES", icon: "paintbrush.fill")
-                        
+                        // Custom Themes
                         let customThemes = themeManager.savedThemes.filter { theme in
                             !PresetThemes.allThemes.contains(where: { $0.name == theme.name })
                         }
                         
-                        if customThemes.isEmpty {
-                            emptyStateView
-                        } else {
-                            ForEach(customThemes) { theme in
-                                ThemeCardView(
-                                    theme: theme,
-                                    isCurrentTheme: theme.id == themeManager.currentTheme.id,
-                                    showDeleteButton: true,
-                                    onSelect: {
-                                        themeManager.applyTheme(theme)
-                                        dismiss()
-                                    },
-                                    onDelete: {
-                                        themeToDelete = theme
-                                        showDeleteAlert = true
+                        VStack(alignment: .leading, spacing: 20) {
+                            sectionLabel("YOUR FORGE", icon: "hammer.fill")
+                            
+                            if customThemes.isEmpty {
+                                emptyStateView
+                            } else {
+                                VStack(spacing: 12) {
+                                    ForEach(customThemes) { theme in
+                                        ThemeGalleryCard(
+                                            theme: theme,
+                                            isCurrent: theme.id == themeManager.currentTheme.id,
+                                            showDelete: true,
+                                            onSelect: {
+                                                themeManager.applyTheme(theme)
+                                                dismiss()
+                                            },
+                                            onDelete: {
+                                                themeToDelete = theme
+                                                showDeleteAlert = true
+                                            }
+                                        )
                                     }
-                                )
+                                }
                             }
                         }
+                        
+                        Spacer().frame(height: 40)
                     }
-                    .padding(20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
                 }
-            }
-            .navigationTitle("Themes")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(hex: "#FFD700"))
-                }
-            }
-            .alert("Delete Theme", isPresented: $showDeleteAlert) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    if let theme = themeToDelete {
-                        themeManager.deleteTheme(theme)
-                    }
-                }
-            } message: {
-                Text("Are you sure you want to delete '\(themeToDelete?.name ?? "")'?")
             }
         }
-        .enableInjection()
+        .navigationBarHidden(true)
+        .alert("Delete Theme", isPresented: $showDeleteAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                if let theme = themeToDelete {
+                    themeManager.deleteTheme(theme)
+                }
+            }
+        } message: {
+            Text("Are you sure you want to delete '\(themeToDelete?.name ?? "")'?")
+        }
     }
-
-    #if DEBUG
-    @ObserveInjection var forceRedraw
-    #endif
     
-    
-    private var headerView: some View {
-        VStack(spacing: DesignSystem.Spacing.xs) {  // 8pt
-            Image(systemName: "paintpalette.fill")
-                .font(.system(size: 60))
+    private var customHeader: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(accentColor)
+                        .frame(width: 44, height: 44)
+                        .background(Circle().fill(Color.white.opacity(0.1)))
+                }
+                
+                Spacer()
+                
+                Text("THEME GALLERY")
+                    .font(.custom("PlayfairDisplay-Black", size: 18))
+                    .foregroundColor(.white)
+                    .tracking(2)
+                
+                Spacer()
+                
+                Color.clear.frame(width: 44, height: 44)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             
-            Text("Choose your Theme")
+            LinearGradient(
+                colors: [Color.clear, accentColor.opacity(0.5), Color.clear],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 1)
+        }
+        .background(Color.black.opacity(0.8))
+    }
+    
+    private var mainIconHeader: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "paintpalette.fill")
+                .font(.system(size: 50))
+                .foregroundColor(accentColor)
+                .shadow(color: accentColor.opacity(0.5), radius: 10)
+            
+            Text("Choose your Aura")
                 .font(.custom("PlayfairDisplay-Bold", size: 24))
                 .foregroundColor(.white)
             
-            Text("Select a theme or create your own")
+            Text("Select a preset or visit the forge to create")
                 .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(DesignSystem.Colors.textSecondary)
+                .foregroundColor(DesignSystem.Colors.textTertiary)
         }
-        .padding(.bottom, DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Escolha seu tema. Selecione um tema ou crie o seu próprio")
     }
     
-    private func sectionHeader(title: String, icon: String) -> some View {
-        HStack {
+    private func sectionLabel(_ text: String, icon: String) -> some View {
+        HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundColor(Color(hex: "#FFD700"))
-            
-            Text(title)
-                .font(.custom("PlayfairDisplay-Bold", size: 18))
-                .foregroundColor(.white)
-            
+                .font(.system(size: 10))
+            Text(text)
+                .font(.custom("PlayfairDisplay-Bold", size: 12))
+                .tracking(3)
             Spacer()
         }
-        .padding(.vertical, 8)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(title)
-        .accessibilityAddTraits(.isHeader)
+        .foregroundColor(accentColor.opacity(0.8))
+        .padding(.leading, 8)
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "paintpalette")
-                .font(.system(size: 50))
-                .foregroundColor(DesignSystem.Colors.textDisabled)
+        VStack(spacing: 16) {
+            Image(systemName: "wand.and.stars")
+                .font(.system(size: 40))
+                .foregroundColor(accentColor.opacity(0.3))
             
-            Text("No custom themes yet")
-                .font(.custom("PlayfairDisplay-Regular", size: 16))
+            Text("No custom auras forged yet")
+                .font(.custom("PlayfairDisplay-Regular", size: 14))
                 .foregroundColor(DesignSystem.Colors.textTertiary)
-            
-            Text("Use 'CUSTOMIZE' to create your first theme!")
-                .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(DesignSystem.Colors.textDisabled)
         }
         .frame(maxWidth: .infinity)
         .padding(40)
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
-                .stroke(DesignSystem.Colors.borderSubtle, lineWidth: 2)
-                .background(
-                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
-                        .fill(Color.white.opacity(0.05))
-                )
-        )
-        .padding(.horizontal, DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
+        .background(Color.white.opacity(0.03))
+        .cornerRadius(20)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.1), lineWidth: 1))
     }
-    
 }
 
-
-struct ThemeCardView: View {
+struct ThemeGalleryCard: View {
     let theme: DiceCustomization
-    let isCurrentTheme: Bool
-    var showDeleteButton: Bool = false
+    let isCurrent: Bool
+    var showDelete: Bool = false
     let onSelect: () -> Void
     var onDelete: (() -> Void)? = nil
     
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 16) {
-                colorPreview
+                // Mini Dice Preview
+                ZStack {
+                    Circle()
+                        .fill(theme.backgroundColor.color)
+                        .frame(width: 50, height: 50)
+                    
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(theme.diceFaceColor.color)
+                        .frame(width: 28, height: 28)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(theme.diceBorderColor.color, lineWidth: 2)
+                        )
+                        .rotationEffect(.degrees(45))
+                    
+                    Text("20")
+                        .font(.custom("PlayfairDisplay-Black", size: 10))
+                        .foregroundColor(theme.accentColor.color)
+                }
+                .shadow(color: theme.accentColor.color.opacity(0.4), radius: 8)
                 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(theme.name)
                             .font(.custom("PlayfairDisplay-Bold", size: 18))
                             .foregroundColor(.white)
                         
-                        if isCurrentTheme {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                        if isCurrent {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 12))
+                                .foregroundColor(theme.accentColor.color)
                         }
-                        
-                        Spacer()
                     }
                     
                     Text(theme.diceTexture.rawValue.capitalized)
@@ -185,69 +233,36 @@ struct ThemeCardView: View {
                         .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
                 
-                if showDeleteButton {
-                    Button(action: {
-                        onDelete?()
-                    }) {
+                Spacer()
+                
+                if showDelete {
+                    Button(action: { onDelete?() }) {
                         Image(systemName: "trash")
-                            .foregroundColor(.red)
-                            .padding(DesignSystem.Spacing.xs)  // 8pt
+                            .font(.system(size: 14))
+                            .foregroundColor(.red.opacity(0.7))
+                            .frame(width: 32, height: 32)
+                            .background(Color.red.opacity(0.1))
+                            .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Deletar tema \(theme.name)")
-                    .accessibilityHint("Toque para excluir este tema")
+                } else if isCurrent {
+                    Text("ACTIVE")
+                        .font(.custom("PlayfairDisplay-Black", size: 10))
+                        .foregroundColor(theme.accentColor.color)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(theme.accentColor.color.opacity(0.1))
+                        .cornerRadius(4)
                 }
             }
-            .padding(DesignSystem.Spacing.md)  // 16pt
-            .background(
-                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                DesignSystem.Colors.backgroundTertiary,
-                                DesignSystem.Colors.backgroundSecondary
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                            .stroke(
-                                isCurrentTheme ? theme.accentColor.color : Color.white.opacity(0.2),  // Mantém relativo ao tema
-                                lineWidth: isCurrentTheme ? 2 : 1
-                            )
-                    )
+            .padding(16)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(isCurrent ? theme.accentColor.color.opacity(0.5) : Color.white.opacity(0.1), lineWidth: isCurrent ? 2 : 1)
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(theme.name). \(theme.diceTexture.rawValue)\(isCurrentTheme ? ". Selecionado" : "")")
-        .accessibilityHint(isCurrentTheme ? "" : "Toque para aplicar este tema")
-        .accessibilityAddTraits(isCurrentTheme ? [.isButton, .isSelected] : .isButton)
-        .enableInjection()
     }
-
-    #if DEBUG
-    @ObserveInjection var forceRedraw
-    #endif
-    
-    private var colorPreview: some View {
-        HStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
-                .fill(theme.diceFaceColor.color)
-                .frame(width: 20, height: 50)
-            
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
-                .fill(theme.diceBorderColor.color)
-                .frame(width: 20, height: 50)
-            
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall)
-                .fill(theme.accentColor.color)
-                .frame(width: 20, height: 50)
-        }
-    }
-}
-
-#Preview {
-    ThemesListView()
 }

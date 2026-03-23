@@ -13,6 +13,10 @@ struct ThemeCustomizerView: View {
     @State private var showSaveAlert = false
     @State private var showColorPicker: ColorPickerType?
     
+    private var accentColor: Color {
+        customTheme.accentColor.color
+    }
+    
     enum ColorPickerType: Identifiable {
         case diceFace, diceBorder, diceNumber, background, accent
         var id: Self { self }
@@ -25,273 +29,226 @@ struct ThemeCustomizerView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.black.opacity(0.95)
-                    .ignoresSafeArea()
+        ZStack {
+            // Background
+            Color.black.ignoresSafeArea()
+            
+            RadialGradient(
+                colors: [Color.black.opacity(0.8), Color.black],
+                center: .center,
+                startRadius: 100,
+                endRadius: 500
+            ).ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom Header
+                customHeader
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        headerView
-                        themeNameSection
-                        diceColorsSection
-                        appColorsSection
-                        textureSection
-                        fontSection
-                        effectsSection
-                        previewSection
-                        buttonsSection
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 32) {
+                        mainIconHeader
+                        
+                        // Theme Name
+                        VStack(alignment: .leading, spacing: 12) {
+                            sectionLabel("THEME NAME")
+                            TextField("Enter theme name...", text: $themeName)
+                                .font(.custom("PlayfairDisplay-Bold", size: 18))
+                                .foregroundColor(.white)
+                                .padding(20)
+                                .background(Color.white.opacity(0.05))
+                                .cornerRadius(16)
+                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                        }
+                        
+                        // Dice Colors
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionLabel("DICE ESSENCE")
+                            HStack(spacing: 12) {
+                                ColorOrb(label: "Face", color: customTheme.diceFaceColor.color) { showColorPicker = .diceFace }
+                                ColorOrb(label: "Edge", color: customTheme.diceBorderColor.color) { showColorPicker = .diceBorder }
+                                ColorOrb(label: "Runes", color: customTheme.diceNumberColor.color) { showColorPicker = .diceNumber }
+                            }
+                        }
+                        
+                        // App Colors
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionLabel("REALM COLORS")
+                            HStack(spacing: 12) {
+                                ColorOrb(label: "Void", color: customTheme.backgroundColor.color) { showColorPicker = .background }
+                                ColorOrb(label: "Aura", color: customTheme.accentColor.color) { showColorPicker = .accent }
+                            }
+                        }
+                        
+                        // Preview
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionLabel("LIVE PREVIEW")
+                            ZStack {
+                                customTheme.backgroundColor.color
+                                DiceDisplayView(
+                                    diceSize: 200, 
+                                    currentNumber: 20, 
+                                    isRolling: false, 
+                                    glowIntensity: customTheme.glowIntensity, 
+                                    diceBorderColor: customTheme.diceBorderColor.color, 
+                                    accentColor: customTheme.accentColor.color, 
+                                    diceSides: 20, 
+                                    theme: customTheme, 
+                                    onRollComplete: { _ in }
+                                )
+                                .scaleEffect(0.8)
+                            }
+                            .frame(height: 240)
+                            .cornerRadius(24)
+                            .overlay(RoundedRectangle(cornerRadius: 24).stroke(accentColor.opacity(0.3), lineWidth: 2))
+                            .shadow(color: accentColor.opacity(0.2), radius: 20)
+                        }
+                        
+                        // Texture & Font
+                        VStack(alignment: .leading, spacing: 24) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                sectionLabel("MATERIAL")
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 12) {
+                                        ForEach([DiceCustomization.DiceTexture.standard, .metallic, .wooden, .stone, .crystal], id: \.self) { texture in
+                                            TextureSelectionButton(texture: texture, isSelected: customTheme.diceTexture == texture, accentColor: accentColor) {
+                                                if texture != .standard && !subManager.isPro {
+                                                    subManager.showPaywall = true
+                                                } else {
+                                                    customTheme.diceTexture = texture
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 12) {
+                                sectionLabel("INSCRIPTION STYLE")
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 12) {
+                                        ForEach(availableFonts, id: \.self) { font in
+                                            FontSelectionButton(font: font, isSelected: customTheme.fontName == font, accentColor: accentColor) {
+                                                customTheme.fontName = font
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Effects
+                        VStack(alignment: .leading, spacing: 16) {
+                            sectionLabel("ARCANE EFFECTS")
+                            VStack(spacing: 20) {
+                                EffectSlider(label: "Glow Intensity", value: $customTheme.glowIntensity, accentColor: accentColor)
+                                Toggle(isOn: $customTheme.shadowEnabled) {
+                                    Text("Dimensional Shadows")
+                                        .font(.custom("PlayfairDisplay-Bold", size: 16))
+                                        .foregroundColor(.white)
+                                }
+                                .tint(accentColor)
+                            }
+                            .padding(20)
+                            .background(Color.white.opacity(0.04))
+                            .cornerRadius(16)
+                        }
+                        
+                        // Actions
+                        HStack(spacing: 16) {
+                            ForgeButton(title: "APPLY AURA", color: accentColor, isSecondary: false) {
+                                themeManager.applyTheme(customTheme)
+                                dismiss()
+                            }
+                            
+                            ForgeButton(title: "SAVE TO FORGE", color: .green, isSecondary: true) {
+                                showSaveAlert = true
+                            }
+                        }
+                        .padding(.bottom, 40)
                     }
-                    .padding(DesignSystem.Spacing.lg)
+                    .padding(.horizontal, 20)
                 }
             }
-            .navigationTitle(LocalizedStringKey("cust_title"))
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(LocalizedStringKey("Cancel")) {
-                        dismiss()
-                    }
-                    .foregroundColor(Color(hex: "#FFD700"))
-                }
-            }
-            .alert(LocalizedStringKey("cust_save"), isPresented: $showSaveAlert) {
-                TextField(LocalizedStringKey("cust_theme_name"), text: $themeName)
-                Button(LocalizedStringKey("Cancel"), role: .cancel) {}
-                Button(LocalizedStringKey("cust_save")) {
-                    saveTheme()
-                }
-            } message: {
-                Text("Enter a name for your custom theme")
-            }
+        }
+        .navigationBarHidden(true)
+        .sheet(item: $showColorPicker) { type in
+            ColorPickerSheet(selectedColor: bindingForColorType(type), title: titleForColorType(type), accentColor: accentColor)
         }
         .sheet(isPresented: $subManager.showPaywall) {
             PaywallView(displayCloseButton: true)
         }
-        .enableInjection()
-    }
-
-    #if DEBUG
-    @ObserveInjection var forceRedraw
-    #endif
-    
-    private var headerView: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "paintpalette.fill")
-                .font(.system(size: 60))
-            Text(LocalizedStringKey("cust_create_theme"))
-                .font(.custom("PlayfairDisplay-Bold", size: 24))
-                .foregroundColor(.white)
-            Text(LocalizedStringKey("cust_subtitle"))
-                .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(DesignSystem.Colors.textSecondary)
-        }
-        .padding(.bottom, 10)
-    }
-    
-    private var themeNameSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionHeader(title: "cust_theme_name")
-            TextField(LocalizedStringKey("cust_theme_name"), text: $themeName)
-                .font(.custom("PlayfairDisplay-Regular", size: 16))
-                .foregroundColor(.white)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                        .fill(DesignSystem.Colors.backgroundOverlay)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                                .stroke(DesignSystem.Colors.borderSubtle, lineWidth: 1)
-                        )
-                )
+        .alert("Save Theme", isPresented: $showSaveAlert) {
+            TextField("Theme Name", text: $themeName)
+            Button("Cancel", role: .cancel) {}
+            Button("Save") { saveTheme() }
+        } message: {
+            Text("Enter a name for your custom theme")
         }
     }
     
-    private var diceColorsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_dice_colors")
-            colorButton(title: "Dice Face", color: customTheme.diceFaceColor.color) { showColorPicker = .diceFace }
-            colorButton(title: "Dice Border", color: customTheme.diceBorderColor.color) { showColorPicker = .diceBorder }
-            colorButton(title: "Numbers", color: customTheme.diceNumberColor.color) { showColorPicker = .diceNumber }
-        }
-        .sheet(item: $showColorPicker) { type in
-            ColorPickerSheet(selectedColor: bindingForColorType(type), title: titleForColorType(type))
-        }
-    }
-    
-    private var appColorsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_app_colors")
-            colorButton(title: "Background", color: customTheme.backgroundColor.color) { showColorPicker = .background }
-            colorButton(title: "Accent", color: customTheme.accentColor.color) { showColorPicker = .accent }
-        }
-    }
-    
-    private var textureSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_texture")
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach([DiceCustomization.DiceTexture.standard, .metallic, .wooden, .stone, .crystal], id: \.self) { texture in
-                        textureButton(texture)
-                    }
+    private var customHeader: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(accentColor)
+                        .frame(width: 44, height: 44)
                 }
-            }
-        }
-    }
-    
-    private func textureButton(_ texture: DiceCustomization.DiceTexture) -> some View {
-        let isPremium = texture != .standard
-        let isLocked = isPremium && !subManager.isPro
-        let isSelected = customTheme.diceTexture == texture
-        
-        return Button(action: {
-            if isLocked {
-                subManager.showPaywall = true
-            } else {
-                customTheme.diceTexture = texture
-            }
-        }) {
-            VStack(spacing: 8) {
-                ZStack(alignment: .topTrailing) {
-                    textureIcon(for: texture)
-                        .font(.system(size: 30))
-                        .foregroundColor(isSelected ? customTheme.accentColor.color : .white)
-                    
-                    if isLocked {
-                        Image(systemName: "crown.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.yellow)
-                            .offset(x: 4, y: -4)
-                    }
-                }
-                Text(LocalizedStringKey("tex_\(texture.rawValue)"))
-                    .font(.custom("PlayfairDisplay-Regular", size: 12))
+                
+                Spacer()
+                
+                Text("THE FORGE")
+                    .font(.custom("PlayfairDisplay-Black", size: 18))
                     .foregroundColor(.white)
+                    .tracking(4)
+                
+                Spacer()
+                
+                Color.clear.frame(width: 44, height: 44)
             }
-            .frame(width: 80, height: 80)
-            .background(
-                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                    .fill(DesignSystem.Colors.backgroundOverlay)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                            .stroke(isSelected ? customTheme.accentColor.color : DesignSystem.Colors.borderSubtle, lineWidth: isSelected ? 2 : 1)
-                    )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            
+            LinearGradient(
+                colors: [Color.clear, accentColor.opacity(0.5), Color.clear],
+                startPoint: .leading,
+                endPoint: .trailing
             )
+            .frame(height: 1)
         }
+        .background(Color.black.opacity(0.8))
     }
     
-    private func textureIcon(for texture: DiceCustomization.DiceTexture) -> some View {
-        switch texture {
-        case .standard: return Image(systemName: "square.fill")
-        case .metallic: return Image(systemName: "bitcoinsign.circle.fill")
-        case .wooden: return Image(systemName: "leaf.fill")
-        case .stone: return Image(systemName: "mountain.2.fill")
-        case .crystal: return Image(systemName: "diamond.fill")
-        }
-    }
-    
-    private var fontSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_font")
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(availableFonts, id: \.self) { font in
-                        fontButton(font)
-                    }
-                }
+    private var mainIconHeader: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "hammer.circle.fill")
+                .font(.system(size: 50))
+                .foregroundColor(accentColor)
+                .shadow(color: accentColor.opacity(0.5), radius: 10)
+            
+            VStack(spacing: 4) {
+                Text("Forge your Destiny")
+                    .font(.custom("PlayfairDisplay-Bold", size: 24))
+                    .foregroundColor(.white)
+                Text("Customize every detail of your arcane tool")
+                    .font(.custom("PlayfairDisplay-Regular", size: 14))
+                    .foregroundColor(DesignSystem.Colors.textTertiary)
             }
         }
+        .padding(.top, 24)
+    }
+    
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.custom("PlayfairDisplay-Bold", size: 12))
+            .foregroundColor(accentColor.opacity(0.8))
+            .tracking(3)
+            .padding(.leading, 4)
     }
     
     private var availableFonts: [String] {
         ["SF Pro", "BebasNeue-Regular", "MetalMania-Regular", "Pangolin-Regular", "PlayfairDisplay-Regular", "PlayfairDisplay-Bold", "PlayfairDisplay-Black", "SecularOne-Regular", "Ubuntu-Regular", "Ubuntu-Bold"]
-    }
-    
-    private func fontButton(_ font: String) -> some View {
-        let isSelected = customTheme.fontName == font
-        return Button(action: { customTheme.fontName = font }) {
-            VStack(spacing: 8) {
-                Text("Aa").font(font == "SF Pro" ? .system(size: 32, weight: .bold) : .custom(font, size: 32))
-                    .foregroundColor(isSelected ? customTheme.accentColor.color : .white)
-                Text(font.replacingOccurrences(of: "-", with: " ")).font(.system(size: 10))
-                    .foregroundColor(DesignSystem.Colors.textSecondary)
-            }
-            .frame(width: 90, height: 90)
-            .background(
-                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                    .fill(DesignSystem.Colors.backgroundOverlay)
-                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                        .stroke(isSelected ? customTheme.accentColor.color : DesignSystem.Colors.borderSubtle, lineWidth: isSelected ? 2 : 1))
-            )
-        }
-    }
-    
-    private var effectsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_effects")
-            VStack(spacing: 12) {
-                sliderRow(title: "Glow Intensity", value: $customTheme.glowIntensity, range: 0...1)
-                Toggle(isOn: $customTheme.shadowEnabled) {
-                    Text("Shadows").font(.custom("PlayfairDisplay-Regular", size: 16)).foregroundColor(.white)
-                }
-                .tint(customTheme.accentColor.color)
-            }
-            .padding()
-            .background(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium).fill(Color.white.opacity(0.1)))
-        }
-    }
-    
-    private var previewSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader(title: "cust_preview")
-            ZStack {
-                customTheme.backgroundColor.color
-                DiceDisplayView(diceSize: 180, currentNumber: 20, isRolling: false, glowIntensity: customTheme.glowIntensity, diceBorderColor: customTheme.diceBorderColor.color, accentColor: customTheme.accentColor.color, diceSides: 20, theme: customTheme, onRollComplete: { _ in })
-                    .scaleEffect(0.8)
-            }
-            .frame(height: 220)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge))
-        }
-    }
-    
-    private var buttonsSection: some View {
-        HStack(spacing: 16) {
-            Button(action: { themeManager.applyTheme(customTheme); dismiss() }) {
-                Text(LocalizedStringKey("cust_apply")).font(.custom("PlayfairDisplay-Bold", size: 16)).foregroundColor(.black)
-                    .frame(maxWidth: .infinity).padding().background(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge).fill(customTheme.accentColor.color))
-            }
-            Button(action: { showSaveAlert = true }) {
-                Text(LocalizedStringKey("cust_save")).font(.custom("PlayfairDisplay-Bold", size: 16)).foregroundColor(.black)
-                    .frame(maxWidth: .infinity).padding().background(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge).fill(Color.green))
-            }
-        }
-    }
-    
-    private func sectionHeader(title: String) -> some View {
-        Text(LocalizedStringKey(title)).font(.custom("PlayfairDisplay-Bold", size: 14)).foregroundColor(.white.opacity(0.7)).tracking(2)
-    }
-    
-    private func colorButton(title: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack {
-                Text(title).font(.custom("PlayfairDisplay-Regular", size: 16)).foregroundColor(.white)
-                Spacer()
-                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusSmall).fill(color).frame(width: 40, height: 40)
-            }
-            .padding().background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.1)))
-        }
-    }
-    
-    private func sliderRow(title: String, value: Binding<Double>, range: ClosedRange<Double>) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title).font(.custom("PlayfairDisplay-Regular", size: 16)).foregroundColor(.white)
-                Spacer()
-                Text(String(format: "%.2f", value.wrappedValue)).font(.custom("PlayfairDisplay-Bold", size: 14)).foregroundColor(customTheme.accentColor.color)
-            }
-            Slider(value: value, in: range).tint(customTheme.accentColor.color)
-        }
     }
     
     private func bindingForColorType(_ type: ColorPickerType) -> Binding<Color> {
@@ -319,22 +276,171 @@ struct ThemeCustomizerView: View {
     }
 }
 
+// MARK: - Components
+
+struct ColorOrb: View {
+    let label: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 12) {
+                Circle()
+                    .fill(color)
+                    .frame(width: 50, height: 50)
+                    .overlay(Circle().stroke(Color.white.opacity(0.2), lineWidth: 2))
+                    .shadow(color: color.opacity(0.4), radius: 8)
+                
+                Text(label.uppercased())
+                    .font(.custom("PlayfairDisplay-Bold", size: 10))
+                    .foregroundColor(.white.opacity(0.6))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+            .background(Color.white.opacity(0.04))
+            .cornerRadius(16)
+        }
+    }
+}
+
+struct TextureSelectionButton: View {
+    let texture: DiceCustomization.DiceTexture
+    let isSelected: Bool
+    let accentColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                textureIcon
+                    .font(.system(size: 24))
+                    .foregroundColor(isSelected ? accentColor : .white.opacity(0.6))
+                
+                Text(texture.rawValue.capitalized)
+                    .font(.custom("PlayfairDisplay-Bold", size: 10))
+                    .foregroundColor(isSelected ? .white : .white.opacity(0.4))
+            }
+            .frame(width: 80, height: 80)
+            .background(isSelected ? accentColor.opacity(0.15) : Color.white.opacity(0.05))
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(isSelected ? accentColor : Color.white.opacity(0.1), lineWidth: 1))
+        }
+    }
+    
+    @ViewBuilder
+    private var textureIcon: some View {
+        switch texture {
+        case .standard: Image(systemName: "square.fill")
+        case .metallic: Image(systemName: "bitcoinsign.circle.fill")
+        case .wooden: Image(systemName: "leaf.fill")
+        case .stone: Image(systemName: "mountain.2.fill")
+        case .crystal: Image(systemName: "diamond.fill")
+        }
+    }
+}
+
+struct FontSelectionButton: View {
+    let font: String
+    let isSelected: Bool
+    let accentColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Text("20")
+                    .font(font == "SF Pro" ? .system(size: 24, weight: .bold) : .custom(font, size: 24))
+                    .foregroundColor(isSelected ? accentColor : .white)
+                
+                Text(font.prefix(6))
+                    .font(.system(size: 8))
+                    .foregroundColor(.white.opacity(0.4))
+            }
+            .frame(width: 70, height: 70)
+            .background(isSelected ? accentColor.opacity(0.15) : Color.white.opacity(0.05))
+            .cornerRadius(12)
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(isSelected ? accentColor : Color.white.opacity(0.1), lineWidth: 1))
+        }
+    }
+}
+
+struct EffectSlider: View {
+    let label: String
+    @Binding var value: Double
+    let accentColor: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(label)
+                    .font(.custom("PlayfairDisplay-Bold", size: 16))
+                    .foregroundColor(.white)
+                Spacer()
+                Text(String(format: "%.0f%%", value * 100))
+                    .font(.custom("PlayfairDisplay-Black", size: 14))
+                    .foregroundColor(accentColor)
+            }
+            Slider(value: $value, in: 0...1).tint(accentColor)
+        }
+    }
+}
+
+struct ForgeButton: View {
+    let title: String
+    let color: Color
+    let isSecondary: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.custom("PlayfairDisplay-Black", size: 14))
+                .foregroundColor(isSecondary ? color : .black)
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity)
+                .background(isSecondary ? color.opacity(0.1) : color)
+                .cornerRadius(16)
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(isSecondary ? color : Color.clear, lineWidth: 2))
+        }
+    }
+}
+
 struct ColorPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedColor: Color
     let title: String
+    let accentColor: Color
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                ColorPicker("Choose Color", selection: $selectedColor, supportsOpacity: true).padding()
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 32) {
+                Text(title.uppercased())
+                    .font(.custom("PlayfairDisplay-Black", size: 24))
+                    .foregroundColor(.white)
+                    .padding(.top, 40)
+                
+                ColorPicker("Pick your aura color", selection: $selectedColor, supportsOpacity: true)
+                    .font(.custom("PlayfairDisplay-Bold", size: 18))
+                    .foregroundColor(.white)
+                    .padding(32)
+                    .background(Color.white.opacity(0.05))
+                    .cornerRadius(24)
+                
                 Spacer()
+                
                 Button(action: { dismiss() }) {
-                    Text("Done").font(.custom("PlayfairDisplay-Bold", size: 16)).foregroundColor(.black).frame(maxWidth: .infinity).padding().background(RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge).fill(Color(hex: "#FFD700")!))
+                    Text("CONFIRM COLOR")
+                        .font(.custom("PlayfairDisplay-Black", size: 16))
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 20)
+                        .background(accentColor)
+                        .cornerRadius(16)
                 }
-                .padding()
+                .padding(24)
             }
-            .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
         }
-        .enableInjection()
     }
 }

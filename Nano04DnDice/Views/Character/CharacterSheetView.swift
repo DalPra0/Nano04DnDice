@@ -6,6 +6,7 @@ import RevenueCatUI
 struct CharacterSheetView: View {
     @EnvironmentObject private var subManager: SubscriptionManager
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @Query private var characters: [PlayerCharacter]
     @StateObject private var themeManager = ThemeManager.shared
     @State private var selectedTab = 0
@@ -14,112 +15,204 @@ struct CharacterSheetView: View {
     @State private var showingShareSheet = false
     @State private var pdfURL: URL?
     
+    private var accentColor: Color {
+        themeManager.currentTheme.accentColor.color
+    }
+    
     private var activeCharacter: PlayerCharacter? {
         characters.first { $0.isActive } ?? characters.first
     }
     
     var body: some View {
-        NavigationView {
-            if let character = activeCharacter {
-                VStack(spacing: 0) {
-                    CharacterHeaderView(character: character)
-                        .padding()
-                        .background(Color(.systemGray6))
-                    
-                    Picker("View", selection: $selectedTab) {
-                        Text("Stats").tag(0)
-                        Text("Skills").tag(1)
-                        Text("Combat").tag(2)
-                        Text("Info").tag(3)
-                    }
-                    .pickerStyle(.segmented)
-                    .padding()
-                    
-                    TabView(selection: $selectedTab) {
-                        CharacterStatsTabView(character: character)
-                            .tag(0)
+        ZStack {
+            // Background
+            Color.black.ignoresSafeArea()
+            
+            RadialGradient(
+                colors: [Color.black.opacity(0.8), Color.black],
+                center: .center,
+                startRadius: 100,
+                endRadius: 500
+            ).ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom Header
+                customHeader
+                
+                if let character = activeCharacter {
+                    VStack(spacing: 0) {
+                        // Character Identity Summary
+                        CharacterIdentityHeader(character: character, accentColor: accentColor)
                         
-                        CharacterSkillsTabView(character: character)
-                            .tag(1)
-                        
-                        CharacterCombatTabView(character: character)
-                            .tag(2)
-                        
-                        CharacterInfoTabView(character: character)
-                            .tag(3)
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                }
-                .navigationTitle("Character Sheet")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: { showingCharacterSelector = true }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "person.crop.circle")
-                                Image(systemName: "chevron.down")
-                                    .font(.caption)
-                            }
+                        // Custom Tab Selector
+                        HStack(spacing: 0) {
+                            TabButton(title: "STATS", icon: "bolt.fill", isSelected: selectedTab == 0, accentColor: accentColor) { selectedTab = 0 }
+                            TabButton(title: "SKILLS", icon: "star.fill", isSelected: selectedTab == 1, accentColor: accentColor) { selectedTab = 1 }
+                            TabButton(title: "COMBAT", icon: "shield.fill", isSelected: selectedTab == 2, accentColor: accentColor) { selectedTab = 2 }
+                            TabButton(title: "INFO", icon: "info.circle.fill", isSelected: selectedTab == 3, accentColor: accentColor) { selectedTab = 3 }
                         }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        HStack(spacing: 16) {
-                            Button(action: { 
-                                if subManager.isPro {
-                                    pdfURL = PDFManager.shared.generateCharacterPDF(character: character)
-                                    if pdfURL != nil {
-                                        showingShareSheet = true
-                                    }
-                                } else {
-                                    subManager.showPaywall = true
-                                }
-                            }) {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(systemName: "arrow.down.doc")
-                                    if !subManager.isPro {
-                                        Image(systemName: "crown.fill")
-                                            .font(.system(size: 8))
-                                            .foregroundColor(.yellow)
-                                            .offset(x: 4, y: -4)
-                                    }
-                                }
-                            }
+                        .padding(.vertical, 12)
+                        .background(Color.white.opacity(0.03))
+                        
+                        TabView(selection: $selectedTab) {
+                            CharacterStatsTabView(character: character)
+                                .tag(0)
                             
-                            NavigationLink(destination: EditCharacterView(character: character)) {
-                                Text("Edit")
-                            }
+                            CharacterSkillsTabView(character: character)
+                                .tag(1)
+                            
+                            CharacterCombatTabView(character: character)
+                                .tag(2)
+                            
+                            CharacterInfoTabView(character: character)
+                                .tag(3)
                         }
+                        .tabViewStyle(.page(indexDisplayMode: .never))
                     }
+                } else {
+                    Spacer()
+                    EmptyCharacterView(onCreateCharacter: { 
+                        if subManager.canAddItem(currentCount: characters.count) {
+                            showingAddCharacter = true
+                        } else {
+                            subManager.showPaywall = true
+                        }
+                    })
+                    .padding(40)
+                    Spacer()
                 }
-                .sheet(isPresented: $showingCharacterSelector) {
-                    CharacterSelectorSheet()
-                }
-                .sheet(isPresented: $showingShareSheet) {
-                    if let url = pdfURL {
-                        ShareSheet(activityItems: [url])
-                    }
-                }
-            } else {
-                EmptyCharacterView(onCreateCharacter: { 
-                    if subManager.canAddItem(currentCount: characters.count) {
-                        showingAddCharacter = true
-                    } else {
-                        subManager.showPaywall = true
-                    }
-                })
             }
+        }
+        .navigationBarHidden(true)
+        .sheet(isPresented: $showingCharacterSelector) {
+            CharacterSelectorSheet()
         }
         .sheet(isPresented: $showingAddCharacter) {
             AddCharacterView()
         }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = pdfURL {
+                ShareSheet(activityItems: [url])
+            }
+        }
         .sheet(isPresented: $subManager.showPaywall) {
             PaywallView(displayCloseButton: true)
         }
-        .enableInjection()
+    }
+    
+    private var customHeader: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(accentColor)
+                        .frame(width: 44, height: 44)
+                        .background(Circle().fill(Color.white.opacity(0.1)))
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 2) {
+                    Text("CHARACTER SHEET")
+                        .font(.custom("PlayfairDisplay-Black", size: 16))
+                        .foregroundColor(.white)
+                        .tracking(2)
+                    
+                    if let character = activeCharacter {
+                        Text(character.name.uppercased())
+                            .font(.custom("PlayfairDisplay-Bold", size: 10))
+                            .foregroundColor(accentColor.opacity(0.7))
+                            .tracking(1)
+                    }
+                }
+                
+                Spacer()
+                
+                HStack(spacing: 4) {
+                    if let character = activeCharacter {
+                        Button(action: {
+                            if subManager.isPro {
+                                pdfURL = PDFManager.shared.generateCharacterPDF(character: character)
+                                if pdfURL != nil { showingShareSheet = true }
+                            } else {
+                                subManager.showPaywall = true
+                            }
+                        }) {
+                            Image(systemName: "arrow.down.doc.fill")
+                                .font(.system(size: 18))
+                                .foregroundColor(accentColor)
+                                .frame(width: 44, height: 44)
+                        }
+                    }
+                    
+                    Button(action: { showingCharacterSelector = true }) {
+                        Image(systemName: "person.2.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(accentColor)
+                            .frame(width: 44, height: 44)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            
+            LinearGradient(
+                colors: [Color.clear, accentColor.opacity(0.5), Color.clear],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 1)
+        }
+        .background(Color.black.opacity(0.8))
     }
 }
 
-#Preview {
-    CharacterSheetView()
+struct CharacterIdentityHeader: View {
+    let character: PlayerCharacter
+    let accentColor: Color
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Character Level Shield
+            ZStack {
+                Circle()
+                    .stroke(accentColor.opacity(0.5), lineWidth: 2)
+                    .frame(width: 50, height: 50)
+                
+                VStack(spacing: 0) {
+                    Text("LVL")
+                        .font(.custom("PlayfairDisplay-Bold", size: 8))
+                    Text("\(character.level)")
+                        .font(.custom("PlayfairDisplay-Black", size: 18))
+                }
+                .foregroundColor(accentColor)
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(character.name)
+                    .font(.custom("PlayfairDisplay-Black", size: 24))
+                    .foregroundColor(.white)
+                
+                HStack(spacing: 8) {
+                    Text(character.race)
+                    Text("•")
+                    Text(character.characterClass)
+                }
+                .font(.custom("PlayfairDisplay-Bold", size: 14))
+                .foregroundColor(accentColor.opacity(0.8))
+            }
+            
+            Spacer()
+            
+            // Edit Button
+            NavigationLink(destination: EditCharacterView(character: character)) {
+                Image(systemName: "pencil.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundColor(accentColor.opacity(0.3))
+            }
+        }
+        .padding(20)
+        .background(Color.white.opacity(0.02))
+    }
 }

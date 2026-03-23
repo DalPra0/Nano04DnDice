@@ -10,8 +10,8 @@ struct DetailedStatisticsView: View {
     @State private var selectedPeriod: StatPeriod = .all
     @State private var selectedDiceFilter: DiceType? = nil
     
-    private var currentTheme: DiceCustomization {
-        themeManager.currentTheme
+    private var accentColor: Color {
+        themeManager.currentTheme.accentColor.color
     }
     
     private var filteredRolls: [DiceRollEntry] {
@@ -45,72 +45,126 @@ struct DetailedStatisticsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.black.opacity(0.95)
-                    .ignoresSafeArea()
+        ZStack {
+            // Background
+            Color.black.ignoresSafeArea()
+            
+            RadialGradient(
+                colors: [Color.black.opacity(0.8), Color.black],
+                center: .center,
+                startRadius: 100,
+                endRadius: 500
+            ).ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Custom Header
+                customHeader
                 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Period Selector
-                        periodSelector
-                        
-                        // Dice Filter
-                        diceFilterSelector
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 32) {
+                        // Filters Section
+                        VStack(spacing: 16) {
+                            periodSelector
+                            diceFilterSelector
+                        }
+                        .padding(.top, 20)
                         
                         if !filteredRolls.isEmpty {
                             // Overview Stats
-                            overviewCard
+                            overviewSection
                             
                             // Distribution Chart
-                            distributionChart
+                            distributionSection
                             
-                            // Success Rate by Dice
-                            dicePerformanceSection
+                            // Performance Analysis
+                            VStack(spacing: 24) {
+                                sectionHeader("PROWESS BY DICE")
+                                dicePerformanceSection
+                            }
                             
-                            // Roll Mode Statistics
-                            rollModeSection
+                            // Activity Analysis
+                            VStack(spacing: 24) {
+                                sectionHeader("CHRONICLE ACTIVITY")
+                                timeAnalysisSection
+                                streaksSection
+                            }
                             
-                            // Time-based Analysis
-                            timeAnalysisSection
-                            
-                            // Streaks
-                            streaksSection
+                            Spacer().frame(height: 40)
                         } else {
                             emptyStateView
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 20)
-                }
-            }
-            .navigationTitle("Detailed Statistics")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .foregroundColor(currentTheme.accentColor.color)
                 }
             }
         }
+        .navigationBarHidden(true)
+    }
+    
+    private var customHeader: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(accentColor)
+                        .frame(width: 44, height: 44)
+                }
+                
+                Spacer()
+                
+                Text("DETAILED INSIGHTS")
+                    .font(.custom("PlayfairDisplay-Black", size: 18))
+                    .foregroundColor(.white)
+                    .tracking(2)
+                
+                Spacer()
+                
+                Color.clear.frame(width: 44, height: 44)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            
+            LinearGradient(
+                colors: [Color.clear, accentColor.opacity(0.5), Color.clear],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 1)
+        }
+        .background(Color.black.opacity(0.8))
+    }
+    
+    private func sectionHeader(_ text: String) -> some View {
+        HStack {
+            Text(text)
+                .font(.custom("PlayfairDisplay-Bold", size: 12))
+                .foregroundColor(accentColor.opacity(0.8))
+                .tracking(3)
+            Spacer()
+            Rectangle()
+                .fill(accentColor.opacity(0.2))
+                .frame(height: 1)
+        }
+        .padding(.horizontal, 4)
     }
     
     private var periodSelector: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             ForEach(StatPeriod.allCases, id: \.self) { period in
-                Button(action: {
-                    selectedPeriod = period
-                }) {
-                    Text(period.rawValue)
-                        .font(.custom("PlayfairDisplay-Regular", size: 14))
-                        .foregroundColor(selectedPeriod == period ? .black : .white)
-                        .padding(.horizontal, 16)
+                Button(action: { selectedPeriod = period }) {
+                    Text(period.rawValue.uppercased())
+                        .font(.custom("PlayfairDisplay-Bold", size: 10))
+                        .foregroundColor(selectedPeriod == period ? .black : .white.opacity(0.7))
+                        .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
-                                .fill(selectedPeriod == period ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
+                            Capsule()
+                                .fill(selectedPeriod == period ? accentColor : Color.white.opacity(0.05))
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(selectedPeriod == period ? Color.clear : Color.white.opacity(0.1), lineWidth: 1)
                         )
                 }
             }
@@ -119,69 +173,45 @@ struct DetailedStatisticsView: View {
     
     private var diceFilterSelector: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                Button(action: {
-                    selectedDiceFilter = nil
-                }) {
-                    Text("All Dice")
-                        .font(.custom("PlayfairDisplay-Regular", size: 14))
-                        .foregroundColor(selectedDiceFilter == nil ? .black : .white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
-                                .fill(selectedDiceFilter == nil ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
-                        )
-                }
+            HStack(spacing: 8) {
+                FilterChip(
+                    text: "ALL", 
+                    isSelected: selectedDiceFilter == nil, 
+                    accentColor: accentColor, 
+                    action: { selectedDiceFilter = nil }
+                )
                 
                 ForEach([DiceType.d4, .d6, .d8, .d10, .d12, .d20], id: \.self) { dice in
-                    Button(action: {
-                        selectedDiceFilter = dice
-                    }) {
-                        Text(dice.name)
-                            .font(.custom("PlayfairDisplay-Regular", size: 14))
-                            .foregroundColor(selectedDiceFilter?.sides == dice.sides ? .black : .white)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusXLarge)
-                                    .fill(selectedDiceFilter?.sides == dice.sides ? currentTheme.accentColor.color : DesignSystem.Colors.backgroundOverlay)
-                            )
-                    }
+                    FilterChip(
+                        text: dice.name, 
+                        isSelected: selectedDiceFilter?.sides == dice.sides, 
+                        accentColor: accentColor, 
+                        action: { selectedDiceFilter = dice }
+                    )
                 }
             }
+            .padding(.horizontal, 4)
         }
     }
     
-    private var overviewCard: some View {
+    private var overviewSection: some View {
         VStack(spacing: 16) {
-            Text("Overview")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 12) {
+                StatPanel(label: "TOTAL ROLLS", value: "\(detailedStats.totalRolls)", color: .white, accentColor: accentColor)
+                StatPanel(label: "SUCCESS RATE", value: "\(detailedStats.successRate)%", color: .green, accentColor: accentColor)
+            }
             
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                MiniStatCard(label: "Rolls", value: "\(detailedStats.totalRolls)", color: currentTheme.accentColor.color)
-                MiniStatCard(label: "Avg", value: String(format: "%.1f", detailedStats.averageRoll), color: .blue)
-                MiniStatCard(label: "Success", value: "\(detailedStats.successRate)%", color: .green)
-                MiniStatCard(label: "Criticals", value: "\(detailedStats.criticals)", color: .green)
-                MiniStatCard(label: "Fumbles", value: "\(detailedStats.fumbles)", color: .red)
-                MiniStatCard(label: "Range", value: "\(detailedStats.lowestRoll)-\(detailedStats.highestRoll)", color: .purple)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                StatPanelMini(label: "AVG", value: String(format: "%.1f", detailedStats.averageRoll), color: accentColor)
+                StatPanelMini(label: "CRITS", value: "\(detailedStats.criticals)", color: .green)
+                StatPanelMini(label: "FUMBLES", value: "\(detailedStats.fumbles)", color: .red)
             }
         }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
     }
     
-    private var distributionChart: some View {
-        VStack(spacing: 16) {
-            Text("Roll Distribution")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
+    private var distributionSection: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            sectionHeader("ROLL DISTRIBUTION")
             
             if #available(iOS 16.0, *) {
                 Chart(detailedStats.distribution) { item in
@@ -189,290 +219,241 @@ struct DetailedStatisticsView: View {
                         x: .value("Result", item.result),
                         y: .value("Count", item.count)
                     )
-                    .foregroundStyle(currentTheme.accentColor.color)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [accentColor, accentColor.opacity(0.4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                 }
-                .frame(height: 200)
+                .frame(height: 180)
                 .chartXAxis {
-                    AxisMarks(values: .automatic) { _ in
-                        AxisValueLabel()
-                            .foregroundStyle(.white)
+                    AxisMarks { _ in
+                        AxisValueLabel().font(.custom("PlayfairDisplay-Regular", size: 10)).foregroundStyle(.white.opacity(0.5))
                     }
                 }
                 .chartYAxis {
                     AxisMarks { _ in
-                        AxisValueLabel()
-                            .foregroundStyle(.white)
+                        AxisValueLabel().font(.custom("PlayfairDisplay-Regular", size: 10)).foregroundStyle(.white.opacity(0.5))
                     }
                 }
             } else {
-                // Fallback for iOS 15
                 HStack(alignment: .bottom, spacing: 4) {
                     ForEach(detailedStats.distribution) { item in
                         VStack {
-                            Text("\(item.count)")
-                                .font(.system(size: 10))
-                                .foregroundColor(.white)
                             Rectangle()
-                                .fill(currentTheme.accentColor.color)
-                                .frame(width: 20, height: CGFloat(item.count) * 10)
+                                .fill(accentColor)
+                                .frame(width: 14, height: max(4, CGFloat(item.count) * 10))
+                                .cornerRadius(2)
                             Text("\(item.result)")
-                                .font(.system(size: 10))
-                                .foregroundColor(.white.opacity(0.6))
+                                .font(.system(size: 8))
+                                .foregroundColor(.white.opacity(0.4))
                         }
                     }
                 }
-                .frame(height: 200)
+                .frame(height: 180)
             }
         }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
+        .padding(24)
+        .background(Color.white.opacity(0.03))
+        .cornerRadius(20)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.08), lineWidth: 1))
     }
     
     private var dicePerformanceSection: some View {
         VStack(spacing: 16) {
-            Text("Dice Performance")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
             ForEach(detailedStats.dicePerformance, id: \.diceName) { perf in
-                DicePerformanceRow(performance: perf, accentColor: currentTheme.accentColor.color)
+                VStack(spacing: 8) {
+                    HStack {
+                        Text(perf.diceName)
+                            .font(.custom("PlayfairDisplay-Black", size: 16))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text("AVG \(perf.average, specifier: "%.1f") • \(perf.count) ROLLS")
+                            .font(.custom("PlayfairDisplay-Bold", size: 10))
+                            .foregroundColor(accentColor.opacity(0.8))
+                    }
+                    
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(height: 6)
+                            
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [accentColor, accentColor.opacity(0.6)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: geometry.size.width * CGFloat(perf.successRate / 100), height: 6)
+                                .shadow(color: accentColor.opacity(0.3), radius: 4)
+                        }
+                    }
+                    .frame(height: 6)
+                }
+                .padding(16)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(12)
             }
         }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
-    }
-    
-    private var rollModeSection: some View {
-        VStack(spacing: 16) {
-            Text("Roll Modes")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            ForEach(detailedStats.rollModeStats, id: \.mode) { stat in
-                RollModeStatRow(stat: stat, accentColor: currentTheme.accentColor.color)
-            }
-        }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
     }
     
     private var timeAnalysisSection: some View {
-        VStack(spacing: 16) {
-            Text("Activity")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            HStack(spacing: 20) {
-                VStack {
-                    Text("\(detailedStats.mostActiveHour):00")
-                        .font(.custom("PlayfairDisplay-Bold", size: 24))
-                        .foregroundColor(currentTheme.accentColor.color)
-                    Text("Most Active Hour")
-                        .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(DesignSystem.Colors.textTertiary)
-                }
-                .frame(maxWidth: .infinity)
-                
-                Divider()
-                    .background(Color.white.opacity(0.3))
-                
-                VStack {
-                    Text("\(detailedStats.averageRollsPerDay, specifier: "%.1f")")
-                        .font(.custom("PlayfairDisplay-Bold", size: 24))
-                        .foregroundColor(currentTheme.accentColor.color)
-                    Text("Avg Rolls/Day")
-                        .font(.custom("PlayfairDisplay-Regular", size: 12))
-                        .foregroundColor(DesignSystem.Colors.textTertiary)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .frame(height: 80)
+        HStack(spacing: 16) {
+            AnalysisCard(
+                label: "PEAK HOUR", 
+                value: "\(detailedStats.mostActiveHour):00", 
+                icon: "clock.fill", 
+                accentColor: accentColor
+            )
+            AnalysisCard(
+                label: "AVG ROLLS/DAY", 
+                value: String(format: "%.1f", detailedStats.averageRollsPerDay), 
+                icon: "calendar", 
+                accentColor: accentColor
+            )
         }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
     }
     
     private var streaksSection: some View {
-        VStack(spacing: 16) {
-            Text("Streaks")
-                .font(.custom("PlayfairDisplay-Bold", size: 20))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            HStack(spacing: 20) {
-                StreakCard(
-                    label: "Best Streak",
-                    value: "\(detailedStats.longestSuccessStreak)",
-                    icon: "flame.fill",
-                    color: .green
-                )
-                
-                StreakCard(
-                    label: "Worst Streak",
-                    value: "\(detailedStats.longestFailureStreak)",
-                    icon: "snowflake",
-                    color: .red
-                )
-            }
+        HStack(spacing: 16) {
+            AnalysisCard(
+                label: "BEST STREAK", 
+                value: "\(detailedStats.longestSuccessStreak)", 
+                icon: "flame.fill", 
+                accentColor: .green
+            )
+            AnalysisCard(
+                label: "WORST STREAK", 
+                value: "\(detailedStats.longestFailureStreak)", 
+                icon: "snowflake", 
+                accentColor: .red
+            )
         }
-        .padding(DesignSystem.Spacing.lg)  // 20pt→24pt arredondado
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusLarge)
-                .fill(Color.white.opacity(0.05))
-        )
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "chart.bar.xaxis")
-                .font(.system(size: 70))
-                .foregroundColor(.white.opacity(0.3))
+        VStack(spacing: 24) {
+            Image(systemName: "sparkles.square.filled.on.square")
+                .font(.system(size: 60))
+                .foregroundColor(accentColor.opacity(0.3))
             
-            Text("No Data for This Period")
-                .font(.custom("PlayfairDisplay-Bold", size: 24))
-                .foregroundColor(.white)
-            
-            Text("Try selecting a different period or dice filter")
-                .font(.custom("PlayfairDisplay-Regular", size: 14))
-                .foregroundColor(.white.opacity(0.6))
+            VStack(spacing: 8) {
+                Text("No Omens Found")
+                    .font(.custom("PlayfairDisplay-Bold", size: 24))
+                    .foregroundColor(.white)
+                Text("Change your filters to reveal the truth.")
+                    .font(.custom("PlayfairDisplay-Regular", size: 16))
+                    .foregroundColor(DesignSystem.Colors.textTertiary)
+            }
         }
         .padding(.top, 100)
     }
 }
 
-// MARK: - Supporting Views
+// MARK: - Components
 
-struct MiniStatCard: View {
+struct FilterChip: View {
+    let text: String
+    let isSelected: Bool
+    let accentColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(text)
+                .font(.custom("PlayfairDisplay-Bold", size: 10))
+                .foregroundColor(isSelected ? .black : .white.opacity(0.7))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(isSelected ? accentColor : Color.white.opacity(0.05))
+                .cornerRadius(20)
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(isSelected ? Color.clear : Color.white.opacity(0.1), lineWidth: 1))
+        }
+    }
+}
+
+struct StatPanel: View {
     let label: String
     let value: String
     let color: Color
+    let accentColor: Color
     
     var body: some View {
         VStack(spacing: 8) {
-            Text(value)
-                .font(.custom("PlayfairDisplay-Bold", size: 22))
-                .foregroundColor(color)
-            
             Text(label)
-                .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.6))
+                .font(.custom("PlayfairDisplay-Bold", size: 10))
+                .foregroundColor(accentColor.opacity(0.7))
+                .tracking(2)
+            
+            Text(value)
+                .font(.custom("PlayfairDisplay-Black", size: 32))
+                .foregroundColor(color)
+                .shadow(color: color.opacity(0.3), radius: 10)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                .fill(Color.white.opacity(0.05))
-        )
+        .padding(.vertical, 24)
+        .background(Color.white.opacity(0.04))
+        .cornerRadius(20)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.08), lineWidth: 1))
     }
 }
 
-struct DicePerformanceRow: View {
-    let performance: DicePerformance
-    let accentColor: Color
+struct StatPanelMini: View {
+    let label: String
+    let value: String
+    let color: Color
     
     var body: some View {
-        HStack {
-            Text(performance.diceName)
-                .font(.custom("PlayfairDisplay-Bold", size: 16))
-                .foregroundColor(.white)
-                .frame(width: 50, alignment: .leading)
+        VStack(spacing: 4) {
+            Text(label)
+                .font(.custom("PlayfairDisplay-Bold", size: 9))
+                .foregroundColor(.white.opacity(0.5))
             
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("Avg: \(performance.average, specifier: "%.1f")")
-                    Spacer()
-                    Text("\(performance.count) rolls")
-                }
-                .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.8))
-                
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(Color.white.opacity(0.1))
-                            .frame(height: 8)
-                            .cornerRadius(4)
-                        
-                        Rectangle()
-                            .fill(accentColor)
-                            .frame(width: geometry.size.width * CGFloat(performance.successRate / 100), height: 8)
-                            .cornerRadius(4)
-                    }
-                }
-                .frame(height: 8)
-            }
+            Text(value)
+                .font(.custom("PlayfairDisplay-Black", size: 18))
+                .foregroundColor(color)
         }
-        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(Color.white.opacity(0.04))
+        .cornerRadius(12)
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.08), lineWidth: 1))
     }
 }
 
-struct RollModeStatRow: View {
-    let stat: RollModeStat
-    let accentColor: Color
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(stat.mode)
-                    .font(.custom("PlayfairDisplay-Bold", size: 16))
-                    .foregroundColor(.white)
-                
-                Text("\(stat.count) rolls • Avg: \(stat.average, specifier: "%.1f")")
-                    .font(.custom("PlayfairDisplay-Regular", size: 12))
-                    .foregroundColor(.white.opacity(0.6))
-            }
-            
-            Spacer()
-            
-            Text("\(stat.percentage)%")
-                .font(.custom("PlayfairDisplay-Bold", size: 18))
-                .foregroundColor(accentColor)
-        }
-        .padding(.vertical, 8)
-    }
-}
-
-struct StreakCard: View {
+struct AnalysisCard: View {
     let label: String
     let value: String
     let icon: String
-    let color: Color
+    let accentColor: Color
     
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 30))
-                .foregroundColor(color)
+                .font(.system(size: 20))
+                .foregroundColor(accentColor.opacity(0.8))
             
-            Text(value)
-                .font(.custom("PlayfairDisplay-Bold", size: 32))
-                .foregroundColor(color)
-            
-            Text(label)
-                .font(.custom("PlayfairDisplay-Regular", size: 12))
-                .foregroundColor(.white.opacity(0.6))
+            VStack(spacing: 4) {
+                Text(value)
+                    .font(.custom("PlayfairDisplay-Black", size: 24))
+                    .foregroundColor(.white)
+                
+                Text(label)
+                    .font(.custom("PlayfairDisplay-Bold", size: 9))
+                    .foregroundColor(.white.opacity(0.5))
+                    .tracking(1)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.Spacing.radiusMedium)
-                .fill(Color.white.opacity(0.05))
-        )
+        .background(Color.white.opacity(0.04))
+        .cornerRadius(16)
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.08), lineWidth: 1))
     }
 }
 

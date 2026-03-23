@@ -1,86 +1,38 @@
-//
-//  WidgetDesignSystem.swift
-//  DnDiceWidget
-//
-//  Design System for Widget (mirrors main app)
-//
 
 import SwiftUI
 
-// MARK: - Widget Design System
+/// Design System for Widget (Mirrors main app's DesignSystem.swift)
 enum WidgetDesignSystem {
     
-    // MARK: - Colors (Dark + Light Mode Support)
     enum Colors {
-        // Brand colors (consistent with main app)
-        static let brandGold = Color(hex: "#FFD700")
-        static let brandGoldDark = Color(hex: "#D4AF37")
+        static let gold = Color(hex: "#FFD700")
+        static let deepGold = Color(hex: "#D4AF37")
+        static let background = Color.black
+        static let backgroundOverlay = Color.white.opacity(0.15)
         
-        // Adaptive backgrounds (automatic dark/light)
-        static let backgroundPrimary = Color(uiColor: .systemBackground)
-        static let backgroundSecondary = Color(uiColor: .secondarySystemBackground)
-        static let backgroundTertiary = Color(uiColor: .tertiarySystemBackground)
-        
-        // Widget-specific gradients (adaptive)
-        static func adaptiveGradient(colorScheme: ColorScheme) -> LinearGradient {
-            if colorScheme == .dark {
-                return LinearGradient(
-                    colors: [
-                        Color(hex: "#1a1a2e"),
-                        Color(hex: "#16213e")
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            } else {
-                return LinearGradient(
-                    colors: [
-                        Color(hex: "#f8f9fa"),
-                        Color(hex: "#e9ecef")
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            }
+        static func resultColor(isCrit: Bool, isFumble: Bool) -> Color {
+            if isCrit { return .green }
+            if isFumble { return .red }
+            return gold
         }
-        
-        // Text colors (adaptive)
-        static let textPrimary = Color.primary
-        static let textSecondary = Color.secondary
-        
-        // Semantic colors
-        static let success = Color.green
-        static let critical = Color.green
-        static let fumble = Color.red
     }
     
-    // MARK: - Typography (Accessible sizes - 13pt minimum)
     enum Typography {
-        // Widget sizes (iOS HIG compliant)
-        static let resultSmall = Font.custom("PlayfairDisplay-Black", size: 52)
-        static let resultMedium = Font.custom("PlayfairDisplay-Black", size: 72)
-        static let resultLarge = Font.custom("PlayfairDisplay-Black", size: 96)
-        
+        static let display = Font.custom("PlayfairDisplay-Black", size: 64)
         static let title = Font.custom("PlayfairDisplay-Bold", size: 18)
-        static let subtitle = Font.custom("PlayfairDisplay-Bold", size: 15)
-        static let body = Font.custom("PlayfairDisplay-Regular", size: 14)
-        static let caption = Font.custom("PlayfairDisplay-Regular", size: 13) // Minimum
-        
-        static let diceType = Font.custom("PlayfairDisplay-Bold", size: 16)
-        static let critical = Font.custom("PlayfairDisplay-Bold", size: 13)
+        static let label = Font.custom("PlayfairDisplay-Bold", size: 14)
+        static let caption = Font.custom("PlayfairDisplay-Regular", size: 12)
     }
     
-    // MARK: - Spacing
     enum Spacing {
-        static let xs: CGFloat = 4
-        static let sm: CGFloat = 8
-        static let md: CGFloat = 12
-        static let lg: CGFloat = 16
-        static let xl: CGFloat = 20
+        static let xs: CGFloat = 8
+        static let sm: CGFloat = 12
+        static let md: CGFloat = 16
+        static let lg: CGFloat = 24
     }
 }
 
-// MARK: - Color Extension (Helper)
+// MARK: - Hex Color Support
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
